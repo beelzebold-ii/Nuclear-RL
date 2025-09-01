@@ -1,6 +1,6 @@
 --global vars
-gameversion = "0.3.1"
-gamedate = "May 15, 2025"
+gameversion = "0.4.0"
+gamedate = "Sep 1, 2025"
 
 frames=1
 
