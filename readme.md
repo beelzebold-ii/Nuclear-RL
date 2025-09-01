@@ -1,4 +1,4 @@
-\# Nuclear Roguelike
+# Nuclear Roguelike
 
 Nuclear Inc. is a multi-trillion dollar "clean" nuclear energy company spanning across all of North America.
 
@@ -22,7 +22,7 @@ Nobody can save the continent from near certain destruction.
 
 
 
-\##
+##
 
 Nuclear RL is a retro themed modern setting traditional roguelike, with guns and stuff.
 
@@ -49,4 +49,5 @@ Arrows and enter navigate menus, backspace drops an item or some ammo from the i
 
 
 The player is a blue @, enemies are various colored letters, ammo is an aterisk, \*, armor is a square bracket, \[, and weapons are curly brackets, }. Walls are hash marks, #, green equal signs, =, are acid (which \*will\* kill you), percent signs (%) are corpses, and a simple period, . , is a floor tile.
+
 
