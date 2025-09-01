@@ -287,13 +287,16 @@ function generatenewlevel(roomtype,nofeeling)
 	--spawn the enemies
 	local enemycount = math.min(dlevel + 2 + gameskill,math.floor( 20 + (levelnum*(1+gameskill/4)) ) ) + love.math.random(0,2)
 	localenemycount = 0
+	local hotstartrate = 0.2
 	for i=1,enemycount do
 		if #spawnabletiles > 40 then
-			localenemycount = localenemycount + 1
 			local spawntile = love.math.random(1,#spawnabletiles)
-			makeObj(enemytable[love.math.random(1,#enemytable)],string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2)))
-			if love.math.random()<0.6 and levelfeeling=="redalert" then
-				eObjs[#eObjs].chasing = true
+			if checkLOS(pObj.pox,pObj.poy,string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))) or love.math.random()<hotstartrate then
+				localenemycount = localenemycount + 1
+				makeObj(enemytable[love.math.random(1,#enemytable)],string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2)))
+				if love.math.random()<0.6 and levelfeeling=="redalert" then
+					eObjs[#eObjs].chasing = true
+					end
 				end
 			table.remove(spawnabletiles,spawntile)
 			end

@@ -186,6 +186,7 @@ altfiring = false
 replayBuffer = {}
 takescreenshot = false
 
+--no more setting hudmessage directly (soon)
 hudmessage = ""
 
 require("assets")
