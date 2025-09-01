@@ -283,10 +283,12 @@ function love.draw()
 			--curveshader pass
 			love.graphics.setCanvas(screencanvas)
 			love.graphics.clear(0,0,0,1)	
+			--drop shadow like effect
 			local brightness = love.math.random()*0.05+0.25
 			love.graphics.setColor(brightness,brightness,brightness)
 			love.graphics.setShader(curveshader)
-			love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
+			--disabling this as I want to replace it with real chromatic aberration
+			--love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
 			love.graphics.setColor(1,1,1)
 			love.graphics.draw(tilecanvas,0,0,0,1)
 			--horizontal blur pass
@@ -512,10 +514,12 @@ function drawMenu()
 	--curveshader pass
 	love.graphics.setCanvas(screencanvas)
 	love.graphics.clear(0,0,0,1)	
+	--drop shadow like effect
 	local brightness = love.math.random()*0.05+0.25
 	love.graphics.setColor(brightness,brightness,brightness)
 	love.graphics.setShader(curveshader)
-	love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
+	--disabling this as I want to replace it with real chromatic aberration
+	--love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
 	love.graphics.setColor(1,1,1)
 	love.graphics.draw(tilecanvas,0,0,0,1)
 	--horizontal blur pass
@@ -988,11 +992,13 @@ function updatescreen(camx,camy)
 	
 	--curveshader pass
 	love.graphics.setCanvas(screencanvas)
-	love.graphics.clear(0,0,0,1)	
+	love.graphics.clear(0,0,0,1)
+	--drop shadow like effect
 	local brightness = love.math.random()*0.05+0.25
 	love.graphics.setColor(brightness,brightness,brightness)
 	love.graphics.setShader(curveshader)
-	love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
+	--disabling this as I want to replace it with real chromatic aberration
+	--love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
 	love.graphics.setColor(1,1,1)
 	love.graphics.draw(tilecanvas,0,0,0,1)
 	--horizontal blur pass

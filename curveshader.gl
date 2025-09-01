@@ -1,6 +1,8 @@
 //small shader to curve the screen out torwards the edges
 
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
+	const float col_divergence = 0.002;
+	
 	vec2 affected_coords = texture_coords;
 	
 	float squishstretch = 1.5;
@@ -26,6 +28,16 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
 	affected_coords.x = (affected_coords.x-0.5)*squish+0.5;
 	
 	vec4 texturecolor = Texel(tex, affected_coords);
+	
+	//apply chromatic aberration by modifying the red and blue values
+	vec2 diverged_coords = affected_coords;
+	diverged_coords.x -= col_divergence;
+	float divred = Texel(tex, diverged_coords).r;
+	diverged_coords.x += col_divergence*2;
+	float divblue = Texel(tex, diverged_coords).b;
+	
+	texturecolor.r = divred;
+	texturecolor.b = divblue;
 	
 	//discard all pure black pixels; we need transparency
 	if (texturecolor.r+texturecolor.g+texturecolor.b == 0) {
