@@ -1,0 +1,448 @@
+--player and control related functions
+
+function playerwait()
+	if playerWeapon~=nil then
+		playerturnend(6 * (playerWeapon.dmgtype=="melee" and pBonus.meleewaittimefactor or 1.0))
+		else
+		playerturnend(6)
+		end
+	if pObj.pain<2 and waitturns>0 then
+		if pObj.damage>6 then
+			pObj.damage = pObj.damage - 2
+			end
+		end
+	if waitturns<5 then
+		waitturns = waitturns + 1
+		end
+	fireturns = 0
+	end
+
+function playermove(key)
+	waitturns = 0
+	fireturns = math.max(0,fireturns-1)
+	local movevec = {[config.keybinds.KEY_LEFT] = {-1,0},[config.keybinds.KEY_RIGHT] = {1,0},[config.keybinds.KEY_UP] = {0,-1},[config.keybinds.KEY_DOWN] = {0,1}}
+	local newplayerpos = {x = pObj.pox+movevec[key][1],y = pObj.poy+movevec[key][2]}
+	if (tilemap[newplayerpos.y][newplayerpos.x] == 0 or tilemap[newplayerpos.y][newplayerpos.x] == 2) and objat(newplayerpos.x,newplayerpos.y,eObjs) == -1 then
+		pObj.pox = newplayerpos.x
+		pObj.poy = newplayerpos.y
+		local armormovetime = 1.0
+		if playerArmor~=nil then
+			armormovetime = playerArmor.movetime
+			end
+		playerturnend((pObj.movetime*armormovetime)*((100 - pObj.pain)/100),nil,true)
+		end
+	end
+function cursormove(key)
+	local movevec = {[config.keybinds.KEY_LEFT] = {-1,0},[config.keybinds.KEY_RIGHT] = {1,0},[config.keybinds.KEY_UP] = {0,-1},[config.keybinds.KEY_DOWN] = {0,1}}
+	local newpos = {x = cursorx+movevec[key][1],y = cursory+movevec[key][2]}
+	if distance(newpos.x,newpos.y,pObj.pox,pObj.poy)<=pObj.viewdist then
+		cursorx = newpos.x
+		cursory = newpos.y
+		end
+	end
+
+function playeraim(alt)
+	if playerWeapon==nil then
+		hudmessage = "I'm gonna need a gun..."
+		return
+		end
+	
+	controlmode = M_FIRING
+	altfiring = alt
+	cursorx = pObj.pox
+	cursory = pObj.poy
+	
+	if alt==true then
+		hudmessage = "Firing (Altfire) - Select target or press escape"
+		else
+		hudmessage = "Firing - Select target or press escape"
+		end
+	end
+
+function playerattack()
+	waitturns = math.max(waitturns - 0.5,0)
+	if playerWeapon.weaptype=="rapid" then
+		fireturns = fireturns + 1
+		end
+	if playerWeapon.ammotype=="no" or playerWeapon.ammo>0 then
+		if cursorx==pObj.pox and cursory==pObj.poy then
+			hudmessage = "That's me, you idiot!"
+			controlmode = M_MOVE
+			return
+			end
+		if pBonus.freefifthshot==true then
+			shots = shots + 1
+			if shots==5 then
+				shots = 0
+				else
+				if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
+				end
+			else
+			if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
+			end
+		sfx[playerWeapon.sound]:stop()
+		sfx[playerWeapon.sound]:play()
+		if playerWeapon.dmgtype~="spread" then
+			if playerWeapon.dmgtype~="melee" then
+				--bullet
+				print("PLAYER ATTACK:")
+				local rayhit = checkLOS(pObj.pox,pObj.poy,cursorx,cursory)
+				if rayhit.type~="obj" then
+					hudmessage = "The shot hits nothing."
+					else
+					local o = rayhit.hit
+					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+					local tohit = playerWeapon.tohit * pObj.tohit * ((100 - pObj.pain)/100)
+					for i=1,math.ceil(dist) do
+						tohit = tohit*0.95
+						end
+					--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited
+					tohit = tohit + pObj.tohitbonus + (math.min(waitturns,3)*(0.1*pBonus.aimfactor))
+					if fireturns>1 then
+						--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
+						--veteran has an innate 0.7 recoil factor
+						tohit = tohit * (1 - (fireturns-1)*((0.2*pBonus.rpdrecoilfactor)*(playerClass==4 and 0.7 or 1.0)))
+						end
+					
+					print("Target distance: "..dist)
+					print("Base ToHit: "..playerWeapon.tohit)
+					print("Hit chance: "..tohit)
+					
+					if love.math.random()<tohit then
+						makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
+						local damage = 0
+						local pistolminbuff = 0
+						--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
+						--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
+						if playerWeapon.weaptype=="sidearm" then
+							pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
+							end
+						for i=1,playerWeapon.dice do
+							damage = damage + love.math.random(1+pistolminbuff,playerWeapon.sides)
+							end
+						if dist>pObj.pointblank then
+							damage = damage - (dist - pObj.pointblank) * 0.5
+							damage = math.max(damage,playerWeapon.dice/2)
+							end
+						
+						--if we're aimed and have an aim dmg bonus to apply, apply it fully once for 2 turns of waiting (so at max of 3 waitturns it'd be 1.5x)
+						if waitturns>0 and pBonus.aimdmg>0 then
+							damage = damage + pBonus.aimdmg * (math.min(waitturns,3)/2)
+							end
+						
+						damage = math.ceil(damage)
+						--if we're in rapidfire and the damage debuff should apply, lose 1 damage per shot in the volley!
+						if pBonus.rpddmgdebuff==true and fireturns>1 then damage = damage - (fireturns - 1) end
+						--innate bonus damage
+						damage = damage + pObj.damagebonus
+						--and lastly, sidearm only bonus damage
+						if playerWeapon.weaptype=="sidearm" then
+							damage = damage + pBonus.sidearmdmgbuff
+							end
+						hudmessage = "The "..o.name.." is hit for "..damage.." damage!"
+						o.health = o.health-damage
+						if o.health<=0 then
+							hudmessage = o.deathmsg
+							killObj(o.id)
+							end
+						else
+						hudmessage = "The shot missed the "..o.name.."."
+						end
+					end
+				else
+				--melee
+				local rayhit = checkLOS(pObj.pox,pObj.poy,cursorx,cursory)
+				if rayhit.type~="obj" then
+					hudmessage = "The swing hits nothing."
+					else
+					local o = rayhit.hit
+					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+					if dist>1.6 then
+						hudmessage = "The swing hits nothing."
+						else
+						local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
+						if waitturns>1 then tohit = tohit + 0.1 end
+						if love.math.random()<tohit then
+							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
+							local damage = 0
+							for i=1,playerWeapon.dice do
+								damage = damage + love.math.random(1,playerWeapon.sides)
+								--officer does guaranteed bonus damage equal to the weapon's damage dice
+								--veteran gets on average half that
+								if playerClass==1 or (playerClass==4 and love.math.random()<0.5) then damage = damage + 1 end
+								end
+							damage = damage + (math.min(waitturns,2)*2)
+							if waitturns>1 then damage = damage + math.min(waitturns-1,2) end
+							--every point of vitality = a 20% chance to deal extra damage, as officer every lvl = additional 10% chance
+							if (pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/5>love.math.random() then
+								--bonus is 2 damage plus 1 for every 2 vitality and 1 for every 4 lvls if playing as officer
+								damage = damage + 2 + ((pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/2) + pBonus.meleecritbuff
+								end
+							
+							damage = math.floor(damage)
+							hudmessage = "The "..o.name.." is struck for "..damage.." damage!"
+							o.health = o.health-damage
+							if o.health<=0 then
+								hudmessage = o.deathmsg
+								killObj(o.id)
+								if pBonus.meleelifesteal==true then
+									pObj.damage = math.max(pObj.damage-love.math.random(3,6),0)
+									end
+								end
+							else
+							hudmessage = "The strike missed the "..o.name.."."
+							end
+						end
+					end
+				end
+			else
+			--spread
+			local cursordist = distance(pObj.pox,pObj.poy,cursorx,cursory)
+			local targetx = ((cursorx-pObj.pox)/cursordist)*(playerWeapon.range+pBonus.shotchokebuff)+pObj.pox - 1
+			local targety = ((cursory-pObj.poy)/cursordist)*(playerWeapon.range+pBonus.shotchokebuff)+pObj.poy - 1
+			local hits = 0
+			local totaldmg = 0
+			local killmsg
+			for i=0,8 do
+				local rayhit = checkLOS(pObj.pox,pObj.poy,targetx+(i%3),targety+math.floor(i/3))
+				
+				if rayhit.type=="obj" then
+					local o = rayhit.hit
+					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+					local tohit = playerWeapon.tohit*pBonus.shottohit
+					--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited (max 1 instead of 3)
+					tohit = tohit + pObj.tohitbonus + (math.min(waitturns,1)*(0.1*pBonus.aimfactor))
+					--freelancer gets 10% extra tohit with shotguns
+					if playerClass==3 then tohit = tohit + 0.1 end
+					
+					if fireturns>1 then
+						--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
+						tohit = tohit * (1 - (fireturns-1)*(0.2*pBonus.rpdrecoilfactor))
+						end
+					for i=1,math.ceil(dist) do
+						--accuracy falloff is 7.5% per tile instead of 5%
+						tohit = tohit*0.925
+						end
+					--tohit multiplier applies 10% less
+					tohit = (tohit + pObj.tohitbonus) * (pObj.tohit * 0.9)
+					
+					if love.math.random()<tohit then
+						makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-2,2),o.poy+love.math.random(-2,2))
+						hits = hits + 1
+						local damage = 0
+						--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
+						--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
+						if playerWeapon.weaptype=="sidearm" then
+							pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
+							end
+						for i=1,playerWeapon.dice do
+							damage = damage + love.math.random(1+pistolminbuff,playerWeapon.sides)
+							end
+						if dist>pObj.pointblank then
+							damage = damage - (dist - pObj.pointblank) * 0.5
+							damage = math.max(damage,playerWeapon.dice/2)
+							damage = math.ceil(damage)
+							end
+						--damagebonus per pellet is cut to 1/5
+						if love.math.random()<1/5 then
+							damage = damage + pObj.damagebonus
+							end
+						--so is sidearm damage buff for the sawnoff
+						if love.math.random()<1/5 then
+							if playerWeapon.weaptype=="sidearm" then
+								damage = damage + pBonus.sidearmdmgbuff
+								end
+							end
+						totaldmg = totaldmg + damage
+						o.health = o.health-damage
+						if o.health<=0 then
+							killmsg = o.deathmsg
+							killObj(o.id)
+							end
+						end
+					end
+				end
+			
+			if hits<1 then
+				hudmessage = "The shot hits nothing."
+				else
+				hudmessage = hits.." pellets hit for "..totaldmg.." total damage!"
+				if killmsg~=nil then hudmessage = killmsg end
+				end
+			end
+		
+		playerturnend(playerWeapon.atktime*pObj.atktime+love.math.random(-1,1),true)
+		else
+		hudmessage = "Gun's empty!"
+		controlmode = M_MOVE
+		end
+	end
+
+function tryplayerreload()
+	if playerAmmo["a"..playerWeapon.ammotype]<1 then
+		hudmessage = "No more ammo!"
+		else
+		local reloadamt = math.min(playerAmmo["a"..playerWeapon.ammotype],playerWeapon.maxammo-playerWeapon.ammo)
+		playerAmmo["a"..playerWeapon.ammotype] = playerAmmo["a"..playerWeapon.ammotype] - reloadamt
+		playerWeapon.ammo = playerWeapon.ammo + reloadamt
+		
+		waitturns = 0
+		
+		local shotgunbonusspd = 1.0
+		if playerWeapon.dmgtype=="spread" then shotgunbonusspd = pBonus.shotreload end
+		
+		--detective reloads 20% faster
+		local detectivebonusspd = 1.0
+		if playerClass==2 then detectivebonusspd = 0.80 end
+		
+		playerturnend((playerWeapon.reltime*pObj.reltime+love.math.random(-1,1)) * shotgunbonusspd * detectivebonusspd)
+		end
+	end
+
+
+function playerLvUp()
+	pObj.xp = 0
+	pObj.lv = pObj.lv + 1
+	pObj.sp = pObj.sp + 1
+	
+	pObj.maxdamage = pObj.maxdamage + 3
+	pObj.tohit = pObj.tohit + 0.1
+	pObj.painfactor = pObj.painfactor * 0.95
+	
+	gamestate = STATE_LVUP
+	menuselect = 1
+	
+	local classlvup = {
+		function() --officer - gets slightly tankier
+			pObj.maxdamage = pObj.maxdamage + 2
+			pObj.painfactor = pObj.painfactor * 0.95
+			end,
+		function() --detective - gets quite more accurate
+			pObj.tohit = pObj.tohit + 0.05
+			pObj.tohitbonus = pObj.tohitbonus + 0.05
+			pObj.pointblank = pObj.pointblank + 0.5
+			if pObj.lv%2==0 then
+				pObj.damagebonus = pObj.damagebonus + 1
+				end
+			end,
+		function() --freelancer - gets slightly faster
+			pObj.movetime = math.max(pObj.movetime * 0.95,5)
+			pObj.atktime = math.max(pObj.atktime * 0.95,0.5)
+			pObj.reltime = math.max(pObj.reltime * 0.95,0.35)
+			end,
+		function() --war vet - gets nothing lmao
+			
+			end
+	}
+	end
+
+function damageplayer(dmg,noarmor,dist)
+	makeFlrObj(".",{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
+	
+	if gameskill>1 then dmg = dmg*1.1 + 1 end
+	if gameskill>3 then dmg = dmg + 1 end
+	local pain = (dmg * 1.1 + 1) * pObj.painfactor
+	if gameskill>2 then pain = pain + 1 end
+	if gameskill>3 then pain = pain + (dmg * 0.4) end
+	if playerArmor~=nil and noarmor~=true then
+		local dmgfactor = 1.0
+		for i=1,playerArmor.protection do
+			dmgfactor = dmgfactor*0.8
+			end
+		
+		pain = pain * playerArmor.painfactor
+		local originaldmg = dmg
+		dmg = dmg * dmgfactor
+		--armor takes as much damage as it *saves* you from plus some change
+		playerArmor.durability = playerArmor.durability - math.floor((originaldmg-dmg) * 1.2 + 1)
+		
+		if playerArmor.durability<1 then playerArmor=nil end
+		end
+	
+	if dist~=nil and dist<3.5 then
+		local bonusdmg = 4.5-dist
+		dmg = dmg + math.floor(bonusdmg*0.4)
+		pain = pain + math.ceil(bonusdmg*2.5)
+		end
+	
+	pObj.damage = pObj.damage + dmg
+	--if pain shouldn't be outright blocked, apply it
+	if (pBonus.dodgeshield==false or playerDodge==false) and (pBonus.aimshield==false or waitturns==0) then
+		print("Applied "..pain.."% pain")
+		pObj.pain = pObj.pain + pain
+		else
+		print("Pain blocked")
+		print("dodgeshield: "..pBonus.dodgeshield)
+		print("playerDodge: "..playerDodge)
+		print("aimshield:   "..pBonus.aimshield)
+		print("waitturns:   "..waitturns)
+		end
+	
+	if pObj.damage + pObj.pain/5 > pObj.maxdamage then
+		--scale 0..1 representing how much overdamage the player has after this attack
+		local overdamage = (pObj.damage - pObj.maxdamage)/pObj.maxdamage
+		--scale 0..1 representing how much of the player's damage threshold this attack is worth
+		local thisdmg = dmg/pObj.maxdamage
+		
+		if overdamage + thisdmg > love.math.random() then
+			--you die!
+			print(playerName.." has died!")
+			print("Total runtime: "..runtime/10 .."s")
+			print("Kills: "..kills.."/"..enemies)
+			playerDead = true
+			local xdeath = 0
+			if overdamage<0.4 then
+				hudmessage = "I've hit the ground..."
+				else
+				if overdamage>0.7 then
+					hudmessage = "It all fades to black."
+					xdeath = 1
+					else
+					hudmessage = "My knees buckle beneath me!"
+					xdeath = 2
+					end
+				end
+			if kills==enemies then pscore = math.floor(pscore*1.5) end
+			mortisinfo = {runtime=runtime,enemies=enemies,kills=kills,score=math.floor(pscore*(gameskill*0.5 + 0.5)),level=pObj.lv,floor=levelnum,class=playerClass,skill=gameskill,pname=playerName,skillsorder=pSkillOrder,stats=pStats,victory=false,xdeath=xdeath}
+			hudmessage = hudmessage.." Press enter."
+			end
+		end
+	end
+
+function generateMortem(info)
+	local mtxt = ""
+	local xdeathtxt = {"unconscious","dead","mangled"}
+	local diffname = {"easy","normal","hard","hardest"}
+	
+	if info.victory==false then
+		--failure report
+		mtxt="Incident Report:\n \n"
+		mtxt=mtxt.."Subject: "..info.pname.." (lv"..info.level.." "..pclassnameshort[info.class]..")\n"
+		mtxt=mtxt.."Found "..xdeathtxt[info.xdeath+1].." on floor "..info.floor.." of Nuclear R&D.\n \n"
+		
+		mtxt=mtxt.."Subject entered the building around 1900 hrs, and then a series of firefights broke out shortly thereafter. Motive presumed to be related to the recently failed legal case against Nuclear.\n"
+		mtxt=mtxt.."Subject was neutralized approx. "..timerText(info.runtime/10).." later.\n \n"
+		
+		mtxt=mtxt.."Confirmed casualties: "..info.kills.." (personnel, drones, canines)\n"
+		mtxt=mtxt.."Estimated survivors: "..info.enemies-info.kills.."\n \n"
+		
+		mtxt=mtxt.."Difficulty: "..skillnames[info.skill].." ("..diffname[info.skill]..")\n"
+		mtxt=mtxt.."Score: "..info.score.."\n \n"
+		
+		mtxt=mtxt.."Stats:\nSpd: "..info.stats.spd.."\nAcc: "..info.stats.acc.."\nVit: "..info.stats.vit.."\nPer: "..info.stats.per.."\n \n"
+		
+		mtxt=mtxt.."Skills taken: \n"
+		local thisline=0
+		for k,skl in ipairs(info.skillsorder) do
+			if thisline>3 then mtxt=mtxt.."\n";thisline=0 end
+			thisline=thisline+1
+			mtxt=mtxt..skl
+			if k<#info.skillsorder then mtxt=mtxt..", " end
+			end
+		else
+		--victory report
+		mtxt="Severe Incident Report:\n \n"
+		end
+	
+	return mtxt
+	end

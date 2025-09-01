@@ -1,0 +1,41 @@
+//small shader to curve the screen out torwards the edges
+
+vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
+	vec2 affected_coords = texture_coords;
+	
+	float squishstretch = 1.5;
+	float squish = (texture_coords.x-0.5)/squishstretch;
+	squish *= squish;
+	
+	//inverts the direction of the curve
+	//squish *= -1;
+	
+	squish += 1;
+	
+	affected_coords.y = (affected_coords.y-0.5)*squish+0.5;
+	
+	squishstretch = 2.2;
+	squish = (texture_coords.y-0.5)/squishstretch;
+	squish *= squish;
+	
+	//inverts the direction of the curve
+	//squish *= -1;
+	
+	squish += 1;
+	
+	affected_coords.x = (affected_coords.x-0.5)*squish+0.5;
+	
+	vec4 texturecolor = Texel(tex, affected_coords);
+	
+	//discard all pure black pixels; we need transparency
+	if (texturecolor.r+texturecolor.g+texturecolor.b == 0) {
+		texturecolor.a = 0;
+	}
+	
+	//scanlines
+	if (mod(affected_coords.y,0.0075) < 0.005) {
+		return texturecolor * color;
+	} else {
+		return (texturecolor * color) * 0.6667;
+	}
+}
