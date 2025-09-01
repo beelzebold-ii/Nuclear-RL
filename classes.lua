@@ -330,7 +330,7 @@ function killObj(oid)
 	localenemycount = localenemycount - 1
 	if localenemycount == 0 then
 		pscore = pscore + 30
-		hudmessage = "With the "..o.name.."'s death, all is peaceful."
+		mkHudmessage("With the "..o.name.."'s death, all is peaceful.",{0.2,0.2,1.0,1.0})
 		end
 	--eObjs[oid]=nil
 	end

@@ -56,11 +56,11 @@ function playerturnend(timetaken,noclear,moving)
 		end
 	
 	if pObj.pox==exit.pox and pObj.poy==exit.poy then
-		hudmessage = "Press enter to descend to the next level"
+		mkHudmessage("Press enter to descend to the next level")
 		end
 	local iat = objat(pObj.pox,pObj.poy,iObjs)
 	if iat~=-1 and hudmessage=="" then
-		hudmessage = "Press "..config.keybinds.KEY_GET.." to get "..iObjs[iat].item.name
+		mkHudmessage("Press "..config.keybinds.KEY_GET.." to get "..iObjs[iat].item.name)
 		end
 	
 	update = true
@@ -133,10 +133,11 @@ function eobjTick(o)
 							end
 						local dmgdist = dist
 						if o.range<1.9 then dmgdist = nil end
+						mkHudmessage("The "..o.name.." attacks!",{1.0,0.2,0.2,1})
 						damageplayer(damage,false,dmgdist)
 						else
 						if playerDodge==true and playerDead==false then
-							hudmessage = "Dodged!"
+							mkHudmessage("Dodged!")
 							if pBonus.dodgeshield==true then
 								waitturns = waitturns+1
 								end
@@ -158,7 +159,7 @@ function eobjTick(o)
 
 --replay gif stuffs
 function createReplayGif()
-	local rpgif = gifcat.newGif("r_nuclearrl-replay_"..playerName.."_"..pObj.lv.."-"..pObj.xp.."_"..runtime..".gif",800,480,15)
+	local rpgif = gifcat.newGif("r_nuclearrl-replay_"..playerName.."_"..os.date("%m.%d.%Y").."_"..runtime..".gif",800,480,15)
 	for k,v in ipairs(replayBuffer) do
 		local durscale = 1.0
 		if k==#replayBuffer then

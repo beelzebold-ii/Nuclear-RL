@@ -43,7 +43,7 @@ function cursormove(key)
 
 function playeraim(alt)
 	if playerWeapon==nil then
-		hudmessage = "I'm gonna need a gun..."
+		mkHudmessage("I'm gonna need a gun...")
 		return
 		end
 	
@@ -53,9 +53,9 @@ function playeraim(alt)
 	cursory = pObj.poy
 	
 	if alt==true then
-		hudmessage = "Firing (Altfire) - Select target or press escape"
+		mkHudmessage("Firing (Altfire) - Select target or press escape")
 		else
-		hudmessage = "Firing - Select target or press escape"
+		mkHudmessage("Firing - Select target or press escape")
 		end
 	end
 
@@ -66,7 +66,7 @@ function playerattack()
 		end
 	if playerWeapon.ammotype=="no" or playerWeapon.ammo>0 then
 		if cursorx==pObj.pox and cursory==pObj.poy then
-			hudmessage = "That's me, you idiot!"
+			mkHudmessage("That's me, you idiot!")
 			controlmode = M_MOVE
 			return
 			end
@@ -88,7 +88,7 @@ function playerattack()
 				print("PLAYER ATTACK:")
 				local rayhit = checkLOS(pObj.pox,pObj.poy,cursorx,cursory)
 				if rayhit.type~="obj" then
-					hudmessage = "The shot hits nothing."
+					mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
 					else
 					local o = rayhit.hit
 					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
@@ -139,26 +139,26 @@ function playerattack()
 						if playerWeapon.weaptype=="sidearm" then
 							damage = damage + pBonus.sidearmdmgbuff
 							end
-						hudmessage = "The "..o.name.." is hit for "..damage.." damage!"
+						mkHudmessage("The "..o.name.." is hit for "..damage.." damage!",{0.2,1,0.2,1})
 						o.health = o.health-damage
 						if o.health<=0 then
-							hudmessage = o.deathmsg
+							mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
 							killObj(o.id)
 							end
 						else
-						hudmessage = "The shot missed the "..o.name.."."
+						mkHudmessage("The shot missed the "..o.name..".",{0.2,1,0.2,1})
 						end
 					end
 				else
 				--melee
 				local rayhit = checkLOS(pObj.pox,pObj.poy,cursorx,cursory)
 				if rayhit.type~="obj" then
-					hudmessage = "The swing hits nothing."
+					mkHudmessage("The swing hits nothing.")
 					else
 					local o = rayhit.hit
 					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
 					if dist>1.6 then
-						hudmessage = "The swing hits nothing."
+						mkHudmessage("The swing hits nothing.")
 						else
 						local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
 						if waitturns>1 then tohit = tohit + 0.1 end
@@ -180,17 +180,17 @@ function playerattack()
 								end
 							
 							damage = math.floor(damage)
-							hudmessage = "The "..o.name.." is struck for "..damage.." damage!"
+							mkHudmessage("The "..o.name.." is struck for "..damage.." damage!",{0.2,1,0.2,1})
 							o.health = o.health-damage
 							if o.health<=0 then
-								hudmessage = o.deathmsg
+								mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
 								killObj(o.id)
 								if pBonus.meleelifesteal==true then
 									pObj.damage = math.max(pObj.damage-love.math.random(3,6),0)
 									end
 								end
 							else
-							hudmessage = "The strike missed the "..o.name.."."
+							mkHudmessage("The strike missed the "..o.name..".",{0.2,1,0.2,1})
 							end
 						end
 					end
@@ -264,23 +264,23 @@ function playerattack()
 				end
 			
 			if hits<1 then
-				hudmessage = "The shot hits nothing."
+				mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
 				else
-				hudmessage = hits.." pellets hit for "..totaldmg.." total damage!"
-				if killmsg~=nil then hudmessage = killmsg end
+				mkHudmessage(hits.." pellets hit for "..totaldmg.." total damage!",{0.2,1,0.2,1})
+				if killmsg~=nil then mkHudmessage(killmsg,{0.5,1.0,0.5,1}) end
 				end
 			end
 		
 		playerturnend(playerWeapon.atktime*pObj.atktime+love.math.random(-1,1),true)
 		else
-		hudmessage = "Gun's empty!"
+		mkHudmessage("Gun's empty!",{1.0,0.4,0.2,1})
 		controlmode = M_MOVE
 		end
 	end
 
 function tryplayerreload()
 	if playerAmmo["a"..playerWeapon.ammotype]<1 then
-		hudmessage = "No more ammo!"
+		mkHudmessage("No more ammo!",{1.0,0.4,0.2,1})
 		else
 		local reloadamt = math.min(playerAmmo["a"..playerWeapon.ammotype],playerWeapon.maxammo-playerWeapon.ammo)
 		playerAmmo["a"..playerWeapon.ammotype] = playerAmmo["a"..playerWeapon.ammotype] - reloadamt
@@ -366,6 +366,7 @@ function damageplayer(dmg,noarmor,dist)
 		end
 	
 	pObj.damage = pObj.damage + dmg
+	mkHudmessage("I'm hit for "..math.floor(dmg+0.5).." damage!",{1.0,0.2,0.2,1})
 	--if pain shouldn't be outright blocked, apply it
 	if (pBonus.dodgeshield==false or playerDodge==false) and (pBonus.aimshield==false or waitturns==0) then
 		print("Applied "..pain.."% pain")
@@ -392,19 +393,20 @@ function damageplayer(dmg,noarmor,dist)
 			playerDead = true
 			local xdeath = 0
 			if overdamage<0.4 then
-				hudmessage = "I've hit the ground..."
+				mkHudmessage("I've hit the ground...")
 				else
 				if overdamage>0.7 then
-					hudmessage = "It all fades to black."
+					mkHudmessage("It all fades to black.")
 					xdeath = 1
 					else
-					hudmessage = "My knees buckle beneath me!"
+					mkHudmessage("My knees buckle beneath me!")
 					xdeath = 2
 					end
 				end
 			if kills==enemies then pscore = math.floor(pscore*1.5) end
 			mortisinfo = {runtime=runtime,enemies=enemies,kills=kills,score=math.floor(pscore*(gameskill*0.5 + 0.5)),level=pObj.lv,floor=levelnum,class=playerClass,skill=gameskill,pname=playerName,skillsorder=pSkillOrder,stats=pStats,victory=false,xdeath=xdeath}
-			hudmessage = hudmessage.." Press enter."
+			saveMsglog("deathlog_"..os.date("%m.%d.%Y").."-"..playerName)
+			mkHudmessage(hudmessage.." Press enter.")
 			end
 		end
 	end

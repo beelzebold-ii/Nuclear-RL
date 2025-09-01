@@ -22,7 +22,8 @@ STATE_MORE=		10
 STATE_LVUP=		11
 STATE_TRAIT=	12
 STATE_EQUIP=	13
-STATE_MORTIS=	14
+STATE_LOG=		14
+STATE_MORTIS=	15
 
 menuselect = 1
 bindingkey = false
@@ -188,6 +189,7 @@ takescreenshot = false
 
 --no more setting hudmessage directly (soon)
 hudmessage = ""
+msglog = {{"Game set!",0}}
 
 require("assets")
 
@@ -216,7 +218,7 @@ function love.load()
 		config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
 			KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
 			KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
-			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_GET = 'g'
+			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_GET = 'g',KEY_LOG = 'l',KEY_GIF = 'f12'
 			}}
 		print("new default config created :3")
 		love.filesystem.write("nrlcfg.json",json.encode(config))
@@ -413,6 +415,8 @@ function drawMenu()
 				{"KEY_INV","key","Inventory"},
 				{"KEY_EQUIP","key","Equipment"},
 				{"KEY_MORE","key","More Info"},
+				{"KEY_LOG","key","Message Log"},
+				{"KEY_GIF","key","Save Replay GIF"},
 				{nil,"txt"," "},
 				{STATE_CONF,"mnu","Back"}
 			},
@@ -434,7 +438,7 @@ function drawMenu()
 		}
 		local menuoptindx = {
 			[STATE_CONF] = {1,2,4,6},
-			[STATE_KEYS] = {2,3,4,5,6,7,8,9,10,11,13},
+			[STATE_KEYS] = {2,3,4,5,6,7,8,9,10,11,12,13,15},
 			[STATE_BUTN] = {2},
 		}
 		local confitems = menudef[gamestate]
@@ -966,6 +970,24 @@ function updatescreen(camx,camy)
 				end
 			end
 		end
+	if gamestate==STATE_LOG then
+		love.graphics.setColor(0,0,0,0.95)
+		love.graphics.rectangle("fill",0,0,800,480)
+		love.graphics.setColor(1,1,1)
+		local startindx = math.max(1,(#msglog-23)-menuselect)
+		for i=startindx,math.min(#msglog,startindx+24),1 do
+			local v = msglog[i]
+			local txcol = v[3]
+			if txcol==nil then txcol = {1,1,1,0.8} end
+			love.graphics.printf({{0.2,1,0.2,1},timerText(v[2]/10),{1.0,0.8,0.2,1},"> ",txcol,v[1]},
+				15,(400-(#msglog * 15))+(i+menuselect-1)*15,770)
+			end
+		love.graphics.setColor(1,0.2,0.2,1.0)
+		love.graphics.print("[SHIFT + S] - Save log as .txt file",30,425)
+		if menuselect>1 then
+			love.graphics.printf("| \nV",770,395,100)
+			end
+		end
 	
 	if gamestate==STATE_MORTIS then
 		love.graphics.clear(0,0,0,1)
@@ -1023,7 +1045,7 @@ function updatescreen(camx,camy)
 
 --input handling
 function love.keypressed(key,scancode,isrepeat)
-	if key=='f12' and #replayBuffer>1 then
+	if key==config.keybinds.KEY_GIF and #replayBuffer>1 then
 		createReplayGif()
 		end
 	
@@ -1045,7 +1067,7 @@ function love.keypressed(key,scancode,isrepeat)
 				if menuselect>1 then menuselect = menuselect - 1 end
 				end
 			if key=='down' then
-				local maxsel = {4,4,11,11,1,4,4}
+				local maxsel = {4,4,13,11,1,4,4}
 				if menuselect<maxsel[gamestate] then menuselect = menuselect + 1 end
 				end
 			end
@@ -1108,6 +1130,8 @@ function love.keypressed(key,scancode,isrepeat)
 				{"KEY_INV","key"},
 				{"KEY_EQUIP","key"},
 				{"KEY_MORE","key"},
+				{"KEY_LOG","key"},
+				{"KEY_GIF","key"},
 				{STATE_CONF,"mnu"},
 			},
 			[STATE_BUTN] = {
@@ -1291,7 +1315,7 @@ function love.keypressed(key,scancode,isrepeat)
 				table.remove(playerInventory,menuselect)
 				else
 				menuselect = 1
-				hudmessage = "There's no room to drop that here."
+				mkHudmessage("There's no room to drop that here.")
 				gamestate = STATE_GAME
 				end
 			end
@@ -1501,6 +1525,21 @@ function love.keypressed(key,scancode,isrepeat)
 			end
 		return
 		end
+	if gamestate==STATE_LOG then
+		if key==config.keybinds.KEY_LOG or key=='escape' or key=='return' then
+			gamestate = STATE_GAME
+			menuselect = 1
+			end
+		if key=='up' then
+			menuselect = math.min(math.max(#msglog-24,1),menuselect+1)
+			end
+		if key=='down' then
+			menuselect = math.max(1,menuselect-1)
+			end
+		if key=='s' and love.keyboard.isDown('lshift') then
+			saveMsglog(os.date("%m.%d.%Y").."-"..playerName)
+			end
+		end
 	if gamestate==STATE_GAME then
 		if key==config.keybinds.KEY_UP or key==config.keybinds.KEY_LEFT or key==config.keybinds.KEY_RIGHT or key==config.keybinds.KEY_DOWN then
 			if controlmode==M_MOVE then playermove(key) end
@@ -1529,6 +1568,10 @@ function love.keypressed(key,scancode,isrepeat)
 			gamestate = STATE_EQUIP
 			menuselect = 1
 			end
+		if key==config.keybinds.KEY_LOG then
+			gamestate = STATE_LOG
+			menuselect = 1
+			end
 		if key==config.keybinds.KEY_WAIT then
 			playerwait()
 			end
@@ -1549,24 +1592,24 @@ function love.keypressed(key,scancode,isrepeat)
 					local bulks = {a9mm=2,a5mm=2.5,a7mm=3,a12ga=4}
 					
 					if ammobulk + (bulks["a"..itemget.ammotype]*itemget.amount)>200+pBonus.ammocapbuff then
-						hudmessage = "I can't carry all this ammo!"
+						mkHudmessage("I can't carry all this ammo!",{0.4,0.4,1,1})
 						else
 						playerAmmo["a"..itemget.ammotype] = playerAmmo["a"..itemget.ammotype] + itemget.amount
 						iObjs[iat] = {pox=-1,poy=-1,char="",color={0,0,0,0}}
-						hudmessage = "Picked up "..itemget.amount.." "..itemget.name.."."
+						mkHudmessage("Picked up "..itemget.amount.." "..itemget.name..".",{0.4,0.4,1,1})
 						playerturnend(6*pBonus.pickupspeed,true)
 						end
 					else
 					if #playerInventory<maxPlayerInventory+pBonus.invcapbuff then
 						table.insert(playerInventory,itemget)
 						iObjs[iat] = {pox=-1,poy=-1,char="",color={0,0,0,0}}
-						hudmessage = "Picked up the "..itemget.name..". "
+						mkHudmessage("Picked up the "..itemget.name..". ",{0.4,0.4,1,1})
 						if itemget.pickupmsg~=nil then
-							hudmessage = hudmessage..itemget.pickupmsg
+							mkHudmessage(hudmessage..itemget.pickupmsg)
 							end
 						playerturnend(6*pBonus.pickupspeed,true)
 						else
-						hudmessage = "I can't carry this!"
+						mkHudmessage("I can't carry this!",{0.4,0.4,1,1})
 						end
 					end
 				end
@@ -1667,6 +1710,26 @@ function makepathmap(fly)
 	
 	ignoreobj = 0
 	return pathmap
+	end
+
+function mkHudmessage(txt,txcol)
+	hudmessage = txt
+	if txcol == nil then txcol = {1.0,1.0,1.0,0.65} end
+	table.insert(msglog,{txt,runtime,txcol})
+	if #msglog>200 then
+		table.remove(msglog,1)
+		end
+	end
+function saveMsglog(filename)
+	local logf = love.filesystem.newFile(filename..".txt")
+	if logf:open('w')==true then
+		local logtxt = ""
+		for k,v in ipairs(msglog) do
+			logtxt = logtxt..timerText(v[2]/10).."> "..v[1].." \n"
+			end
+		logf:write(logtxt)
+		logf:close()
+		end
 	end
 
 

@@ -59,7 +59,8 @@ function startgame()
 	makeAmmoObj("12ga",4,9,8)
 	--]]
 	gamestate = STATE_GAME
-	hudmessage = "You arrive at the main Nuclear R&D HQ. What a warm welcome."
+	msglog = {{"Game set!",0}}
+	mkHudmessage("You arrive at the main Nuclear R&D HQ. What a warm welcome.")
 	end
 
 function fillsquare(ox,oy,w,h,tile)
@@ -354,10 +355,11 @@ function generatenewlevel(roomtype,nofeeling)
 	table.remove(spawnabletiles,spawntile)
 	
 	local feelingtext = {acidspill = "Your eyes begin to burn.",dogs = "You hear barking and snarling.",vault = "This place seems pretty important.",robotics = "You hear mechanical whirring.",redalert = "Whoops. It seems they expected you."}
-	hudmessage = "You descend to floor "..levelnum..". "
+	local hm = "You descend to floor "..levelnum..". "
 	if levelfeeling~=nil then
-		hudmessage = hudmessage..feelingtext[levelfeeling]
+		hm = hm..feelingtext[levelfeeling]
 		end
+	mkHudmessage(hm)
 	end
 --a list of every coordinate that can have Things spawn in it (including items, the player, enemies, and the exit)
 --this system may be incredibly slow and I don't know if it's worth it but ykw fuck it
