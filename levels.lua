@@ -114,6 +114,19 @@ function generatenewlevel(roomtype,nofeeling)
 	--empty the replay buffer so things don't spill between levels
 	replayBuffer = {}
 	
+	if levelnum>1 then
+		lvmus["cluster"..muscluster][clustertrack]:stop()
+		end
+	local thiscluster = math.floor((levelnum-1)/3)+1
+	if love.math.random()<1/(thiscluster^0.41504) then
+		muscluster = thiscluster
+		else
+		muscluster = math.max(1,love.math.random(love.math.random(1,thiscluster-1),thiscluster-1))
+		end
+	--print(muscluster)
+	clustertrack = love.math.random(1,#lvmus["cluster"..muscluster])
+	lvmus["cluster"..muscluster][clustertrack]:play()
+	
 	roomtype="dungeon"
 	spawnabletiles = {}
 	tilemap = {}
@@ -141,11 +154,11 @@ function generatenewlevel(roomtype,nofeeling)
 	--what level feeling
 	local levelfeeling = nil
 	local bonusfeelingrate = 0.0
-	if gameskill>1 then bonusfeelingrate = 0.025
-	if gameskill>3 then bonusfeelingrate = 0.05
-	if dangerlevel(levelnum,gameskill)>8 then bonusfeelingrate = bonusfeelingrate + 0.025
-	if dangerlevel(levelnum,gameskill)>16 then bonusfeelingrate = bonusfeelingrate + 0.015
-	if dangerlevel(levelnum,gameskill)>24 then bonusfeelingrate = bonusfeelingrate + 0.010
+	if gameskill>1 then bonusfeelingrate = 0.025 end
+	if gameskill>3 then bonusfeelingrate = 0.05 end
+	if dangerlevel(levelnum,gameskill)>8 then bonusfeelingrate = bonusfeelingrate + 0.025 end
+	if dangerlevel(levelnum,gameskill)>16 then bonusfeelingrate = bonusfeelingrate + 0.015 end
+	if dangerlevel(levelnum,gameskill)>24 then bonusfeelingrate = bonusfeelingrate + 0.010 end
 	if nofeeling~=nil and love.math.random()<0.15+bonusfeelingrate then
 		local feeltable = {"acidspill"}
 		local mindlevel = {dogs=7,vault=14,robotics=32}
@@ -318,7 +331,7 @@ function generatenewlevel(roomtype,nofeeling)
 	local itemcount = love.math.random(-1,4) + math.floor(levelnum/3) + gameskill
 	local ln = levelnum
 	if gameskill==1 then ln = ln - 3 end
-	if levelfeeling=="vault" then ln = ln + 6;itemcount = itemcount + 6 end
+	if levelfeeling=="vault" then ln = ln + 4;itemcount = itemcount + 8 end
 	--spawntable
 	local itemtable = {}
 	for _,v in ipairs(ispawntable) do
@@ -409,8 +422,9 @@ aspawntable = {
 	{"9mm",0,6,12},
 	{"12ga",2,2,3},
 	{"9mm",3,1,30},
-	{"5mm",5,2,20},{"12ga",5,2,4},
+	{"5mm",5,1,20},{"12ga",5,2,4},
 	{"5mm",7,3,20},{"12ga",7,2,4},
+	{"7mm",9,3,20}
 	{"7mm",10,3,20}
 }
 --entries are as follows:
@@ -419,9 +433,10 @@ aspawntable = {
 ispawntable = {
 	{"m99pis",-3,10,12},{"secarm",-1,4,60},{"sawnoff",1,1,2},
 	{"sawnoff",2,4,2},
-	{"sm40smg",3,3,30},{"sawnoff",3,1,2},
-	{"riotarm",4,4,70},
-	{"sm40smg",5,4,30},{"riotarm",5,2,70},
+	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},
+	{"riotarm",4,5,70},
+	{"sm40smg",5,4,30},{"riotarm",5,3,70},
+	{"riotarm",7,2,70},
 	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},
 	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,2,150},
 	{"z3rifle",13,4,20},{"balarm",13,2,150},{"nrgarm",13,2,170}

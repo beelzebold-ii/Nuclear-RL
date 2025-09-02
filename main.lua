@@ -1318,6 +1318,7 @@ function love.keypressed(key,scancode,isrepeat)
 				end
 			gamestate = STATE_MORTIS
 			playerDead = false
+			lvmus["cluster"..muscluster][clustertrack]:stop()
 			mus.death:play()
 			menuselect = 1
 			end
