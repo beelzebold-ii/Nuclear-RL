@@ -1,6 +1,8 @@
 --global vars
 gameversion = "0.4.0"
 gamedate = "Sep 1, 2025"
+--this only changes when the cfg format is altered!!!
+gamecfgversion = "040"
 
 frames=1
 
@@ -216,12 +218,21 @@ function love.load()
 	if configdat then
 		print("config loaded")
 		config = json.decode(configdat)
+		if config.cfgversion~=gamecfgversion then
+			config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
+				KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
+				KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
+				KEY_INV = 'i',KEY_EQUIP = 'e',KEY_GET = 'g',KEY_LOG = 'l',KEY_GIF = 'f12'
+				},cfgversion = "040"}
+			print("cfg reset (version incorrect)")
+			love.filesystem.write("nrlcfg.json",json.encode(config))
+			end
 		else
 		config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
 			KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
 			KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
 			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_GET = 'g',KEY_LOG = 'l',KEY_GIF = 'f12'
-			}}
+			},cfgversion = gamecfgversion}
 		print("new default config created :3")
 		love.filesystem.write("nrlcfg.json",json.encode(config))
 		end
