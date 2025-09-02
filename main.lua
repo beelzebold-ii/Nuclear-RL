@@ -191,6 +191,8 @@ takescreenshot = false
 hudmessage = ""
 msglog = {{"Game set!",0}}
 
+hiscores = {}
+
 require("assets")
 
 
@@ -504,6 +506,29 @@ function drawMenu()
 		}
 		--love.graphics.print(pclassstat[menuselect],400,200)
 		love.graphics.printf(skilldesc[menuselect],80,280,640)
+		end
+	if gamestate==STATE_SCORES then
+		for k,v in ipairs(hiscores) do
+			if k<menuselect+12 and k>menuselect-1 then
+				local i = k+1-menuselect
+				love.graphics.setColor(0.2,0.2,1)
+				love.graphics.printf("  "..v.pname.." - Lv"..v.level.." "..pclassnameshort[v.class],35,i*20+90,800)
+				
+				love.graphics.setColor(1,0.2,0.2)
+				love.graphics.printf(skillnames[v.skill],10,i*20+90,800,"center")
+				love.graphics.setColor(1,0.8,0.2)
+				love.graphics.printf("Floor "..v.floor,-200,i*20+90,800,"right")
+				love.graphics.setColor(0.2,1,0.2)
+				love.graphics.printf(v.score,-95,i*20+90,800,"right")
+				end
+			end
+		love.graphics.setColor(1,0,0)
+		love.graphics.printf("[CTRL + SHIFT + DEL] - !!Delete highscores!!",0,400,800,"center")
+		--scroll bar
+		love.graphics.setColor(0.3,0.,0.)
+		love.graphics.rectangle("fill",730,10,4,460)
+		love.graphics.setColor(1,0.2,0.2)
+		love.graphics.rectangle("fill",727,(menuselect-1)*(460/(#hiscores-11)) + 30,10,25)
 		end
 	
 	--good old CRT camera recording distortion
@@ -1067,7 +1092,7 @@ function love.keypressed(key,scancode,isrepeat)
 				if menuselect>1 then menuselect = menuselect - 1 end
 				end
 			if key=='down' then
-				local maxsel = {4,4,13,11,1,4,4}
+				local maxsel = {4,4,13,11,math.max(1,#hiscores-12),4,4}
 				if menuselect<maxsel[gamestate] then menuselect = menuselect + 1 end
 				end
 			end
@@ -1085,6 +1110,7 @@ function love.keypressed(key,scancode,isrepeat)
 			function() --scores
 				gamestate = STATE_SCORES
 				menuselect = 1
+				loadHiscores()
 				end,
 			function() --exit
 				love.event.quit()
@@ -1251,7 +1277,35 @@ function love.keypressed(key,scancode,isrepeat)
 		end
 	
 	if playerDead==true then
-		if key=='return' then mortistxt=generateMortem(mortisinfo);gamestate = STATE_MORTIS;playerDead = false;mus.death:play();menuselect = 1 end
+		if key=='return' then
+			mortistxt=generateMortem(mortisinfo)
+			local mortisf = love.filesystem.newFile("incidentreport_"..playerName.."-"..os.date("%m.%d.%Y")..".txt")
+			if mortisf:open('w')==true then
+				mortisf:write(mortistxt)
+				mortisf:close()
+				end
+			local hiscoredat = ""..
+				string.char(mortisinfo.score%256)..
+				string.char(math.floor(mortisinfo.score/256))..
+				string.char(mortisinfo.level)..
+				string.char(mortisinfo.floor)..
+				string.char(mortisinfo.class)..
+				string.char(mortisinfo.skill)..
+				love.data.encode("string","base64",mortisinfo.pname)
+			if love.filesystem.getInfo("nrlhiscore.nrl")~=nil then
+				love.filesystem.append("nrlhiscore.nrl","\n"..hiscoredat)
+				else
+				local hiscoref = love.filesystem.newFile("nrlhiscore.nrl")
+				if hiscoref:open('w') then
+					hiscoref:write("nrlhiscore\n"..hiscoredat)
+					hiscoref:close()
+					end
+				end
+			gamestate = STATE_MORTIS
+			playerDead = false
+			mus.death:play()
+			menuselect = 1
+			end
 		return
 		end
 	if gamestate==STATE_MORTIS then
@@ -1729,6 +1783,52 @@ function saveMsglog(filename)
 			end
 		logf:write(logtxt)
 		logf:close()
+		end
+	end
+
+
+function loadHiscores()
+	hiscores = {}
+	if love.filesystem.getInfo("nrlhiscore.nrl")~=nil then
+		print("hiscore file found")
+		local i = 1
+		for line in love.filesystem.lines("nrlhiscore.nrl") do
+			if i==1 then
+				if line~="nrlhiscore" then
+					print("err: header idstr fail")
+					print(line)
+					break
+					end
+				else
+				--local hiscoredat = ""..
+				--	string.char(mortisinfo.score%256)..
+				--	string.char(math.floor(mortisinfo.score/256))..
+				--	string.char(mortisinfo.level)..
+				--	string.char(mortisinfo.floor)..
+				--	string.char(mortisinfo.class)..
+				--	string.char(mortisinfo.skill)..
+				--	love.data.encode("string","base64",mortisinfo.pname)
+				local hiscoredat = {
+					score = string.byte(line,1)+(string.byte(line,2)*256),
+					level = string.byte(line,3),
+					floor = string.byte(line,4),
+					class = string.byte(line,5),
+					skill = string.byte(line,6),
+					pname = love.data.decode("string","base64",string.sub(line,7,-1))
+				}
+				print("hiscore loaded for character "..hiscoredat.pname)
+				print("lv"..hiscoredat.level.." class"..hiscoredat.class.." score"..hiscoredat.score)
+				print("skill"..hiscoredat.skill)
+				table.insert(hiscores,hiscoredat)
+				end
+			
+			i = i+1
+			end
+		table.sort(hiscores,function(a,b)
+			if a.score>b.score then return true else return false end
+			end)
+		else
+		print("err: hiscore file not found")
 		end
 	end
 
