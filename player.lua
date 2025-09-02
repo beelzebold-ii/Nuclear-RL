@@ -86,7 +86,7 @@ function playerattack()
 			if playerWeapon.dmgtype~="melee" then
 				--bullet
 				print("PLAYER ATTACK:")
-				local rayhit = checkLOS(pObj.pox,pObj.poy,cursorx,cursory)
+				local rayhit = hitscan(pObj.pox,pObj.poy,cursorx,cursory)
 				if rayhit.type~="obj" then
 					mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
 					else
@@ -151,7 +151,7 @@ function playerattack()
 					end
 				else
 				--melee
-				local rayhit = checkLOS(pObj.pox,pObj.poy,cursorx,cursory)
+				local rayhit = hitscan(pObj.pox,pObj.poy,cursorx,cursory)
 				if rayhit.type~="obj" then
 					mkHudmessage("The swing hits nothing.")
 					else
@@ -204,7 +204,7 @@ function playerattack()
 			local totaldmg = 0
 			local killmsg
 			for i=0,8 do
-				local rayhit = checkLOS(pObj.pox,pObj.poy,targetx+(i%3),targety+math.floor(i/3))
+				local rayhit = hitscan(pObj.pox,pObj.poy,targetx+(i%3),targety+math.floor(i/3))
 				
 				if rayhit.type=="obj" then
 					local o = rayhit.hit
@@ -337,6 +337,7 @@ function playerLvUp()
 	end
 
 function damageplayer(dmg,noarmor,dist)
+	dmg = dmg * 0.9
 	makeFlrObj(".",{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
 	
 	if gameskill>1 then dmg = dmg*1.05 + 0.5 end
@@ -423,10 +424,10 @@ function generateMortem(info)
 		mtxt=mtxt.."Found "..xdeathtxt[info.xdeath+1].." on floor "..info.floor.." of Nuclear R&D.\n \n"
 		
 		local firefights = "and then a series of firefights broke out shortly thereafter."
-		if love.math.random()<0.4 and info.floor<4 then
+		if love.math.random()<0.4 and info.floor<1 then
 			firefights = "then immediately began attacking security staff."
 			end
-		local killratio = info.kills/info.enemies
+		local killratio = math.min(1,info.kills/(info.enemies-localenemycount))
 		if killratio>0.85 then
 			firefights = "and proceeded to wreak indescriminate havoc on everyone they saw."
 			if love.math.random()<0.4 then
@@ -453,7 +454,7 @@ function generateMortem(info)
 					end
 				end
 			end
-		if info.skill>2 and killratio>0.8 and info.floor>4 and love.math.random()<0.6 then
+		if info.skill>2 and killratio>0.8 and info.floor>4 and love.math.random()<0.7 then
 			firefights = "impossibly overwhelming the security force."
 			end
 		if info.floor>6 and love.math.random()<0.8 then
@@ -465,8 +466,8 @@ function generateMortem(info)
 				firefights = "killing a great amount of the total security force before being stopped."
 				end
 			end
-		if info.runtime/info.floor<1500 and info.floor>3 then --less than 2.5 min per floor and floor 4 or higher
-			if love.math.random()<0.7 then
+		if info.runtime/info.floor<1800 and info.floor>3 then --less than 3 min per floor and floor 4 or higher
+			if love.math.random()<0.9 then
 				firefights = "and very swiftly made their way through the facility before being stopped."
 				end
 			if killratio>0.6 and love.math.random()<0.8 then

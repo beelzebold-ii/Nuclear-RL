@@ -1,6 +1,6 @@
 --global vars
-gameversion = "0.4.0"
-gamedate = "Sep 1, 2025"
+gameversion = "0.5.0"
+gamedate = "Sep 2, 2025"
 --this only changes when the cfg format is altered!!!
 gamecfgversion = "040"
 
@@ -1294,7 +1294,7 @@ function love.keypressed(key,scancode,isrepeat)
 	if playerDead==true then
 		if key=='return' then
 			mortistxt=generateMortem(mortisinfo)
-			local mortisf = love.filesystem.newFile("incidentreport_"..playerName.."-"..os.date("%m.%d.%Y")..".txt")
+			local mortisf = love.filesystem.newFile("incidentreport_"..playerName.."-"..os.date("%m.%d.%Y").."-"..runtime..".txt")
 			if mortisf:open('w')==true then
 				mortisf:write(mortistxt)
 				mortisf:close()
@@ -1750,6 +1750,40 @@ function checkLOS(x1,y1,x2,y2,onlyobj,exactrange,hitfloor)
 			end
 		end
 	if exactrange~=true and onlyobj==nil then print("unblocked!") end
+	return {type="none",hit=nil}
+	end
+function hitscan(x1,y1,x2,y2,onlyobj)
+	local maxraylength = 80
+	
+	local dx,dy
+	dx=x2-x1
+	dy=y2-y1
+	local ox,oy
+	ox=x1+0.5
+	oy=y1+0.5
+	
+	local dist=math.sqrt((dx^2)+(dy^2))
+	if exactrange==true then maxraylength = math.floor(dist) end
+	
+	if dist==0 then return {type="error",hit=nil} end
+	
+	dx=(dx/dist)*0.25
+	dy=(dy/dist)*0.25
+	for i=3,maxraylength,1 do
+		if math.floor(oy+dy*i) < 1 or math.floor(oy+dy*i) > 25 or math.floor(ox+dx*i) < 1 or math.floor(ox+dx*i) > 45 then return {type="none",hit=nil} end
+		local tile = tilemap[math.floor(oy+dy*i)][math.floor(ox+dx*i)]
+		local obj = -1
+		for k,v in ipairs(eObjs) do
+			if v.pox==math.floor(ox+dx*i) and v.poy==math.floor(oy+dy*i) then
+				obj = k
+				end
+			end
+		
+		--if there's an object at this location then it blocks LOS and we should return it
+		if obj~=-1 and eObjs[obj].health>0 and (onlyobj==obj or onlyobj==nil) then return {type="obj", hit=eObjs[obj]} end
+		--if the tile at this location is a wall then it blocks LOS and we should return it
+		if tile==1 then return {type="wall", hit={pox=math.floor(ox+dx*i),poy=math.floor(oy+dy*i)} } end
+		end
 	return {type="none",hit=nil}
 	end
 function objat(ox,oy,otable)
