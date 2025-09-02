@@ -1223,6 +1223,10 @@ function love.keypressed(key,scancode,isrepeat)
 			gamestate = STATE_TITLE
 			return
 			end
+		if key=='delete' and love.keyboard.isDown('lshift') and love.keyboard.isDown('lctrl') then
+			love.filesystem.remove("nrlhiscore.nrl")
+			loadHiscores()
+			end
 		end
 	if gamestate==STATE_START then
 		if key=='return' then
