@@ -123,6 +123,9 @@ function generatenewlevel(roomtype,nofeeling)
 		else
 		muscluster = math.max(1,love.math.random(love.math.random(1,thiscluster-1),thiscluster-1))
 		end
+	if levelnum%3==1 then
+		muscluster = thiscluster
+		end
 	--print(muscluster)
 	clustertrack = love.math.random(1,#lvmus["cluster"..muscluster])
 	lvmus["cluster"..muscluster][clustertrack]:play()

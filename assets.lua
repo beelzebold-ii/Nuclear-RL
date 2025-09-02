@@ -13,10 +13,17 @@ lvmus = {
 	cluster1 = {--floors 1-3
 		love.audio.newSource("music/DangerClose.wav","stream"),
 		love.audio.newSource("music/Unnatural.wav","stream"),
+		love.audio.newSource("music/Meltdown.wav","stream"),
 	},
 	cluster2 = {--floors 4-6
 		love.audio.newSource("music/ArmsRace.wav","stream"),
 		love.audio.newSource("music/BulletDance.wav","stream"),
+		love.audio.newSource("music/ArmsRace.wav","stream"),
+		love.audio.newSource("music/BulletDance.wav","stream"),
+		love.audio.newSource("music/CorporateMilitary.wav","stream"),--this is primarily a cluster3 song
+	},
+	cluster3 = {--floors 7-9
+		love.audio.newSource("music/CorporateMilitary.wav","stream"),
 	}
 }
 
