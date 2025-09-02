@@ -292,7 +292,11 @@ function generatenewlevel(roomtype,nofeeling)
 	for i=1,enemycount do
 		if #spawnabletiles > 40 then
 			local spawntile = love.math.random(1,#spawnabletiles)
-			if checkLOS(pObj.pox,pObj.poy,string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))) or love.math.random()<hotstartrate then
+			local spx = string.byte(string.sub(spawnabletiles[spawntile],1,1))
+			local spy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
+			local ray = checkLOS(pObj.pox,pObj.poy,spx,spy,nil,true)
+			
+			if (ray.pox~=spx and ray.poy~=spy) or love.math.random()<hotstartrate then
 				localenemycount = localenemycount + 1
 				makeObj(enemytable[love.math.random(1,#enemytable)],string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2)))
 				if love.math.random()<0.6 and levelfeeling=="redalert" then
