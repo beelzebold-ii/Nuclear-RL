@@ -344,7 +344,7 @@ function love.draw()
 	--clear excess buffer items if above the limit
 	local buffertime = 0
 	for k,v in ipairs(replayBuffer) do
-		buffertime = buffertime + (v[2]/1.5) --because it's divided like that in the gif
+		buffertime = buffertime + (v[2]/1)
 		end
 	if buffertime > config.rbuf*10 then
 		table.remove(replayBuffer,1)
