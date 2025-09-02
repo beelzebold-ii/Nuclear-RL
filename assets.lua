@@ -8,6 +8,14 @@ sfx = {
 mus = {
 	title = love.audio.newSource("music/HalfDeath.wav","stream"),
 	death = love.audio.newSource("music/RadiationIncident.wav","stream"),
+	cluster1 = {--floors 1-3
+		love.audio.newSource("music/DangerClose.wav","stream"),
+		love.audio.newSource("music/Unnatural.wav","stream"),
+	},
+	cluster2 = {--floors 4-6
+		love.audio.newSource("music/ArmsRace.wav","stream"),
+		love.audio.newSource("music/BulletDance.wav","stream"),
+	}
 }
 
 mus.title:setLooping(true)

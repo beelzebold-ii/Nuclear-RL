@@ -1,7 +1,7 @@
 function dangerlevel(level,skill)
 	local skillfunc = {
 		function(l)
-			return 1+(l^1.3)
+			return 1+1.5*(l^1.2)
 			end,
 		function(l)
 			return 1+2*(l^1.3)
@@ -140,9 +140,15 @@ function generatenewlevel(roomtype,nofeeling)
 		end
 	--what level feeling
 	local levelfeeling = nil
-	if nofeeling~=nil and love.math.random()<0.15 then
-		local feeltable = {"acidspill","acidspill"}
-		local mindlevel = {dogs=10,vault=30,robotics=50}
+	local bonusfeelingrate = 0.0
+	if gameskill>1 then bonusfeelingrate = 0.025
+	if gameskill>3 then bonusfeelingrate = 0.05
+	if dangerlevel(levelnum,gameskill)>8 then bonusfeelingrate = bonusfeelingrate + 0.025
+	if dangerlevel(levelnum,gameskill)>16 then bonusfeelingrate = bonusfeelingrate + 0.015
+	if dangerlevel(levelnum,gameskill)>24 then bonusfeelingrate = bonusfeelingrate + 0.010
+	if nofeeling~=nil and love.math.random()<0.15+bonusfeelingrate then
+		local feeltable = {"acidspill"}
+		local mindlevel = {dogs=7,vault=14,robotics=32}
 		if dangerlevel(levelnum,gameskill)>mindlevel.dogs then
 			table.insert(feeltable,"dogs")
 			end
@@ -155,6 +161,7 @@ function generatenewlevel(roomtype,nofeeling)
 		if dangerlevel(levelnum,gameskill)>mindlevel.robotics then
 			table.insert(feeltable,"vault")
 			table.insert(feeltable,"redalert")
+			table.insert(feeltable,"robotics")
 			table.insert(feeltable,"robotics")
 			end
 		
@@ -270,7 +277,7 @@ function generatenewlevel(roomtype,nofeeling)
 		local lencancermine = math.floor(#enemytable/1.8)
 		for i=1,lencancermine do
 			table.insert(enemytable,"secdog")
-			if dlevel>27 then
+			if dlevel>love.math.random(20,34) then
 				table.insert(enemytable,"mildog")
 				else
 				table.insert(enemytable,"secdog")
@@ -278,7 +285,7 @@ function generatenewlevel(roomtype,nofeeling)
 			end
 		end
 	if levelfeeling=="robotics" then
-		local lencancermine = math.floor(#enemytable/2)
+		local lencancermine = math.floor(#enemytable/3)
 		for i=1,lencancermine do
 			table.insert(enemytable,"gundrone")
 			table.insert(enemytable,"shockdrone")
@@ -374,26 +381,27 @@ spawnabletiles = {}
 --classname, min danger level, weight
 --one class can have multiple entries associated with it to gain higher bias as each one's min dlevel is met
 espawntable = {
-	{"pissecguard",1,3},
-	{"secdog",6,1},
-	{"shotsecguard",9,2},
-	{"secdog",10,1},
-	{"shotsecguard",11,1},
-	{"smgtacguard",13,3},
-	{"secdog",13,1},
-	{"smgtacguard",16,2},
-	{"rifletacguard",16,4},
-	{"secdog",18,3},
-	{"smgtacguard",20,3},
-	{"rifletacguard",21,2},
-	{"riflemilguard",28,5},
-	{"mildog",28,3},
-	{"riflemilguard",32,6},
-	{"mildog",31,4},
-	{"shotmilguard",34,6},
-	{"mildog",35,4},
-	{"riflemilguard",35,4},
-	{"shotmilguard",36,6}
+	{"pissecguard",1,3},	-- 1, 1, 1, 1
+	{"secdog",6,2},			-- 3, 3, 2, 1
+	{"shotsecguard",9,2},	-- 5, 3, 3, 2
+	{"secdog",10,1},		-- 5, 4, 3, 2
+	{"shotsecguard",11,1},	-- 5, 4, 3, 3
+	{"smgtacguard",13,3},	-- 6, 4, 4, 3
+	{"secdog",13,2},		-- 6, 4, 4, 3
+	{"smgtacguard",16,2},	-- 7, 5, 5, 3
+	{"rifletacguard",16,4},	-- 7, 5, 5, 3
+	{"secdog",18,3},		-- 8, 6, 5, 4
+	{"smgtacguard",20,3},	-- 9, 6, 5, 4
+	{"rifletacguard",21,2},	-- 9, 6, 5, 4
+	{"riflemilguard",28,5},	--12, 8, 7, 5
+	{"mildog",28,3},		--12, 8, 7, 5
+	{"mildog",31,4},		--13, 9, 7, 5
+	{"shotmilguard",31,4},	--13, 9, 7, 5
+	{"riflemilguard",32,2},	--13, 9, 7, 6
+	{"shotmilguard",34,6},	--14, 9, 8, 6
+	{"mildog",35,4},		--14, 9, 8, 6
+	{"riflemilguard",35,4},	--14, 9, 8, 6
+	{"shotmilguard",36,6}	--14,10, 8, 6
 }
 --entries are as follows:
 --ammotype, min floor, weight, count
