@@ -339,7 +339,7 @@ function playerLvUp()
 function damageplayer(dmg,noarmor,dist)
 	makeFlrObj(".",{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
 	
-	if gameskill>1 then dmg = dmg*1.1 + 1 end
+	if gameskill>1 then dmg = dmg*1.05 + 0.5 end
 	if gameskill>3 then dmg = dmg + 1 end
 	local pain = (dmg * 1.1 + 1) * pObj.painfactor
 	if gameskill>2 then pain = pain + 1 end
@@ -347,7 +347,7 @@ function damageplayer(dmg,noarmor,dist)
 	if playerArmor~=nil and noarmor~=true then
 		local dmgfactor = 1.0
 		for i=1,playerArmor.protection do
-			dmgfactor = dmgfactor*0.8
+			dmgfactor = dmgfactor*0.85
 			end
 		
 		pain = pain * playerArmor.painfactor
@@ -359,8 +359,8 @@ function damageplayer(dmg,noarmor,dist)
 		if playerArmor.durability<1 then playerArmor=nil end
 		end
 	
-	if dist~=nil and dist<3.5 then
-		local bonusdmg = 4.5-dist
+	if dist~=nil and dist<3 then
+		local bonusdmg = 3.5-dist
 		dmg = dmg + math.floor(bonusdmg*0.4)
 		pain = pain + math.ceil(bonusdmg*2.5)
 		end
@@ -379,13 +379,13 @@ function damageplayer(dmg,noarmor,dist)
 		print("waitturns:   "..waitturns)
 		end
 	
-	if pObj.damage + pObj.pain/5 > pObj.maxdamage then
+	if pObj.damage + pObj.pain/10 > pObj.maxdamage then
 		--scale 0..1 representing how much overdamage the player has after this attack
 		local overdamage = (pObj.damage - pObj.maxdamage)/pObj.maxdamage
 		--scale 0..1 representing how much of the player's damage threshold this attack is worth
 		local thisdmg = dmg/pObj.maxdamage
 		
-		if overdamage + thisdmg > love.math.random() then
+		if overdamage + (thisdmg/2) > love.math.random() then
 			--you die!
 			print(playerName.." has died!")
 			print("Total runtime: "..runtime/10 .."s")
@@ -397,10 +397,10 @@ function damageplayer(dmg,noarmor,dist)
 				else
 				if overdamage>0.7 then
 					mkHudmessage("It all fades to black.")
-					xdeath = 1
+					xdeath = 2
 					else
 					mkHudmessage("My knees buckle beneath me!")
-					xdeath = 2
+					xdeath = 1
 					end
 				end
 			if kills==enemies then pscore = math.floor(pscore*1.5) end
@@ -422,7 +422,67 @@ function generateMortem(info)
 		mtxt=mtxt.."Subject: "..info.pname.." (lv"..info.level.." "..pclassnameshort[info.class]..")\n"
 		mtxt=mtxt.."Found "..xdeathtxt[info.xdeath+1].." on floor "..info.floor.." of Nuclear R&D.\n \n"
 		
-		mtxt=mtxt.."Subject entered the building around 1900 hrs, and then a series of firefights broke out shortly thereafter. Motive presumed to be related to the recently failed legal case against Nuclear.\n"
+		local firefights = "and then a series of firefights broke out shortly thereafter."
+		if love.math.random()<0.4 and info.floor<4 then
+			firefights = "then immediately began attacking security staff."
+			end
+		local killratio = info.kills/info.enemies
+		if killratio>0.85 then
+			firefights = "and proceeded to wreak indescriminate havoc on everyone they saw."
+			if love.math.random()<0.4 then
+				firefights = "killing or otherwise incapacitating most or all of the security staff they encountered."
+				end
+			else
+			if killratio<0.3 and love.math.random()<0.7 then
+				firefights = "and attempted to infiltrate the building, killing several security contractors."
+				end
+			end
+		if info.kills<=3 then
+			if info.floor<2 then
+				firefights = "and proceeded to get gunned down immediately after opening fire."
+				if love.math.random()<0.6 then
+					firefights = "and was promptly killed."
+					if love.math.random()<0.5 then
+						firefights = "opened fire on the security staff,and was swiftly taken care of."
+						end
+					end
+				else
+				firefights = "and snuck through the facility unnoticed before being dispatched."
+				if love.math.random()<0.5 then
+					firefights = "and was only spotted well into their infiltration, before being engaged."
+					end
+				end
+			end
+		if info.skill>2 and killratio>0.8 and info.floor>4 and love.math.random()<0.6 then
+			firefights = "impossibly overwhelming the security force."
+			end
+		if info.floor>6 and love.math.random()<0.8 then
+			firefights = "and caused trouble throughout much of the facility, making it over halfway to the bottom floor."
+			if love.math.random()<0.5 then
+				firefights = "and then engaged in many firefights on their way deep into the facility."
+				end
+			if killratio>0.8 and love.math.random()<0.65 then
+				firefights = "killing a great amount of the total security force before being stopped."
+				end
+			end
+		if info.runtime/info.floor<1500 and info.floor>3 then --less than 2.5 min per floor and floor 4 or higher
+			if love.math.random()<0.7 then
+				firefights = "and very swiftly made their way through the facility before being stopped."
+				end
+			if killratio>0.6 and love.math.random()<0.8 then
+				firefights = "and very swiftly made their way through the facility, killing plenty of guards along their way."
+				end
+			end
+		if killratio>0.97 then --can only miss 1 guard per 34 spawned in order to get the YAAM
+			firefights = firefights.." They hunted everyone down like a maniac."
+			if love.math.random()<0.3 then
+				firefights = "and killed as many security guards as they could, in a horrific bloodbath."
+				end
+			if love.math.random()<0.07 then
+				firefights = firefights.." Yet another asskicking marine, I guess."
+				end
+			end
+		mtxt=mtxt.."Subject entered the building around 1900 hrs, "..firefights.." Motive presumed to be related to the recently failed legal case against Nuclear.\n"
 		mtxt=mtxt.."Subject was neutralized approx. "..timerText(info.runtime/10).." later.\n \n"
 		
 		mtxt=mtxt.."Confirmed casualties: "..info.kills.." (personnel, drones, canines)\n"

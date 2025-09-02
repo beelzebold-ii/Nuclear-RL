@@ -271,7 +271,7 @@ function makeObj(classname,ox,oy)
 	o.id=#eObjs+1
 	
 	if gameskill>2 then o.health = (o.health + 1) * 1.1 end
-	if gameskill>3 then o.health = o.health * 1.15 end
+	if gameskill>3 then o.health = o.health * 1.1 end
 	o.maxhealth=o.health
 	
 	table.insert(eObjs,o)
