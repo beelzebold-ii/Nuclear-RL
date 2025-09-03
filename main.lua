@@ -4,6 +4,7 @@ gamedate = "Sep 2, 2025"
 --this only changes when the cfg format is altered!!!
 gamecfgversion = "040"
 
+--this has been promoted from debug feature to just plain feature but I'm not changing the name on all of the uses
 hitscandebug = true
 hitscanlines = {}
 hitscanpoints = {}
@@ -596,7 +597,7 @@ function drawworld(camx,camy)
 			
 			local rayhit = checkLOS(pObj.pox,pObj.poy,tx,ty,-1,true)
 			if rayhit.type~="none" then
-				if rayhit.type=="error" or rayhit.hit.pox~=tx or rayhit.hit.poy~=ty then brightness = 0 end
+				if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
 				end
 			
 			--draw the tile at tx,ty
@@ -1733,7 +1734,7 @@ function timerText(timet)
 --for ray scans, they return a table containing member type (string identifier, "wall" or "obj") and a member hit (either contains the obj or
 --the location of the hit if it hit a wall)
 function checkLOS(x1,y1,x2,y2,onlyobj,exactrange,hitfloor)
-	local maxraylength = 20
+	local maxraylength = 80
 	
 	local dx,dy
 	dx=x2-x1
@@ -1743,14 +1744,14 @@ function checkLOS(x1,y1,x2,y2,onlyobj,exactrange,hitfloor)
 	oy=y1+0.5
 	
 	local dist=math.sqrt((dx^2)+(dy^2))
-	if exactrange==true then maxraylength = math.floor(dist) end
+	if exactrange==true then maxraylength = math.floor(dist)*4 end
 	
 	if dist==0 then return {type="error",hit=nil} end
 	
-	dx=dx/dist
-	dy=dy/dist
+	dx=(dx/dist)*0.25
+	dy=(dy/dist)*0.25
 	if exactrange~=true and onlyobj==nil then print("LOS check:") end
-	for i=1,maxraylength do
+	for i=2,maxraylength do
 		if math.floor(oy+dy*i) < 1 or math.floor(oy+dy*i) > 25 or math.floor(ox+dx*i) < 1 or math.floor(ox+dx*i) > 45 then return {type="none",hit=nil} end
 		local tile = tilemap[math.floor(oy+dy*i)][math.floor(ox+dx*i)]
 		local obj = objat(math.floor(ox+dx*i),math.floor(oy+dy*i),eObjs)
