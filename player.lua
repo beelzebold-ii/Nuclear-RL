@@ -39,6 +39,9 @@ function cursormove(key)
 		cursorx = newpos.x
 		cursory = newpos.y
 		end
+	hitscanlines = {}
+	hitscanpoints = {}
+	hitscan(pObj.pox,pObj.poy,cursorx,cursory)
 	end
 
 function playeraim(alt)
@@ -428,6 +431,7 @@ function generateMortem(info)
 			firefights = "then immediately began attacking security staff."
 			end
 		local killratio = math.min(1,info.kills/(info.enemies-localenemycount))
+		if info.floor==1 then killratio = 0.5 end
 		if killratio>0.85 then
 			firefights = "and proceeded to wreak indescriminate havoc on everyone they saw."
 			if love.math.random()<0.4 then

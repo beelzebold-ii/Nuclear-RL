@@ -54,6 +54,11 @@ function playerturnend(timetaken,noclear,moving)
 	for i=1,timetaken do
 		foreach(eObjs,eobjTick)
 		end
+	hitscanlines = {}
+	hitscanpoints = {}
+	if controlmode==M_FIRING then
+		hitscan(pObj.pox,pObj.poy,cursorx,cursory)
+		end
 	
 	if pObj.pox==exit.pox and pObj.poy==exit.poy then
 		mkHudmessage("Press enter to descend to the next level")
@@ -74,7 +79,7 @@ function eobjTick(o)
 		o.turncounter = love.math.random(0,1)
 		--it's my turn!
 		local dist = distance(o.pox,o.poy,pObj.pox,pObj.poy)
-		local rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy)
+		local rayhit = hitscan(pObj.pox,pObj.poy,o.pox,o.poy)
 		
 		if o.chasing==true then
 			local canattack = false

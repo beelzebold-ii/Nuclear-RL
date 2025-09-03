@@ -4,6 +4,10 @@ gamedate = "Sep 2, 2025"
 --this only changes when the cfg format is altered!!!
 gamecfgversion = "040"
 
+hitscandebug = true
+hitscanlines = {}
+hitscanpoints = {}
+
 frames=1
 
 update = true
@@ -242,6 +246,7 @@ function love.load()
 	consolas = love.graphics.newFont("consola.ttf",20)
 	title = love.graphics.newFont("consola.ttf",60)
 	subtitle = love.graphics.newFont("consola.ttf",30)
+	love.graphics.setPointSize(3)
 	love.graphics.setFont(consolas)
 	curveshader = love.graphics.newShader("curveshader.gl")
 	horzblurshader = love.graphics.newShader("horzblur.gl")
@@ -1025,6 +1030,16 @@ function updatescreen(camx,camy)
 			end
 		end
 	
+	--debug hitscan rays
+	if hitscandebug == true then
+		love.graphics.setColor(0.8,0,0,0.3)
+		for k,v in ipairs(hitscanlines) do
+			love.graphics.line(v)
+			end
+		love.graphics.setColor(1,1,1,1)
+		love.graphics.points(hitscanpoints)
+		end
+	
 	if gamestate==STATE_MORTIS then
 		love.graphics.clear(0,0,0,1)
 		--scroll bar
@@ -1647,6 +1662,8 @@ function love.keypressed(key,scancode,isrepeat)
 			end
 		if key=='escape' and controlmode==M_FIRING then
 			controlmode=M_MOVE
+			hitscanlines = {}
+			hitscanpoints = {}
 			hudmessage=""
 			end
 		if key=='return' and pObj.pox==exit.pox and pObj.poy==exit.poy then
@@ -1752,7 +1769,7 @@ function checkLOS(x1,y1,x2,y2,onlyobj,exactrange,hitfloor)
 	if exactrange~=true and onlyobj==nil then print("unblocked!") end
 	return {type="none",hit=nil}
 	end
-function hitscan(x1,y1,x2,y2,onlyobj)
+function hitscan(x1,y1,x2,y2,onlyobj,novis)
 	local maxraylength = 80
 	
 	local dx,dy
@@ -1761,6 +1778,8 @@ function hitscan(x1,y1,x2,y2,onlyobj)
 	local ox,oy
 	ox=x1+0.5
 	oy=y1+0.5
+	
+	local ofsox,ofsoy=(ox*15)+50-9,(oy*15)+15-8
 	
 	local dist=math.sqrt((dx^2)+(dy^2))
 	if exactrange==true then maxraylength = math.floor(dist) end
@@ -1778,11 +1797,29 @@ function hitscan(x1,y1,x2,y2,onlyobj)
 				obj = k
 				end
 			end
+		local ofsx,ofsy=((ox+dx*i)*15)+50-9,((oy+dy*i)*15)+15-8
+		--table.insert(hitscanpoints,{ofsx,ofsy,1,1,0.2,1})
 		
 		--if there's an object at this location then it blocks LOS and we should return it
-		if obj~=-1 and eObjs[obj].health>0 and (onlyobj==obj or onlyobj==nil) then return {type="obj", hit=eObjs[obj]} end
+		if obj~=-1 and eObjs[obj].health>0 and (onlyobj==obj or onlyobj==nil) then
+			if novis~=true then
+				table.insert(hitscanlines,{ofsox,ofsoy,ofsx,ofsy})
+				if i/4<=pObj.viewdist+1 then
+					table.insert(hitscanpoints,{ofsx,ofsy,0.2,1,0.2,1})
+					end
+				end
+			return {type="obj", hit=eObjs[obj]}
+			end
 		--if the tile at this location is a wall then it blocks LOS and we should return it
-		if tile==1 then return {type="wall", hit={pox=math.floor(ox+dx*i),poy=math.floor(oy+dy*i)} } end
+		if tile==1 then
+			if novis~=true then
+				table.insert(hitscanlines,{ofsox,ofsoy,ofsx,ofsy})
+				if i/4<=pObj.viewdist+1 then
+					table.insert(hitscanpoints,{ofsx,ofsy,1,0,0,1})
+					end
+				end
+			return {type="wall", hit={pox=math.floor(ox+dx*i),poy=math.floor(oy+dy*i)} }
+			end
 		end
 	return {type="none",hit=nil}
 	end
