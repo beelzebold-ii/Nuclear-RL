@@ -130,7 +130,6 @@ function generatenewlevel(roomtype,nofeeling)
 	clustertrack = love.math.random(1,#lvmus["cluster"..muscluster])
 	lvmus["cluster"..muscluster][clustertrack]:play()
 	
-	roomtype="dungeon"
 	spawnabletiles = {}
 	tilemap = {}
 	for y=1,25 do
@@ -149,7 +148,7 @@ function generatenewlevel(roomtype,nofeeling)
 	iObjs={}
 	
 	--which type of map generation
-	local types = {"dungeon","lobby","smallprefabs"}
+	local types = {"dungeon","maze"}
 	if roomtype==nil then
 		roomtype = love.math.random(1,#types)
 		roomtype = types[roomtype]
@@ -252,8 +251,86 @@ function generatenewlevel(roomtype,nofeeling)
 		lobby = function() --a center lobby with four outer rooms
 			fillsquare(2,2,42,22,0)
 			end,
-		smallprefabs = function() --a grid of small pre-made rooms
-			fillsquare(2,2,42,22,0)
+		maze = function() --a grid of MAZE
+			fillsquare(2,2,42,22,1)
+			--fillsquare(20,11,5,3,0)
+			--initialize a grid of all 0 (unvisited maze cells)
+			--mazegrid is 11x6
+			local mazegrid = {}
+			for x=1,11 do
+				mazegrid[x] = {0,0,0,0,0,0}
+				end
+			--select a starting tile
+			local startx,starty = love.math.random(1,11),love.math.random(1,6)
+			--simply direction vectors.
+			local directionvectors = {
+				{0,-1},--up
+				{1,0},--right
+				{0,1},--down
+				{-1,0}--left
+			}
+			--mark the starting cell as visited and clear it out
+			mazegrid[startx][starty] = 1
+			--we use fillsquare here as it correctly populates the spawnabletiles set
+			-- (and everywhere else)^
+			--and because cells are now 2x2
+			fillsquare(startx*4-3,starty*4-3,2,2,0)
+			--keep track of the number of (unique) cells we've visited so we know when they've all been visited
+			local visitedcells = 1
+			--keep the history of visited cells, and pull from it like a stack when we need to backtrack
+			--this is initialized to empty. we will add the start pos to it whenever we move from the starting cell.
+			local cellhistory = {}
+			--obviously we need to know what cell we're currently at
+			local curx,cury = startx,starty
+			--for as long as there are cells left to visit, run this loop
+			while visitedcells<11*6 do
+				--unvisited directions, just so we don't have to get stuck in a loop of generating random numbers
+				local unvisdirs = {}
+				--populate that above list
+				for i=1,4 do
+					local dirv = directionvectors[i]
+					--if the tile in this direction is OoB then it can't be visited
+					if not (curx+dirv[1]>11 or curx+dirv[1]<1 or cury+dirv[2]>6 or cury+dirv[2]<1) then
+						if mazegrid[curx+dirv[1]][cury+dirv[2]]==0 then
+							table.insert(unvisdirs,i)
+							end
+						end
+					end
+				--if there are no unvisited directions, backtrack.
+				-- (and do nothing else, the loop will continue from the previous cell as normal)
+				--otherwise continue with the loop
+				if #unvisdirs==0 then--BACKTRACK!!
+					if #cellhistory==0 then--if we're at the start cell and must backtrack, we need to bail.
+						break
+						end
+					curx = cellhistory[#cellhistory][1]
+					cury = cellhistory[#cellhistory][2]
+					table.remove(cellhistory)--should remove the last value in the table, like popping from a stack
+					else--SELECT A DIRECTION
+					--select a random unvisited direction
+					local dir = unvisdirs[love.math.random(1,#unvisdirs)]
+					local dirv = directionvectors[dir]
+					--add current cell to the history as we're about to move off of it
+					table.insert(cellhistory,{curx,cury})
+					--clear the wall between this cell and the next one
+					fillsquare(curx*4+dirv[1]*2-3,cury*4+dirv[2]*2-3,2,2,0)
+					--go to the next cell, clear it, and set it as visited (incrementing visitedcells as well)
+					curx = curx + dirv[1]			--next cell
+					cury = cury + dirv[2]
+					fillsquare(curx*4-3,cury*4-3,2,2,0)	--clear it
+					mazegrid[curx][cury] = 1		--mark visited
+					visitedcells = visitedcells+1	--increment
+					end
+				end
+			--once the DFS maze is finished generating, go through and knock down a few walls to make it a bit
+			--less linear and claustrophobic
+			local wallstodemolish = love.math.random(4,8)
+			for i=1,wallstodemolish do
+				local demox,demoy = love.math.random(1,10),love.math.random(1,5)
+				fillsquare(demox*4-3,demoy*4-1,2,2,0)
+				demox,demoy = love.math.random(1,10),love.math.random(1,5)
+				fillsquare(demox*4-1,demoy*4-3,2,2,0)
+				end
 			end
 	}
 	mapfunc[roomtype]()
@@ -290,7 +367,7 @@ function generatenewlevel(roomtype,nofeeling)
 			end
 		end
 	if levelfeeling=="dogs" then
-		local lencancermine = math.floor(#enemytable/1.8)
+		local lencancermine = math.floor(#enemytable/1.5)
 		for i=1,lencancermine do
 			table.insert(enemytable,"secdog")
 			if dlevel>love.math.random(20,34) then
@@ -301,7 +378,7 @@ function generatenewlevel(roomtype,nofeeling)
 			end
 		end
 	if levelfeeling=="robotics" then
-		local lencancermine = math.floor(#enemytable/3)
+		local lencancermine = math.floor(#enemytable/2.2)
 		for i=1,lencancermine do
 			table.insert(enemytable,"gundrone")
 			table.insert(enemytable,"shockdrone")
@@ -310,6 +387,9 @@ function generatenewlevel(roomtype,nofeeling)
 	
 	--spawn the enemies
 	local enemycount = math.min(dlevel + 2 + gameskill,math.floor( 20 + (levelnum*(1+gameskill/4)) ) ) + love.math.random(0,2)
+	if levelfeeling=="dogs" then
+		enemycount = math.floor(enemycount * 1.4)
+		end
 	localenemycount = 0
 	local hotstartrate = 0.2
 	for i=1,enemycount do
@@ -329,6 +409,11 @@ function generatenewlevel(roomtype,nofeeling)
 					print("enemy spawed outside of LOS of player")
 					end
 				if love.math.random()<0.6 and levelfeeling=="redalert" then
+					eObjs[#eObjs].chasing = true
+					end
+				--dogs have a 40% chance to spawn chasing the player in dog levels
+				if levelfeeling=="dogs" and love.math.random()<0.4 and
+					(eObjs[#eObjs].name=="Security Dog" or eObjs[#eObjs].name=="Militia Dog") then
 					eObjs[#eObjs].chasing = true
 					end
 				end
