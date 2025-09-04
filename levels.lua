@@ -401,13 +401,13 @@ function generatenewlevel(roomtype,nofeeling)
 			if (ray.type == "wall") or love.math.random()<hotstartrate then
 				localenemycount = localenemycount + 1
 				makeObj(enemytable[love.math.random(1,#enemytable)],string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2)))
-				if ray.hit == nil then
-					eObjs[#eObjs].color = {0,1,0,1}
-					print("enemy spawned in LOS of player")
-					else
-					eObjs[#eObjs].color = {1,0,1,1}
-					print("enemy spawed outside of LOS of player")
-					end
+				--if ray.hit == nil then
+				--	eObjs[#eObjs].color = {0,1,0,1}
+				--	print("enemy spawned in LOS of player")
+				--	else
+				--	eObjs[#eObjs].color = {1,0,1,1}
+				--	print("enemy spawed outside of LOS of player")
+				--	end
 				if love.math.random()<0.6 and levelfeeling=="redalert" then
 					eObjs[#eObjs].chasing = true
 					end
