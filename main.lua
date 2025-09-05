@@ -800,6 +800,9 @@ function updatescreen(camx,camy)
 			else
 			love.graphics.print("  Ammo: N/A",220,435)
 			end
+		if waitturns >0 then
+			love.graphics.print("+"..waitturns.." Aim",220,450)
+			end
 		end
 	--target
 	love.graphics.setColor(1,0.2,0.2)

@@ -164,6 +164,10 @@ function playerattack()
 						mkHudmessage("The swing hits nothing.")
 						else
 						local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
+						--AIMING EFFECTS ON MELEE:
+						--+1 Aim : + 2 dmg
+						--+2 Aim : + 5 dmg, + 0.1 tohit
+						--+3 Aim : + 6 dmg, + 0.1 tohit
 						if waitturns>1 then tohit = tohit + 0.1 end
 						if love.math.random()<tohit then
 							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
@@ -174,7 +178,9 @@ function playerattack()
 								--veteran gets on average half that
 								if playerClass==1 or (playerClass==4 and love.math.random()<0.5) then damage = damage + 1 end
 								end
+							--deal 2 more damage per aimed turn up to 2 turns
 							damage = damage + (math.min(waitturns,2)*2)
+							--deal 1 more damage for aimed turn at 2 or 3 turns
 							if waitturns>1 then damage = damage + math.min(waitturns-1,2) end
 							--every point of vitality = a 20% chance to deal extra damage, as officer every lvl = additional 10% chance
 							if (pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/5>love.math.random() then
@@ -215,7 +221,7 @@ function playerattack()
 					local tohit = playerWeapon.tohit*pBonus.shottohit
 					--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited (max 1 instead of 3)
 					tohit = tohit + pObj.tohitbonus + (math.min(waitturns,1)*(0.1*pBonus.aimfactor))
-					--freelancer gets 10% extra tohit with shotguns
+					--freelancer gets 0.1 extra base tohit with shotguns
 					if playerClass==3 then tohit = tohit + 0.1 end
 					
 					if fireturns>1 then
@@ -246,12 +252,12 @@ function playerattack()
 							damage = math.max(damage,playerWeapon.dice/2)
 							damage = math.ceil(damage)
 							end
-						--damagebonus per pellet is cut to 1/5
-						if love.math.random()<1/5 then
+						--damagebonus per pellet is cut to 1/6
+						if love.math.random()<1/6 then
 							damage = damage + pObj.damagebonus
 							end
-						--so is sidearm damage buff for the sawnoff
-						if love.math.random()<1/5 then
+						--so is sidearm damage buff for the sawnoff, but to 1/7
+						if love.math.random()<1/7 then
 							if playerWeapon.weaptype=="sidearm" then
 								damage = damage + pBonus.sidearmdmgbuff
 								end
