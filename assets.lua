@@ -3,6 +3,7 @@ sfx = {
 	submachine = love.audio.newSource("sounds/submachine.wav","static"),
 	rifle = love.audio.newSource("sounds/rifle.wav","static"),
 	batrifle = love.audio.newSource("sounds/batrifle.wav","static"),
+	melee = love.audio.newSource("sounds/pistol.wav","static"),
 }
 
 mus = {

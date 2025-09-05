@@ -896,7 +896,8 @@ function updatescreen(camx,camy)
 						love.graphics.printf(itemsel.desc,135,345,500)
 						else
 						if itemsel.dmgtype=="melee" then
-							love.graphics.print("Charge rating: "..itemsel.charge,135,315)
+							local chargebar = string.sub("IIIII",1,itemsel.charge)
+							love.graphics.print("Charge rating:  "..chargebar,135,315)
 							love.graphics.printf(itemsel.desc,135,345,500)
 							else
 							love.graphics.printf(itemsel.desc,135,330,500)
@@ -1016,7 +1017,8 @@ function updatescreen(camx,camy)
 					love.graphics.printf(itemsel.desc,135,345,500)
 					else
 					if itemsel.dmgtype=="melee" then
-						love.graphics.print("Charge rating: "..itemsel.charge,135,315)
+						local chargebar = string.sub("IIIII",1,itemsel.charge)
+						love.graphics.print("Charge rating: "..chargebar,135,315)
 						love.graphics.printf(itemsel.desc,135,345,500)
 						else
 						love.graphics.printf(itemsel.desc,135,330,500)
