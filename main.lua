@@ -895,12 +895,21 @@ function updatescreen(camx,camy)
 						love.graphics.print("Choke:  "..itemsel.range-1,135,315)
 						love.graphics.printf(itemsel.desc,135,345,500)
 						else
-						love.graphics.printf(itemsel.desc,135,330,500)
+						if itemsel.dmgtype=="melee" then
+							love.graphics.print("Charge rating: "..itemsel.charge,135,315)
+							love.graphics.printf(itemsel.desc,135,345,500)
+							else
+							love.graphics.printf(itemsel.desc,135,330,500)
+							end
 						end
 					if itemsel.ammotype~="no" then
 						love.graphics.print("Reload time: "..itemsel.reltime/10 .."s",315,285)
 						else
-						love.graphics.print("Reload time: N/A",315,285)
+						if itemsel.dmgtype=="melee" then
+							love.graphics.print("Charge time: "..itemsel.chrgtime/10 .."s",315,285)
+							else
+							love.graphics.print("Reload time: N/A",315,285)
+							end
 						end
 					love.graphics.print("Fire time:   "..itemsel.atktime/10 .."s",315,300)
 					end
@@ -1006,12 +1015,21 @@ function updatescreen(camx,camy)
 					love.graphics.print("Choke:  "..itemsel.range-1,135,315)
 					love.graphics.printf(itemsel.desc,135,345,500)
 					else
-					love.graphics.printf(itemsel.desc,135,330,500)
+					if itemsel.dmgtype=="melee" then
+						love.graphics.print("Charge rating: "..itemsel.charge,135,315)
+						love.graphics.printf(itemsel.desc,135,345,500)
+						else
+						love.graphics.printf(itemsel.desc,135,330,500)
+						end
 					end
 				if itemsel.ammotype~="no" then
 					love.graphics.print("Reload time: "..itemsel.reltime/10 .."s",315,285)
 					else
-					love.graphics.print("Reload time: N/A",315,285)
+					if itemsel.dmgtype=="melee" then
+						love.graphics.print("Charge time: "..itemsel.chrgtime/10 .."s",315,285)
+						else
+						love.graphics.print("Reload time: N/A",315,285)
+						end
 					end
 				love.graphics.print("Fire time:   "..itemsel.atktime/10 .."s",315,300)
 				end

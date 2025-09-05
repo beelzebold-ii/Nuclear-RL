@@ -165,10 +165,6 @@ function playerattack()
 						mkHudmessage("The swing hits nothing.")
 						else
 						local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
-						--AIMING EFFECTS ON MELEE:
-						--+1 Aim : + 1 dmg
-						--+2 Aim : + 4 dmg, + 0.1 tohit
-						--+3 Aim : + 7 dmg, + 0.1 tohit
 						if waitturns>1 then tohit = tohit + 0.1 end
 						if love.math.random()<tohit then
 							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
@@ -179,10 +175,8 @@ function playerattack()
 								--veteran gets on average half that
 								if playerClass==1 or (playerClass==4 and love.math.random()<0.5) then damage = damage + 1 end
 								end
-							--deal 1 more damage per aimed turn up to 3 turns
-							damage = damage + (math.min(waitturns,3))
-							--deal 2 more damage for aimed turn at 2 or 3 turns
-							if waitturns>1 then damage = damage + (math.min(waitturns-1,2)*2) end
+							--deal additional damage from waitturns based on weapon's charge bonus stat
+							damage = damage + playerWeapon.chrgbonus[math.floor(math.min(waitturns,3))]
 							--every point of vitality = a 20% chance to deal extra damage, as officer every lvl = additional 10% chance
 							if (pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/5>love.math.random() then
 								--bonus is 2 damage plus 1 for every 2 vitality and 1 for every 4 lvls if playing as officer
