@@ -800,8 +800,16 @@ function updatescreen(camx,camy)
 			else
 			love.graphics.print("  Ammo: N/A",220,435)
 			end
-		if waitturns >0 then
-			love.graphics.print("+"..waitturns.." Aim",220,450)
+		if waitturns > 0 then
+			local aimnum = math.min(waitturns,3)
+			if playerWeapon.dmgtype=="spread" then
+				aimnum = math.min(waitturns,1)
+				end
+			local aimtxt = " Aim"
+			if playerWeapon.dmgtype=="melee" then
+				aimtxt = " Charge"
+				end
+			love.graphics.print("+"..aimnum..aimtxt,220,450)
 			end
 		end
 	--target
