@@ -1,6 +1,6 @@
 --global vars
-gameversion = "0.5.0"
-gamedate = "Sep 4, 2025"
+gameversion = "0.5.1"
+gamedate = "Sep 7, 2025"
 --this only changes when the cfg format is altered!!!
 gamecfgversion = "040"
 
