@@ -176,7 +176,7 @@ function playerattack()
 								if playerClass==1 or (playerClass==4 and love.math.random()<0.5) then damage = damage + 1 end
 								end
 							--deal additional damage from waitturns based on weapon's charge bonus stat
-							damage = damage + playerWeapon.chrgbonus[math.floor(math.min(waitturns,3))]
+							if waitturns>0 then damage = damage + playerWeapon.chrgbonus[math.floor(math.min(waitturns,3))] end
 							--every point of vitality = a 20% chance to deal extra damage, as officer every lvl = additional 10% chance
 							if (pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/5>love.math.random() then
 								--bonus is 2 damage plus 1 for every 2 vitality and 1 for every 4 lvls if playing as officer

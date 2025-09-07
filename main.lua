@@ -1911,6 +1911,10 @@ function loadHiscores()
 	if love.filesystem.getInfo("nrlhiscore.nrl")~=nil then
 		print("hiscore file found")
 		local i = 1
+		
+		--quick hack to fix the crash here
+		local partialLine = nil
+		
 		for line in love.filesystem.lines("nrlhiscore.nrl") do
 			if i==1 then
 				if line~="nrlhiscore" then
@@ -1927,18 +1931,38 @@ function loadHiscores()
 				--	string.char(mortisinfo.class)..
 				--	string.char(mortisinfo.skill)..
 				--	love.data.encode("string","base64",mortisinfo.pname)
-				local hiscoredat = {
-					score = string.byte(line,1)+(string.byte(line,2)*256),
-					level = string.byte(line,3),
-					floor = string.byte(line,4),
-					class = string.byte(line,5),
-					skill = string.byte(line,6),
-					pname = love.data.decode("string","base64",string.sub(line,7,-1))
-				}
-				print("hiscore loaded for character "..hiscoredat.pname)
-				print("lv"..hiscoredat.level.." class"..hiscoredat.class.." score"..hiscoredat.score)
-				print("skill"..hiscoredat.skill)
-				table.insert(hiscores,hiscoredat)
+				local byteLine = {}
+				for n=1,#line do
+					table.insert(byteLine,n,string.byte(line,n))
+					end
+				if partialLine~=nil then
+					table.insert(partialLine,0x0A)
+					table.move(byteLine,1,#byteLine,#partialLine+1,partialLine)
+					byteLine = partialLine
+					partialLine = nil
+					end
+				if #byteLine>7 then
+					local lpname = ""
+					for n=7,#byteLine do
+						lpname = lpname..string.char(byteLine[n])
+						end
+					print("score entry line: "..table.concat(byteLine," "))
+					local hiscoredat = {
+						score = byteLine[1]+(byteLine[2]*256),
+						level = byteLine[3],
+						floor = byteLine[4],
+						class = byteLine[5],
+						skill = byteLine[6],
+						pname = love.data.decode("string","base64",lpname)
+					}
+					print("hiscore loaded for character "..hiscoredat.pname)
+					print("lv"..hiscoredat.level.." class"..hiscoredat.class.." score"..hiscoredat.score)
+					print("skill"..hiscoredat.skill)
+					table.insert(hiscores,hiscoredat)
+					else
+					partialLine = byteLine
+					print("partial line detected: "..table.concat(partialLine," "))
+					end
 				end
 			
 			i = i+1
