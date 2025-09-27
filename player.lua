@@ -55,6 +55,30 @@ function playeraim(alt)
 	cursorx = pObj.pox
 	cursory = pObj.poy
 	
+	local closestenemy = -1
+	local closestdist = 9999
+	for i,o in ipairs(eObjs) do
+		local rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy,o.id)
+		local los = true
+		if rayhit.type ~= "obj" or rayhit.hit ~= o then
+			rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy,0,true,nil)
+			if rayhit.type ~= "none" then
+				los = false
+				end
+			end
+		if los==true and o.health>0 then
+			local odist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+			if odist<closestdist then
+				closestenemy = i
+				closestdist = odist
+				end
+			end
+		end
+	if closestenemy~=-1 then
+		cursorx = eObjs[closestenemy].pox
+		cursory = eObjs[closestenemy].poy
+		end
+	
 	if alt==true then
 		mkHudmessage("Firing (Altfire) - Select target or press escape")
 		else
