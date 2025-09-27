@@ -167,7 +167,7 @@ pBonus = {
 	meleewaittimefactor = 1.0, meleecritbuff = 0, meleelifesteal = false
 }
 
-playerAmmo = {a9mm=50,a5mm=50,a7mm=0,a12ga=20,abattery=0}
+playerAmmo = {a9mm=50,a5mm=50,a7mm=0,a12ga=20,["a.35"]=10,abattery=0}
 playerInventory = {}
 maxPlayerInventory = 6
 playerWeapon = inventoryItem("sm40smg")
@@ -886,12 +886,13 @@ function updatescreen(camx,camy)
 		if ammoselect==false then
 			love.graphics.print("AMMO",500,120)
 			love.graphics.print("9mm  "..playerAmmo.a9mm,485,150)
-			love.graphics.print("5mm  "..playerAmmo.a5mm,485,165)
-			love.graphics.print("7mm  "..playerAmmo.a7mm,485,180)
-			love.graphics.print("12ga "..playerAmmo.a12ga,485,195)
-			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
-			love.graphics.print("CAPACITY",485,225)
-			love.graphics.print(math.floor(ammobulk).."/"..200+pBonus.ammocapbuff,485,240)
+			love.graphics.print(".35  "..playerAmmo["a.35"],485,165)
+			love.graphics.print("5mm  "..playerAmmo.a5mm,485,180)
+			love.graphics.print("7mm  "..playerAmmo.a7mm,485,195)
+			love.graphics.print("12ga "..playerAmmo.a12ga,485,210)
+			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo["a.35"]*2.5) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
+			love.graphics.print("CAPACITY",485,240)
+			love.graphics.print(math.floor(ammobulk).."/"..200+pBonus.ammocapbuff,485,255)
 			
 			local itemsel = playerInventory[menuselect]
 			if itemsel~=nil then
@@ -930,27 +931,28 @@ function updatescreen(camx,camy)
 					end
 				end
 			else
-			local ammos = {"9mm  ","5mm  ","7mm  ","12ga "}
-			local ammoid = {"9mm","5mm","7mm","12ga"}
+			local ammos = {"9mm  ",".35  ","5mm  ","7mm  ","12ga "}
+			local ammoid = {"9mm",".35","5mm","7mm","12ga"}
 			love.graphics.print("AMMO",500,120)
-			for i=1,4 do
+			for i=1,5 do
 				if menuselect==i then
 					love.graphics.setColor(0.2,1,0.2)
 					end
 				love.graphics.print(ammos[i]..playerAmmo["a"..ammoid[i]],485,135+(i*15))
 				love.graphics.setColor(1,0.2,0.2)
 				end
-			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
-			love.graphics.print("CAPACITY",485,225)
-			love.graphics.print(math.floor(ammobulk).."/"..200+pBonus.ammocapbuff,485,240)
+			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo["a.35"]*2.5) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
+			love.graphics.print("CAPACITY",485,240)
+			love.graphics.print(math.floor(ammobulk).."/"..200+pBonus.ammocapbuff,485,255)
 			
 			local ammodesc = {
 				"The classic small size round. Lightweight but punchy. Not great against armor though.",
+				"Roughly the same bore as 9mm, much angrier round. Lucky day if you get to spend these bundles of magnum joy freely.",
 				"The 5mm rifle round is an excellent intermediate size cartridge capable of hurting \"real men\" real bad.",
 				"Everyone loves to get the chance to use a full size battle rifle round. Hefty, but worth the weight.",
-				"Ah, the beloved 12-gauge buckshot. Cheap, effective, and long tried and tested. Though, not the lightest ammo."
+				"Ah, the beloved 12-gauge buckshot. Cheap, effective, and long tried and tested. Though, not the lightest ammo.",
 			}
-			local ammoweight = {1,1.25,1.5,2}
+			local ammoweight = {1,1.25,1.25,1.5,2}
 			
 			love.graphics.print(ammos[menuselect],150,255)
 			love.graphics.print("Weight: "..ammoweight[menuselect],135,285)
@@ -1288,8 +1290,8 @@ function love.keypressed(key,scancode,isrepeat)
 			playerClass = menuselect
 			local cfunc = {
 				function()--officer
-					playerAmmo = {a9mm=45,a5mm=0,a7mm=0,a12ga=0}
-					playerInventory = {inventoryItem("baton")}
+					playerAmmo = {a9mm=45,a5mm=0,a7mm=0,a12ga=0,["a.35"]=10}
+					playerInventory = {inventoryItem("baton"),inventoryItem("witchmag")}
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = inventoryItem("secarm")
 					
@@ -1297,7 +1299,7 @@ function love.keypressed(key,scancode,isrepeat)
 						viewdist=8.1,movetime=10,atktime=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--detective
-					playerAmmo = {a9mm=30,a5mm=0,a7mm=0,a12ga=0}
+					playerAmmo = {a9mm=30,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
 					playerInventory = {}
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = nil
@@ -1306,7 +1308,7 @@ function love.keypressed(key,scancode,isrepeat)
 						viewdist=9.1,movetime=10,atktime=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
 					end,
 				function()--freelancer
-					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=12}
+					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=12,["a.35"]=0}
 					playerInventory = {}
 					playerWeapon = inventoryItem("sawnoff")
 					playerArmor = nil
@@ -1315,7 +1317,7 @@ function love.keypressed(key,scancode,isrepeat)
 						viewdist=8.1,movetime=9,atktime=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--war vet
-					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0}
+					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
 					playerInventory = {}
 					playerWeapon = inventoryItem("knife")
 					playerArmor = nil
@@ -1404,7 +1406,7 @@ function love.keypressed(key,scancode,isrepeat)
 	if gamestate==STATE_INV then
 		if key=='escape' or key=='i' then gamestate=STATE_GAME end
 		if key=='up' then menuselect=math.max(1,menuselect-1) end
-		if key=='down' then menuselect=math.min((ammoselect==true) and 4 or #playerInventory,menuselect+1) end
+		if key=='down' then menuselect=math.min((ammoselect==true) and 5 or #playerInventory,menuselect+1) end
 		if key=='right' then ammoselect = true;menuselect = 1 end
 		if key=='left' then ammoselect = false;menuselect = 1 end
 		if key=='return' and ammoselect==false then
@@ -1449,7 +1451,7 @@ function love.keypressed(key,scancode,isrepeat)
 		if key=='backspace' and ammoselect==true then
 			local iat = objat(pObj.pox,pObj.poy,iObjs)
 			if iat==-1 then
-				local ammotypes = {"9mm","5mm","7mm","12ga"}
+				local ammotypes = {"9mm",".35","5mm","7mm","12ga"}
 				local dropamt = {10,10,8,4}
 				if playerAmmo["a"..ammotypes[menuselect]] > 0 then
 					makeAmmoObj(ammotypes[menuselect],math.min(dropamt[menuselect],playerAmmo["a"..ammotypes[menuselect]]),pObj.pox,pObj.poy)
@@ -1717,8 +1719,8 @@ function love.keypressed(key,scancode,isrepeat)
 			if iat~=-1 then
 				local itemget = iObjs[iat].item
 				if itemget.type=="ammo" then
-					local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
-					local bulks = {a9mm=2,a5mm=2.5,a7mm=3,a12ga=4}
+					local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo["a.35"]*2.5) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
+					local bulks = {a9mm=2,["a.35"]=2.5,a5mm=2.5,a7mm=3,a12ga=4}
 					
 					if ammobulk + (bulks["a"..itemget.ammotype]*itemget.amount)>200+pBonus.ammocapbuff then
 						mkHudmessage("I can't carry all this ammo!",{0.4,0.4,1,1})
@@ -2048,6 +2050,7 @@ function love.filedropped(file)
 				end
 			local ammotypes = {
 				["9mm"]=1,
+				[".35"]=1,
 				["12ga"]=1,
 				["5mm"]=1,
 				["7mm"]=1
@@ -2141,6 +2144,7 @@ function love.filedropped(file)
 				end
 			local ammotypes = {
 				["9mm"]=1,
+				[".35"]=1,
 				["12ga"]=1,
 				["5mm"]=1,
 				["7mm"]=1
@@ -2153,8 +2157,8 @@ function love.filedropped(file)
 				mkHudmessage("a2 ("..a2..") is not a number")
 				return
 				end
-			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
-			local bulks = {a9mm=2,a5mm=2.5,a7mm=3,a12ga=4}
+			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo["a.35"]*2.5) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
+			local bulks = {a9mm=2,["a.35"]=2.5,a5mm=2.5,a7mm=3,a12ga=4}
 			if ammobulk + (bulks["a"..a1]*a2)>200+pBonus.ammocapbuff then
 				mkHudmessage("inventory too full for "..a1.." ammo")
 				else
@@ -2189,6 +2193,20 @@ function love.filedropped(file)
 			mkHudmessage("zapped player to floor "..a1)
 			levelnum = tonumber(a1)
 			generatenewlevel(nil,false,a2)
+			end,
+		regenfloor = function(a1,a2)
+			if a1==nil then
+				mkHudmessage("re-generates the current floor with the specified level")
+				mkHudmessage("generation type.")
+				mkHudmessage("invalid types will not failsafe and will crash the game.")
+				mkHudmessage("regenfloor:type:[feeling]")
+				end
+			local feelings = {acidspill=1,dogs=1,vault=1,redalert=1,robotics=1}
+			if a2~=nil and feelings[a2]==nil then
+				mkHudmessage("a2 ("..a2..") is not a valid levelfeeling")
+				return
+				end
+			generatenewlevel(a1,false,a2)
 			end,
 	}
 	

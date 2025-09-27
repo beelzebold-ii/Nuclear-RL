@@ -521,24 +521,26 @@ espawntable = {
 --entries are as follows:
 --ammotype, min floor, weight, count
 aspawntable = {
-	{"9mm",0,6,12},
-	{"12ga",2,2,3},
-	{"9mm",3,1,30},
-	{"5mm",5,1,20},{"12ga",5,2,4},
+	{"9mm",0,7,12},
+	{".35",0,1,4},
+	{"12ga",2,3,3},
+	{"9mm",3,1,30},{"12ga",3,1,4},
+	{"5mm",5,1,20},{"12ga",5,1,5},{".35",5,1,6},
 	{"5mm",7,3,20},{"12ga",7,2,4},
-	{"7mm",9,3,20},
-	{"7mm",10,3,20}
+	{"7mm",9,3,20},{".35",9,1,9},
+	{"7mm",10,3,20},{".35",10,1,7},
 }
 --entries are as follows:
 --classname, min floor, weight, count
 --on firing blanks you need to be three floors higher to find any given drop
 ispawntable = {
-	{"m99pis",-3,10,12},{"secarm",-1,4,60},{"sawnoff",1,1,2},
-	{"sawnoff",2,4,2},
-	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},
-	{"riotarm",4,5,70},
-	{"sm40smg",5,4,30},{"riotarm",5,3,70},
-	{"riotarm",7,2,70},
+	{"m99pis",-3,10,12},{"secarm",-1,4,60},{"autopis",0,1,2},{"sawnoff",1,1,2},{"baton",1,1,0},
+	{"sawnoff",2,4,2},{"machete",2,2,0},{"witchmag",2,3,6},
+	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},
+	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,2,9},{"knuckles",4,1,0},
+	{"sm40smg",5,4,30},{"riotarm",5,3,70},{"knuckles",5,2,0},
+	{"mk23pis",6,2,9},{"huntrifle",6,2,10},
+	{"riotarm",7,4,70},{"milarm",7,2,100},
 	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},
 	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,2,150},
 	{"z3rifle",13,4,20},{"balarm",13,2,150},{"nrgarm",13,2,170}

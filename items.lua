@@ -255,7 +255,7 @@ itemclasses = {
 	--new guns
 	witchmag = {
 		type="weapon",
-		name="WMag Magnum Revolver",
+		name="Magnum Revolver",
 		dice=6,
 		sides=3,
 		maxammo=6,
@@ -268,7 +268,7 @@ itemclasses = {
 		weaptype="sidearm",
 		desc="What an ancient firearm. Kicks like a mule, pretty reliably.",
 		char="}",
-		color={0.5,0.5,0.5,1}
+		color={0.4,0.65,0.5,1}
 	},
 	mk23pis = {
 		type="weapon",
@@ -285,11 +285,11 @@ itemclasses = {
 		weaptype="sidearm",
 		desc="This magnum pistol packs a lovely kick in an almost manageable package. Sadly not the most reliable, as the cartridge is a bit to hefty for the gun.",
 		char="}",
-		color={0.5,0.5,0.5,1}
+		color={0.1,0.55,0.15,1}
 	},
 	huntrifle = {
 		type="weapon",
-		name=".35 Hunting Rifle",
+		name="Hunting Rifle",
 		dice=7,
 		sides=4,
 		maxammo=10,
@@ -302,24 +302,24 @@ itemclasses = {
 		weaptype="shotgun",
 		desc="Nice. Make sure to do a spin with it when you work the lever.",
 		char="}",
-		color={0.4,0.4,0.8,1}
+		color={0.2,0.6,0.6,1}
 	},
 	autopis = {
 		type="weapon",
-		name="sm-41 Machinepistol",
+		name="sm-41 Micro-SMG",
 		dice=2,
 		sides=4,
 		maxammo=20,
 		ammotype="9mm",
 		atktime=2,
 		reltime=20,
-		tohit=0.2,
+		tohit=0.4,
 		sound="pistol",
 		dmgtype="bullet",
 		weaptype="rapid",
 		desc="What an odd little piece of junk. This crunched down version of the much better sm-40 is just downright uncontrollable. Fires too fast, if you can believe it.",
 		char="}",
-		color={0.65,0.65,0.7,1}
+		color={0.3,0.3,0.45,1}
 	},
 	
 	secarm = {
@@ -517,7 +517,7 @@ function makeAmmoObj(ammotype,count,ox,oy)
 	if ioat~=-1 then
 		return
 		end
-	local ammocolors={a9mm={0.7,0.7,0.7,1},a5mm={0.6,0.4,0.2,1},a7mm={0.9,0.7,0.2,1},a12ga={1,0.5,0.5,1}}
+	local ammocolors={a9mm={0.7,0.7,0.7,1},["a.35"]={0.7,0.7,0.3,1},a5mm={0.6,0.4,0.2,1},a7mm={0.9,0.7,0.2,1},a12ga={1,0.5,0.5,1}}
 	local o={pox=ox,poy=oy,item={type="ammo",name=ammotype.." ammo",ammotype=ammotype,amount=count,char="*",color=ammocolors["a"..ammotype]}}
 	o.char=o.item.char
 	o.color=o.item.color
