@@ -9,6 +9,11 @@ hitscandebug = true
 hitscanlines = {}
 hitscanpoints = {}
 
+--CHEATER!!!
+cheatermode = false
+--other cheat states
+revealall = false
+
 frames=1
 
 update = true
@@ -600,6 +605,8 @@ function drawworld(camx,camy)
 				if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
 				end
 			
+			if revealall == true then brightness = math.max(0.3,brightness) end
+			
 			--draw the tile at tx,ty
 			tilecolor[tilemap[ty][tx]+1][4]=brightness
 			love.graphics.setColor(tilecolor[tilemap[ty][tx]+1])
@@ -628,6 +635,7 @@ function objDraw(o,alwaysdraw)
 		if o.health ~= nil and o.health<=0 then return end
 		local stairtrackdist = 0
 		if pObj.pox==exit.pox and pObj.poy==exit.poy and waitturns>0 and pBonus.stairtracking==true then stairtrackdist=99 end
+		if revealall == true then stairtrackdist=99 end
 		if distance(o.pox,o.poy,pObj.pox,pObj.poy)>pObj.viewdist+pBonus.trackdist+stairtrackdist then return end
 		if o ~= pObj and distance(o.pox,o.poy,pObj.pox,pObj.poy)>pBonus.trackdist+stairtrackdist+1 then
 			local rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy,o.id)
@@ -1346,21 +1354,23 @@ function love.keypressed(key,scancode,isrepeat)
 				mortisf:write(mortistxt)
 				mortisf:close()
 				end
-			local hiscoredat = ""..
-				string.char(mortisinfo.score%256)..
-				string.char(math.floor(mortisinfo.score/256))..
-				string.char(mortisinfo.level)..
-				string.char(mortisinfo.floor)..
-				string.char(mortisinfo.class)..
-				string.char(mortisinfo.skill)..
-				love.data.encode("string","base64",mortisinfo.pname)
-			if love.filesystem.getInfo("nrlhiscore.nrl")~=nil then
-				love.filesystem.append("nrlhiscore.nrl","\n"..hiscoredat)
-				else
-				local hiscoref = love.filesystem.newFile("nrlhiscore.nrl")
-				if hiscoref:open('w') then
-					hiscoref:write("nrlhiscore\n"..hiscoredat)
-					hiscoref:close()
+			if cheatermode==false then
+				local hiscoredat = ""..
+					string.char(mortisinfo.score%256)..
+					string.char(math.floor(mortisinfo.score/256))..
+					string.char(mortisinfo.level)..
+					string.char(mortisinfo.floor)..
+					string.char(mortisinfo.class)..
+					string.char(mortisinfo.skill)..
+					love.data.encode("string","base64",mortisinfo.pname)
+				if love.filesystem.getInfo("nrlhiscore.nrl")~=nil then
+					love.filesystem.append("nrlhiscore.nrl","\n"..hiscoredat)
+					else
+					local hiscoref = love.filesystem.newFile("nrlhiscore.nrl")
+					if hiscoref:open('w') then
+						hiscoref:write("nrlhiscore\n"..hiscoredat)
+						hiscoref:close()
+						end
 					end
 				end
 			gamestate = STATE_MORTIS
@@ -1979,4 +1989,241 @@ function loadHiscores()
 
 function love.quit()
 	gifcat.close()
+	end
+
+
+
+
+
+
+--cheats hehehehehe
+function love.filedropped(file)
+	local cmdfunc = {
+		test = function(a1,a2)
+			mkHudmessage("niko is gay")
+			end,
+		nrlcmd = function(a1,a2)
+			mkHudmessage("cheater mode activate")
+			cheatermode = true
+			end,
+		dmgplayer = function(a1,a2)
+			if a1==nil then
+				mkHudMessage("damages the player.")
+				mkHudmessage("dmgplayer:damage:[noarmor]")
+				return
+				end
+			if tonumber(a1)==nil then
+				mkHudmessage("a1 ("..a1..") is not a number")
+				return
+				end
+			if a2~=nil then a2 = true end
+			damageplayer(a1,a2,0)
+			end,
+		lvlplayer = function(a1,a2)
+			mkHudmessage("level up")
+			playerLvUp()
+			end,
+		behold = function(a1,a2)
+			if a1==nil or a2==nil then
+				mkHudmessage("beholds an item at the player's feet.")
+				mkHudmessage("behold:class:count")
+				return
+				end
+			if itemclasses[a1]==nil then
+				mkHudmessage(a1.." is not a valid item class")
+				return
+				end
+			if tonumber(a2)==nil then
+				mkHudmessage("a2 ("..a2..") is not a number")
+				return
+				end
+			mkHudmessage("behold! "..a2.." of "..a1)
+			makeItemObj(a1,tonumber(a2),pObj.pox,pObj.poy)
+			end,
+		beholdammo = function(a1,a2)
+			if a1==nil or a2==nil then
+				mkHudmessage("beholds a pile of ammo at the player's feet.")
+				mkHudmessage("beholdammo:type:count")
+				return
+				end
+			local ammotypes = {
+				["9mm"]=1,
+				["12ga"]=1,
+				["5mm"]=1,
+				["7mm"]=1
+			}
+			if ammotypes[a1]==nil then
+				mkHudmessage(a1.." is not a valid ammo type")
+				return
+				end
+			if tonumber(a2)==nil then
+				mkHudmessage("a2 ("..a2..") is not a number")
+				return
+				end
+			mkHudmessage("behold! "..a2.." of "..a1.." ammo")
+			makeAmmoObj(a1,tonumber(a2),pObj.pox,pObj.poy)
+			end,
+		--id software's dave d. taylor
+		davetaylor = function(a1,a2)
+			if revealall==false then
+				mkHudmessage("automap cheat active")
+				revealall = true
+				else
+				mkHudmessage("you return to non-omniscience")
+				revealall = false
+				end
+			end,
+		clearinv = function(a1,a2)
+			mkHudmessage("player inventory cleared")
+			playerInventory = {}
+			playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0}
+			end,
+		playerlvl = function(a1,a2)
+			if a1==nil then
+				mkHudmessage("levels up the player. skill will not be taken if")
+				mkHudmessage("points insufficient.")
+				mkHudmessage("speed, accuracy, vitality, perception")
+				mkHudmessage("side, rapid, steady, shot, dodge, track, pack, slayer")
+				mkHudmessage("playerlvl:stat:[skill]")
+				return
+				end
+			if tonumber(a1)==nil or tonumber(a1)>4 or tonumber(a1)<1 then
+				mkHudmessage("a1 ("..a1..") is not a number 1..4")
+				return
+				end
+			if a2~=nil and (tonumber(a2)==nil or tonumber(a2)<1 or tonumber(a2)>8) then
+				mkHudmessage("a2 ("..a2..") is not a number 1..8")
+				return
+				end
+			if a2==nil then
+				mkHudmessage("forced level up for stat "..a1.." with no skill taken")
+				else
+				mkHudmessage("forced level up for stat "..a1.." with skill "..a2)
+				end
+			--saveMsglog("testytest")
+			playerLvUp()
+			menuselect = tonumber(a1)
+			love.keypressed('return')
+			if a2~=nil then
+				menuselect = tonumber(a2)
+				love.keypressed('return')
+				end
+			menuselect = 9
+			love.keypressed('return')
+			end,
+		give = function(a1,a2)
+			if a1==nil or a2==nil then
+				mkHudmessage("directly give the player an item.")
+				mkHudmessage("give:class:count")
+				return
+				end
+			if itemclasses[a1]==nil then
+				mkHudmessage(a1.." is not a valid item class")
+				return
+				end
+			if tonumber(a2)==nil then
+				mkHudmessage("a2 ("..a2..") is not a number")
+				return
+				end
+			local itemget = inventoryItem(a1,tonumber(a2))
+			if #playerInventory<maxPlayerInventory+pBonus.invcapbuff then
+				table.insert(playerInventory,itemget)
+				mkHudmessage("given player "..a2.." "..itemget.name.."")
+				else
+				mkHudmessage("inventory too full for "..itemget.name)
+				end
+			end,
+		giveammo = function(a1,a2)
+			if a1==nil or a2==nil then
+				mkHudmessage("directly give the player ammo.")
+				mkHudmessage("giveammo:type:count")
+				return
+				end
+			local ammotypes = {
+				["9mm"]=1,
+				["12ga"]=1,
+				["5mm"]=1,
+				["7mm"]=1
+			}
+			if ammotypes[a1]==nil then
+				mkHudmessage(a1.." is not a valid ammo type")
+				return
+				end
+			if tonumber(a2)==nil then
+				mkHudmessage("a2 ("..a2..") is not a number")
+				return
+				end
+			local ammobulk = (playerAmmo.a9mm*2) + (playerAmmo.a5mm*2.5) + (playerAmmo.a7mm*3) + (playerAmmo.a12ga*4)
+			local bulks = {a9mm=2,a5mm=2.5,a7mm=3,a12ga=4}
+			if ammobulk + (bulks["a"..a1]*a2)>200+pBonus.ammocapbuff then
+				mkHudmessage("inventory too full for "..a1.." ammo")
+				else
+				playerAmmo["a"..a1] = playerAmmo["a"..a1] + a2
+				mkHudmessage("given player "..a2.." "..a1.." ammo")
+				end
+			end,
+		nextfloor = function(a1,a2)
+			--david szymanski - down we go
+			mkHudmessage("you take your magic shovel and dig to the floor below.")
+			levelnum = levelnum+1
+			generatenewlevel(nil,false)
+			end,
+		gotofloor = function(a1,a2)
+			if a1==nil then
+				mkHudmessage("takes the player to the specified floor, optionally with a")
+				mkHudmessage("specified levelfeeling.")
+				mkHudmessage("valid levelfeelings are: acidspill, dogs, vault,")
+				mkHudmessage("redalert, robotics")
+				mkHudmessage("gotofloor:floornum:[feeling]")
+				return
+				end
+			local feelings = {acidspill=1,dogs=1,vault=1,redalert=1,robotics=1}
+			if a2~=nil and feelings[a2]==nil then
+				mkHudmessage("a2 ("..a2..") is not a valid levelfeeling")
+				return
+				end
+			if tonumber(a1)==nil then
+				mkHudmessage("a1 ("..a1..") is not a number")
+				return
+				end
+			mkHudmessage("zapped player to floor "..a1)
+			levelnum = tonumber(a1)
+			generatenewlevel(nil,false,a2)
+			end,
+	}
+	
+	local i = 0
+	for line in file:lines() do
+		if string.sub(line,1,1)~="#" then
+			i = i+1
+			if i==1 and line~="nrlcmd" then
+				break
+				end
+			mkHudmessage(line,{0.5,0.5,0.5,1.0})
+			--parse line into a cmd and up to 2 args
+			local sep = string.find(line,":")
+			local cmd = nil
+			local arg1 = nil
+			local arg2 = nil
+			if sep~=nil then
+				cmd = string.sub(line,1,sep-1)
+				local args = string.sub(line,sep+1,-1)
+				sep = string.find(args,":")
+				if sep~=nil then
+					arg1 = string.sub(args,1,sep-1)
+					arg2 = string.sub(args,sep+1,-1)
+					else
+					arg1 = args
+					end
+				else
+				cmd = line
+				end
+			
+			if cmdfunc[cmd]==nil then
+				mkHudmessage("invalid cmd",{0.7,0.1,0.1,1.0})
+				else
+				cmdfunc[cmd](arg1,arg2)
+				end
+			end
+		end
 	end

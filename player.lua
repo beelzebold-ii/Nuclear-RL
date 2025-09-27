@@ -236,6 +236,7 @@ function playerattack()
 						local damage = 0
 						--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
 						--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
+						local pistolminbuff = 0
 						if playerWeapon.weaptype=="sidearm" then
 							pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
 							end
@@ -378,10 +379,10 @@ function damageplayer(dmg,noarmor,dist)
 		pObj.pain = pObj.pain + pain
 		else
 		print("Pain blocked")
-		print("dodgeshield: "..pBonus.dodgeshield)
-		print("playerDodge: "..playerDodge)
-		print("aimshield:   "..pBonus.aimshield)
-		print("waitturns:   "..waitturns)
+		--print("dodgeshield: "..pBonus.dodgeshield)
+		--print("playerDodge: "..playerDodge)
+		--print("aimshield:   "..pBonus.aimshield)
+		--print("waitturns:   "..waitturns)
 		end
 	
 	if pObj.damage + pObj.pain/10 > pObj.maxdamage then
@@ -426,6 +427,9 @@ function generateMortem(info)
 		mtxt="Incident Report:\n \n"
 		mtxt=mtxt.."Subject: "..info.pname.." (lv"..info.level.." "..pclassnameshort[info.class]..")\n"
 		mtxt=mtxt.."Found "..xdeathtxt[info.xdeath+1].." on floor "..info.floor.." of Nuclear R&D.\n \n"
+		if cheatermode==true then
+			mtxt=mtxt.."Cheats were used during this run.\n \n"
+			end
 		
 		local firefights = "and then a series of firefights broke out shortly thereafter."
 		if love.math.random()<0.4 and info.floor<1 then

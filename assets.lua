@@ -23,6 +23,14 @@ lvmus = {
 	},
 	cluster3 = {--floors 7-9
 		love.audio.newSource("music/CorporateMilitary.wav","stream"),
+	},
+	cluster4 = {--floors 10-12
+		love.audio.newSource("music/CorporateMilitary.wav","stream"),
+	},
+	cluster5 = {--floors 13+
+		love.audio.newSource("music/BulletDance.wav","stream"),
+		love.audio.newSource("music/Meltdown.wav","stream"),
+		love.audio.newSource("music/CorporateMilitary.wav","stream"),
 	}
 }
 

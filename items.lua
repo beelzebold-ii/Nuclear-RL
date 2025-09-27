@@ -251,6 +251,77 @@ itemclasses = {
 		char="/",
 		color={0.7,0.3,1.0,1}
 	},
+	
+	--new guns
+	witchmag = {
+		type="weapon",
+		name="WMag Magnum Revolver",
+		dice=6,
+		sides=3,
+		maxammo=6,
+		ammotype=".35",
+		atktime=10,
+		reltime=24,
+		tohit=0.8,
+		sound="pistol",
+		dmgtype="bullet",
+		weaptype="sidearm",
+		desc="What an ancient firearm. Kicks like a mule, pretty reliably.",
+		char="}",
+		color={0.5,0.5,0.5,1}
+	},
+	mk23pis = {
+		type="weapon",
+		name="mk23 Handcannon",
+		dice=3,
+		sides=5,
+		maxammo=9,
+		ammotype=".35",
+		atktime=10,
+		reltime=18,
+		tohit=0.7,
+		sound="pistol",
+		dmgtype="bullet",
+		weaptype="sidearm",
+		desc="This magnum pistol packs a lovely kick in an almost manageable package. Sadly not the most reliable, as the cartridge is a bit to hefty for the gun.",
+		char="}",
+		color={0.5,0.5,0.5,1}
+	},
+	huntrifle = {
+		type="weapon",
+		name=".35 Hunting Rifle",
+		dice=7,
+		sides=4,
+		maxammo=10,
+		ammotype=".35",
+		atktime=13,
+		reltime=20,
+		tohit=0.8,
+		sound="rifle",
+		dmgtype="bullet",
+		weaptype="shotgun",
+		desc="Nice. Make sure to do a spin with it when you work the lever.",
+		char="}",
+		color={0.4,0.4,0.8,1}
+	},
+	autopis = {
+		type="weapon",
+		name="sm-41 Machinepistol",
+		dice=2,
+		sides=4,
+		maxammo=20,
+		ammotype="9mm",
+		atktime=2,
+		reltime=20,
+		tohit=0.2,
+		sound="pistol",
+		dmgtype="bullet",
+		weaptype="rapid",
+		desc="What an odd little piece of junk. This crunched down version of the much better sm-40 is just downright uncontrollable. Fires too fast, if you can believe it.",
+		char="}",
+		color={0.65,0.65,0.7,1}
+	},
+	
 	secarm = {
 		type="armor",
 		name="Security Armor",
@@ -282,7 +353,7 @@ itemclasses = {
 		maxdurability=100,
 		protection=3,
 		painfactor=0.8,
-		movetime=1.2,
+		movetime=1.15,
 		desc="Finally, some quality armor. Easy to move in hybrid armor that's likely to hold up to a lot of punishment.",
 		char="[",
 		color={0.2,0.6,0.2,1}
@@ -312,6 +383,65 @@ itemclasses = {
 		desc="A chest mounted passive energy shield. Given Nuclear's track record, I don't think I wanna know what kind of radiation this'd pump into you... At least it'll last you ages.",
 		char="[",
 		color={0.6,0.4,0.9,1}
+	},
+	
+	--medical
+	painkiller = {
+		type="pain",
+		name="Painkillers",
+		minheal=4,
+		maxheal=6,
+		stim=20,
+		char="+",
+		color={0.2,0.8,0.2}
+	},
+	adrenaline = {
+		type="pain",
+		name="Adrenaline",
+		minheal=9,
+		maxheal=16,
+		stim=45,
+		char="+",
+		color={0.25,0.9,0.2}
+	},
+	combatstim = {
+		type="pain",
+		name="Combat Stim",
+		minheal=22,
+		maxheal=27,
+		stim=100,
+		char="+",
+		color={0.4,1.0,0.35}
+	},
+	bandage = {
+		type="aid",
+		name="Bandages",
+		usetime=9,
+		heal=5,
+		pain=0,
+		uses=4,
+		char="+",
+		color={0.8,0.3,0.3}
+	},
+	medikit = {
+		type="aid",
+		name="First Aid Kit",
+		usetime=12,
+		heal=10,
+		pain=20,
+		uses=2,
+		char="+",
+		color={0.7,0.15,0.1}
+	},
+	traumakit = {
+		type="aid",
+		name="Trauma Kit",
+		usetime=20,
+		heal=28,
+		pain=45,
+		uses=1,
+		char="+",
+		color={0.65,0.0,0.0}
 	},
 }
 

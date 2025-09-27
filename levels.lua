@@ -38,6 +38,10 @@ function startgame()
 	kills = 0
 	levelnum = 1
 	pscore = 0
+	
+	cheatermode = false
+	revealall = false
+	
 	generatenewlevel("dungeon",true)
 	--[[
 	makeItemObj("secarm",50,3,4)
@@ -110,7 +114,7 @@ function spray(ox,oy,radx,rady,count,tile,noreplace)
 function pasteprefab(ox,oy,prefab,w,h)
 	
 	end
-function generatenewlevel(roomtype,nofeeling)
+function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--empty the replay buffer so things don't spill between levels
 	replayBuffer = {}
 	
@@ -118,6 +122,7 @@ function generatenewlevel(roomtype,nofeeling)
 		lvmus["cluster"..muscluster][clustertrack]:stop()
 		end
 	local thiscluster = math.floor((levelnum-1)/3)+1
+	thiscluster = math.min(thiscluster,5)
 	if love.math.random()<1/(thiscluster^0.41504) then
 		muscluster = thiscluster
 		else
@@ -181,6 +186,9 @@ function generatenewlevel(roomtype,nofeeling)
 			end
 		
 		levelfeeling = feeltable[love.math.random(1,#feeltable)]
+		end
+	if forcefeeling~=nil then
+		levelfeeling = forcefeeling
 		end
 	
 	--generate map
