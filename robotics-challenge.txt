@@ -1,0 +1,19 @@
+# play as any class you'd like, on radioactive.
+nrlcmd
+# clears the player's inventory
+clearinv
+# gives the player a fully loaded sn730
+give:sn730rifle:30
+# gives some ammo for it
+giveammo:5mm:60
+# give the player some armor so they aren't naked
+give:secarm:60
+# levels up the player to level 7 with two points each in spd, acc, and vit, and a maxed out sustained fire skill
+playerlvl:2:2
+playerlvl:1
+playerlvl:3:2
+playerlvl:3
+playerlvl:1
+playerlvl:2:2
+# good luck.
+gotofloor:8:robotics
