@@ -194,6 +194,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--generate map
 	local mapfunc = {
 		dungeon = function() --a bunch of adjacent rooms, separated by doorways, with one corridor somewhere through the map
+			--god what a mess... oh well
 			local corridor = love.math.random(10,31)
 			local corridorw = love.math.random(2,5)
 			fillsquare(corridor,1,corridorw,23,0)
@@ -257,7 +258,120 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 				end
 			end,
 		lobby = function() --a center lobby with four outer rooms
-			fillsquare(2,2,42,22,0)
+			fillsquare(1,1,43,23,0)
+			linesquare(12,1,21,23,0,1)
+			line(2,13,{1,0},11,1)
+			line(34,13,{1,0},11,1)
+			local roompos = {
+				{x=1,y=1},
+				{x=1,y=13},
+				{x=33,y=1},
+				{x=33,y=13}
+			}
+			line(11,7,{1,0},3,0)
+			line(11,19,{1,0},3,0)
+			line(31,7,{1,0},3,0)
+			line(31,19,{1,0},3,0)
+			for i=1,4 do
+				local rooms = {
+					"office",
+					"ware",
+					"acid",
+					"server",
+					"maze"
+				}
+				local thisroom = rooms[love.math.random(1,#rooms)]
+				local roomfunc = {
+					office = function(x,y)--workspaces of a sort
+						linesquare(x+1,y+1,9,9,0,1)
+						fillsquare(x+1,y+3,9,1,0)
+						fillsquare(x+1,y+7,9,1,0)
+						local linesf = {
+							function()
+								fillsquare(x+1,y+5,9,1,1)
+								end,
+							function()
+								fillsquare(x+5,y+1,1,9,1)
+								end,
+							function()
+								fillsquare(x+5,y+1,1,9,1)
+								fillsquare(x+1,y+5,9,1,1)
+								end,
+						}
+						linesf[love.math.random(1,3)]()
+						end,
+					ware = function(x,y)--a bunch o squares
+						local numpillars = love.math.random(4,12)
+						for i=1,numpillars do
+							local pillarsize = love.math.random(1,3)
+							fillsquare(x+love.math.random(1,10-pillarsize),y+love.math.random(1,10-pillarsize),pillarsize,pillarsize,1)
+							end
+						end,
+					acid = function(x,y)--a central vat (or vats) of acid
+						fillsquare(x+1,y+1,9,9,2)
+						if love.math.random()<0.55 then
+							line(x+1,y+6,{1,0},11,0)
+							end
+						if love.math.random()<0.55 then
+							line(x+6,y+1,{0,1},11,0)
+							end
+						end,
+					server = function(x,y)--just a grid of pillars
+						for i=0,24 do
+							fillsquare(x + ((i%5)*2)+1,y + (math.floor(i/5)*2)+1,1,1,1)
+							end
+						end,
+					maze = function(x,y)--weird claustrophobic cooridors, not another dfs maze
+						linesquare(x+1,y+1,9,9,0,1)
+						linesquare(x+1,y+3,9,5,0,1)
+						fillsquare(x+3,y+1,1,9,1)
+						fillsquare(x+5,y+1,1,9,1)
+						fillsquare(x+7,y+1,1,9,1)
+						fillsquare(x+1,y+5,9,1,1)
+						for i=1,80,2 do
+							if love.math.random()<0.65 then
+								fillsquare((x+(i%9))+1,y+math.floor(i/9)+1,1,1,0)
+								if love.math.random()<0.235 then
+									fillsquare((x+(i%9))+1,y+math.floor(i/9)+1,1,1,2)
+									end
+								end
+							end
+						end,
+				}
+				roomfunc[thisroom](roompos[i].x,roompos[i].y)
+				end
+			--then populate the center lobby
+			local rooms = {
+				"office",
+				"ware",
+				"acid",
+				"maze"
+			}
+			local roomfunc = {
+				office = function(x,y)--grid of cubicles
+					
+					end,
+				ware = function(x,y)--a bunch o squares
+					local numpillars = love.math.random(4,12)
+					for i=1,numpillars do
+						local pillarsize = love.math.random(1,3)
+						fillsquare(x+love.math.random(1,10-pillarsize),y+love.math.random(1,10-pillarsize),pillarsize,pillarsize,1)
+						end
+					end,
+				acid = function(x,y)--a central vat (or vats) of acid
+					fillsquare(x+1,y+1,17,19,2)
+					if love.math.random()<0.55 then
+						line(x+1,y+10,{1,0},11,0)
+						end
+					if love.math.random()<0.55 then
+						line(x+9,y+1,{0,1},11,0)
+						end
+					end,
+				maze = function(x,y)--dfs maze :pensive:
+					
+					end,
+				}
+			roomfunc[thisroom](12,1)
 			end,
 		maze = function() --a grid of MAZE
 			fillsquare(2,2,42,22,1)
@@ -345,6 +459,10 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	
 	local acidpuddles = love.math.random(2,4)
 	local minpuddlesize = 2
+	if roomtype=="lobby" then
+		acidpuddles = acidpuddles - 3
+		minpuddlesize = 0
+		end
 	if levelfeeling=="acidspill" then
 		acidpuddles = acidpuddles + 4
 		minpuddlesize = 3
@@ -534,7 +652,7 @@ aspawntable = {
 --classname, min floor, weight, count
 --on firing blanks you need to be three floors higher to find any given drop
 ispawntable = {
-	{"m99pis",-3,10,12},{"secarm",-1,4,60},{"autopis",0,1,2},{"sawnoff",1,1,2},{"baton",1,1,0},
+	{"m99pis",-3,10,12},{"secarm",-1,4,60},{"autopis",0,1,20},{"sawnoff",1,1,2},{"baton",1,1,0},
 	{"sawnoff",2,4,2},{"machete",2,2,0},{"witchmag",2,3,6},
 	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},
 	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,2,9},{"knuckles",4,1,0},

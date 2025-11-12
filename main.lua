@@ -2079,7 +2079,7 @@ function love.filedropped(file)
 		clearinv = function(a1,a2)
 			mkHudmessage("player inventory cleared")
 			playerInventory = {}
-			playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0}
+			playerAmmo = {a9mm=0,a5mm=0,["a.35"]=0,a7mm=0,a12ga=0}
 			end,
 		playerlvl = function(a1,a2)
 			if a1==nil then
