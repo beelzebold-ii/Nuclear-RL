@@ -1452,7 +1452,7 @@ function love.keypressed(key,scancode,isrepeat)
 			local iat = objat(pObj.pox,pObj.poy,iObjs)
 			if iat==-1 then
 				local ammotypes = {"9mm",".35","5mm","7mm","12ga"}
-				local dropamt = {10,10,8,4}
+				local dropamt = {10,10,10,8,4}
 				if playerAmmo["a"..ammotypes[menuselect]] > 0 then
 					makeAmmoObj(ammotypes[menuselect],math.min(dropamt[menuselect],playerAmmo["a"..ammotypes[menuselect]]),pObj.pox,pObj.poy)
 					playerAmmo["a"..ammotypes[menuselect]] = math.max(playerAmmo["a"..ammotypes[menuselect]]-dropamt[menuselect],0)
