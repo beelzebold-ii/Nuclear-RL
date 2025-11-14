@@ -1495,6 +1495,8 @@ function love.keypressed(key,scancode,isrepeat)
 				function()
 					pObj.damagebonus = pObj.damagebonus + 1
 					pObj.tohit = pObj.tohit + 0.05
+					--accuracy very slightly buffs your semi automatic firing speed (it's already very powerful so this may be unbalanced)
+					pObj.atktimesemi = math.max(pObj.atktimesemi * 0.96,0.65)
 					end,
 				function()
 					--damage threshold increases by 1/4, but that increase is clamped between 8 and 17
@@ -1555,10 +1557,14 @@ function love.keypressed(key,scancode,isrepeat)
 						--first time basic upgrade
 						pBonus.aimfactor = pBonus.aimfactor + 0.1
 						pBonus.aimdmg = pBonus.aimdmg + 1
+						--slight semi firing speed increase
+						pObj.atktimesemi = math.max(pObj.atktimesemi * 0.97,0.65)
 						else
 						--standard upgrade
 						pBonus.aimfactor = pBonus.aimfactor + 0.25
 						pBonus.aimdmg = pBonus.aimdmg + 2
+						--better but still small semi firing speed increase
+						pObj.atktimesemi = math.max(pObj.atktimesemi * 0.94,0.65)
 						if slv==2 then
 							--max lv bonus
 							pBonus.aimshield = true
