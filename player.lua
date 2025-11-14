@@ -7,8 +7,12 @@ function playerwait()
 		playerturnend(6)
 		end
 	if pObj.pain<2 and waitturns>0 then
-		if pObj.damage>6 then
-			pObj.damage = pObj.damage - 2
+		if pObj.damage>pObj.injuries + 6 then
+			--randomly block the wait regen if injuries are high
+			--100% chance at maxdamage injuries, scaling linearly
+			if pObj.injuries <= 2 or love.math.random() > pObj.injuries/pObj.maxdamage then
+				pObj.damage = pObj.damage - 2
+				end
 			end
 		end
 	if waitturns<5 then
@@ -346,8 +350,8 @@ function playerusepainkiller(o)
 		end
 	
 	local healamt = love.math.random(o.minheal,o.maxheal)
-	--using painkillers to heal pain is a bit wasteful compared to damage as pain accumulates more
-	healamt = math.max(healamt - math.floor((pObj.pain * 0.7)),1)
+	--using painkillers to heal pain is a bit wasteful compared to damage as pain isn't quite as important to clear fast
+	healamt = math.max(healamt - math.floor((pObj.pain * 0.5)),1)
 	pObj.pain = 0 --however, even if the item didn't have enough heal to get to your health damage, all pain is cleared anyway 
 	
 	if healamt > 1 then
@@ -419,7 +423,7 @@ function playerLvUp()
 	end
 
 function damageplayer(dmg,noarmor,dist)
-	dmg = dmg * 0.9
+	dmg = dmg * ( 0.9 + (pObj.injuries*0.02) )
 	makeFlrObj(".",{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
 	
 	if gameskill>1 then dmg = dmg*1.05 + 0.5 end
@@ -440,6 +444,22 @@ function damageplayer(dmg,noarmor,dist)
 		playerArmor.durability = playerArmor.durability - math.floor((originaldmg-dmg) * 1.2 + 1)
 		
 		if playerArmor.durability<1 then playerArmor=nil end
+		end
+	
+	--guaranteed injuries
+	--skills 1 and 2 have 1/6 injuries, 3 and 4 have 1/4 injuries
+	local injuries = math.floor(dmg / (gameskill > 2 and 4 or 6))
+	--random injuries
+	--unchanged by gameskill
+	for i=1,math.floor(dmg/4) do --every fourth point of damage rolls for an aditional wound
+		if i>math.floor(dmg/4) then break end
+		--the base chance for this to succeed is 33%, every point of damage adds an additional 2%
+		if love.math.random()<(0.33 + dmg/50) then
+			injuries = injuries + 1
+			end
+		end
+	if noarmor~=true then
+		pObj.injuries = pObj.injuries + injuries
 		end
 	
 	if dist~=nil and dist<3 then

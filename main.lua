@@ -792,11 +792,17 @@ function updatescreen(camx,camy)
 	love.graphics.setColor(0.2,0.2,1)
 	love.graphics.print(playerName,45,405)
 	love.graphics.print(math.floor(pObj.damage/pObj.maxdamage*100).."% Damage",45,420)
-	if pObj.pain>0 then
-		love.graphics.setColor(0.5,0,0,1)
-		love.graphics.print(math.floor(pObj.pain+0.5).."% Pain",45,450)
-		love.graphics.setColor(0.2,0.2,1)
+	local painandinjuries = ""
+	if pObj.injuries > 0 then
+		painandinjuries = painandinjuries.. pObj.injuries.." Wounds"
 		end
+	if pObj.pain>0 then
+		if pObj.injuries > 0 then painandinjuries = painandinjuries.. " / " end
+		painandinjuries = painandinjuries.. math.floor(pObj.pain+0.5).."% Pain"
+		end
+	love.graphics.setColor(0.5,0,0,1)
+	love.graphics.print(painandinjuries,45,450)
+	love.graphics.setColor(0.2,0.2,1)
 	if playerArmor==nil then
 		love.graphics.print("NO ARMOR",45,435)
 		else
@@ -822,7 +828,7 @@ function updatescreen(camx,camy)
 			if playerWeapon.dmgtype=="melee" then
 				aimtxt = " Charge"
 				end
-			love.graphics.print("+"..aimnum..aimtxt,220,450)
+			love.graphics.print("+"..aimnum..aimtxt,280,450)
 			end
 		end
 	--find targetted object

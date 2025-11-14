@@ -8,17 +8,19 @@ function playerturnend(timetaken,noclear,moving)
 	lasttimetaken = timetaken/10
 	lastturnframes = frames
 	
-	if pObj.pain==0 then
-		if timetaken<=10 then
+	if pObj.pain==0 and pObj.damage > pObj.injuries then
+		--regen speed halved when at maxdamage injuries
+		local timeToRegen = math.floor(10 + 10*(pObj.injuries/pObj.maxdamage))
+		if timetaken<=timeToRegen then
 			pObj.regentime = pObj.regentime + timetaken
-			print("regen time "..pObj.regentime)
-			if pObj.regentime>=10 then
-				pObj.damage = math.max(0, pObj.damage - 1)
-				pObj.regentime = pObj.regentime - 10
-				end
 			else
-			pObj.damage = math.max(0, pObj.damage - math.floor(timetaken/10))
-			pObj.regentime = math.max(0, pObj.regentime - math.floor(timetaken/10) * 10)
+			pObj.damage = math.max(pObj.injuries, pObj.damage - math.floor(timetaken/timeToRegen))
+			pObj.regentime = pObj.regentime + (timetaken%timeToRegen)
+			end
+		print("regen time "..pObj.regentime)
+		if pObj.regentime>=timeToRegen then
+			pObj.damage = math.max(pObj.injuries, pObj.damage - 1)
+			pObj.regentime = pObj.regentime - timeToRegen
 			end
 		else
 		pObj.pain = math.floor(math.max(0, pObj.pain * pObj.painfactor - math.floor(timetaken/2)))
