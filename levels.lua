@@ -30,7 +30,7 @@ function startgame()
 		shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
 		passivedodgerate = 0.0,activedodgerate = 0.0,dodgeshield = false,
 		trackdist = 0,stairtracking = false,
-		ammocapbuff = 0,invcapbuff = 0,pickupspeed = 1.0,freefifthshot = false,
+		ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,freefifthshot = false,
 		meleewaittimefactor = 1.0,meleecritbuff = 0,meleelifesteal = false
 	}
 	
@@ -551,10 +551,10 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 		end
 	
 	--create items
-	local itemcount = love.math.random(-1,4) + math.floor(levelnum/3) + gameskill
+	local itemcount = love.math.random(2,6) + math.floor(levelnum/2.5) + gameskill
 	local ln = levelnum
 	if gameskill==1 then ln = ln - 3 end
-	if levelfeeling=="vault" then ln = ln + 4;itemcount = itemcount + 8 end
+	if levelfeeling=="vault" then ln = ln + 4;itemcount = itemcount + 9 end
 	--spawntable
 	local itemtable = {}
 	for _,v in ipairs(ispawntable) do
@@ -655,14 +655,19 @@ aspawntable = {
 --classname, min floor, weight, count
 --on firing blanks you need to be three floors higher to find any given drop
 ispawntable = {
-	{"m99pis",-3,10,12},{"secarm",-1,4,60},{"autopis",0,1,20},{"sawnoff",1,1,2},{"baton",1,1,0},
-	{"sawnoff",2,4,2},{"machete",2,2,0},{"witchmag",2,3,6},
-	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},
-	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,2,9},{"knuckles",4,1,0},
+	{"m99pis",-3,8,12},{"painkiller",-3,3,1},{"bandage",-3,6,1},
+	{"bandage",-2,2,1},
+	{"painkiller",-1,4,1},{"bandage",-1,2,1},{"secarm",-1,4,60},
+	{"autopis",0,1,20},
+	{"sawnoff",1,1,2},{"baton",1,1,0},{"adrenaline",1,2,1},
+	{"sawnoff",2,5,2},{"machete",2,2,0},{"witchmag",2,3,6},{"medikit",2,4,1},
+	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},{"adrenaline",3,4,1},
+	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,2,9},{"knuckles",4,1,0},{"bandage",4,4,1},{"medikit",4,4,1},
 	{"sm40smg",5,4,30},{"riotarm",5,3,70},{"knuckles",5,2,0},
-	{"mk23pis",6,2,9},{"huntrifle",6,2,10},
-	{"riotarm",7,4,70},{"milarm",7,2,100},
-	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},
+	{"mk23pis",6,2,9},{"huntrifle",6,2,10},{"traumakit",6,2,1},{"medikit",6,4,1},{"adrenaline",6,3,1},
+	{"riotarm",7,4,70},{"milarm",7,2,100},{"traumakit",7,6,1},{"combatstim",7,4,1},
+	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},{"combatstim",8,4,1},{"traumakit",8,4,1},{"medikit",8,4,1},
 	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,2,150},
-	{"z3rifle",13,4,20},{"balarm",13,2,150},{"nrgarm",13,2,170}
+	{"traumakit",11,5,1},{"medikit",11,2,1},{"adrenaline",11,2,1},{"combatstim",11,3,1},
+	{"z3rifle",13,6,20},{"balarm",13,4,150},{"nrgarm",13,4,170},
 }

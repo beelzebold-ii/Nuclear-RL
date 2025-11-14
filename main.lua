@@ -168,7 +168,7 @@ pBonus = {
 	shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
 	passivedodgerate = 0.0,activedodgerate = 0.1,dodgeshield = false,
 	trackdist = 0,stairtracking = false,
-	ammocapbuff = 0,invcapbuff = 0,pickupspeed = 1.0,freefifthshot = false,
+	ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,freefifthshot = false,
 	meleewaittimefactor = 1.0, meleecritbuff = 0, meleelifesteal = false
 }
 
