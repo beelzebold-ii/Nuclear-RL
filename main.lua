@@ -980,7 +980,14 @@ function updatescreen(camx,camy)
 			love.graphics.print("Fire time:   N/A",485,150)
 			love.graphics.print("Reload time: N/A",485,165)
 			else
-			love.graphics.print("Fire time:   "..math.floor(playerWeapon.atktime * pObj.atktime + 0.5)/10 .."s",485,150)
+			local atktime = 1.0
+			if playerWeapon.weaptype ~= "rapid" then
+				atktime = pObj.atktimesemi
+				end
+			if playerWeapon.weaptype == "shotgun" then
+				atktime = pObj.atktimepump
+				end
+			love.graphics.print("Fire time:   "..math.floor(playerWeapon.atktime * atktime + 0.5)/10 .."s",485,150)
 			if playerWeapon.ammotype~="no" then
 				love.graphics.print("Reload time: "..math.floor(playerWeapon.reltime * pObj.reltime + 0.5)/10 .."s",485,165)
 				else

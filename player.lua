@@ -300,7 +300,7 @@ function playerattack()
 				end
 			end
 		
-		local atktime = 1.0;
+		local atktime = 1.0
 		if playerWeapon.weaptype ~= "rapid" then
 			atktime = pObj.atktimesemi
 			end
@@ -364,7 +364,7 @@ function playerLvUp()
 			end,
 		function() --freelancer - gets slightly faster
 			pObj.movetime = math.max(pObj.movetime * 0.95,5)
-			pObj.atktime = math.max(pObj.atktime * 0.95,0.5)
+			pObj.atktimepump = math.max(pObj.atktimepump * 0.95,0.5)
 			pObj.reltime = math.max(pObj.reltime * 0.95,0.35)
 			end,
 		function() --war vet - gets nothing lmao
