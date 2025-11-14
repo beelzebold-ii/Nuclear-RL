@@ -336,6 +336,50 @@ function tryplayerreload()
 		end
 	end
 
+function playerusepainkiller(o)
+	if o==nil then return end
+	if o.type~="pain" then return end
+	
+	local usetime = 8
+	if pObj.pain > 5 then
+		usetime = usetime + (pObj.pain / 5)
+		end
+	
+	local healamt = love.math.random(o.minheal,o.maxheal)
+	healamt = healamt - math.floor(pObj.pain * 1.1 + 1.0) --using painkillers to heal pain is wasteful compared to damage
+	pObj.pain = 0 --however, even if the item didn't have enough heal to get to your health damage, all pain is cleared anyway 
+	
+	if healamt > 0 then
+		if pObj.damage > pObj.maxdamage then --heal bonus when overdamaged
+			healamt = healamt + math.floor((healamt/5) + (pObj.maxdamage/6))
+			end
+		pObj.damage = math.max(math.floor(pObj.damage - healamt), 0)
+		else
+		if pObj.damage > pObj.maxdamage then --if no heal due to pain still heal some bonus if overdamaged
+			healamt = math.floor((healamt/5) + (pObj.maxdamage/6))
+			pObj.damage = math.max(math.floor(pObj.damage - healamt), 0)
+			end
+		end
+	
+	--importantly, time is taken *after* the item is used
+	mkHudmessage("Used "..o.name.." to heal "..healamt.." damage.",{0.2,1,0.2,1})
+	playerturnend(usetime,true)
+	end
+function playerusefirstaid(o)
+	if o==nil then return end
+	if o.type~="aid" then return end
+	
+	local usetime = o.usetime + (pObj.pain / 3)
+	
+	pObj.pain = math.floor( pObj.pain + ( o.pain * (1.0 + love.math.random()) ) )
+	
+	pObj.injuries = math.max(pObj.injuries - o.heal, 0)
+	
+	--importantly, time is taken *after* the item is used
+	mkHudmessage("Used "..o.name.." to heal "..o.heal.." injuries.",{0.2,1,0.2,1})
+	playerturnend(usetime,true)
+	end
+
 
 function playerLvUp()
 	pObj.xp = 0

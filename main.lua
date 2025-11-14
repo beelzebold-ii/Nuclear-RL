@@ -1,6 +1,6 @@
 --global vars
-gameversion = "0.5.1"
-gamedate = "Sep 7, 2025"
+gameversion = "0.6.0"
+gamedate = "Nov 19, 2025"
 --this only changes when the cfg format is altered!!!
 gamecfgversion = "040"
 
@@ -97,8 +97,9 @@ iObjs={}
 exit={pox=0,poy=0}
 eObjs={}
 localenemycount = 0 --number of enemies in the current level
-pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
-		viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
+pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
+		viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,
+		pointblank=4,damagebonus=0,painfactor=1.0}
 pscore = 0
 --player shit
 controlmode = 0
@@ -849,6 +850,9 @@ function updatescreen(camx,camy)
 				if target.type=="armor" then
 					love.graphics.print("Durability: "..math.floor(target.durability/target.maxdurability*100).."%",570,435)
 					end
+				if target.type=="aid" then
+					love.graphics.print("Uses left: "..target.uses.."/"..target.maxuses,570,435)
+					end
 				else
 				love.graphics.print("Target: NONE",555,405)
 				end
@@ -878,6 +882,9 @@ function updatescreen(camx,camy)
 				end
 			if v.type=="armor" then
 				xtratxt = " ("..math.floor(v.durability/v.maxdurability*100).."%)"
+				end
+			if v.type=="aid" then
+				xtratxt = " ("..v.uses.."/"..v.maxuses..")"
 				end
 			
 			if menuselect==i and ammoselect==false then
@@ -931,6 +938,20 @@ function updatescreen(camx,camy)
 					love.graphics.print("Protection: "..itemsel.protection,135,285)
 					love.graphics.print("Durability: "..itemsel.maxdurability,135,300)
 					love.graphics.print("Move time: +"..(itemsel.movetime*100)-100 .."%",315,285)
+					love.graphics.printf(itemsel.desc,135,330,500)
+					end
+				if itemsel.type=="pain" then
+					love.graphics.print("Avg heal: ".. (itemsel.minheal + itemsel.maxheal)/2,135,285)
+					love.graphics.printf(itemsel.desc,135,330,500)
+					end
+				if itemsel.type=="aid" then
+					love.graphics.print("Heals: ".. itemsel.heal,135,285)
+					if itemsel.pain > 0 then
+						love.graphics.print("Pain:  "..itemsel.pain.." - "..itemsel.pain*2,135,300)
+						else
+						love.graphics.print("Pain:  0",135,300)
+						end
+					love.graphics.print("Use time: "..math.floor(itemsel.usetime + (pObj.pain / 3)) / 10 .."s",315,285)
 					love.graphics.printf(itemsel.desc,135,330,500)
 					end
 				end
@@ -1306,7 +1327,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = inventoryItem("secarm")
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--detective
@@ -1315,7 +1336,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
 					end,
 				function()--freelancer
@@ -1324,7 +1345,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("sawnoff")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=9,atktimesemi=0.9,atktimepump=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--war vet
@@ -1333,7 +1354,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("knife")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=9,atktimesemi=0.95,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
 					end
 			}
@@ -1444,6 +1465,29 @@ function love.keypressed(key,scancode,isrepeat)
 				playerturnend(45)
 				table.remove(playerInventory,menuselect)
 				if menuselect>#playerInventory then menuselect = #playerInventory end
+				end
+			if itemsel.type=="pain" then
+				if pObj.damage > 0 or pObj.pain > 0 then
+					table.remove(playerInventory,menuselect)
+					gamestate = STATE_GAME
+					playerusepainkiller(itemsel)
+					else
+					mkHudmessage("I'm not in any real pain.")
+					gamestate = STATE_GAME
+					end
+				end
+			if itemsel.type=="aid" then
+				if pObj.injuries > 0 then
+					itemsel.uses = itemsel.uses - 1
+					if itemsel.uses == 0 then
+						table.remove(playerInventory,menuselect)
+						end
+					gamestate = STATE_GAME
+					playerusefirstaid(itemsel)
+					else
+					mkHudmessage("I'm not bleeding.")
+					gamestate = STATE_GAME
+					end
 				end
 			end
 		if key=='backspace' and ammoselect==false and #playerInventory>0 then
@@ -1861,7 +1905,8 @@ function hitscan(x1,y1,x2,y2,onlyobj,novis)
 		local obj = -1
 		for k,v in ipairs(eObjs) do
 			--I believe I have finally fixed the objat bug. the health check should be here, otherwise
-			--a dead object with a higher id can be selected as the object at the location
+			--a dead object with a higher id can be selected as the object at the location, overwriting
+			--another living one at the same position (and causing it to be skipped and passed through)
 			if v.pox==math.floor(ox+dx*i) and v.poy==math.floor(oy+dy*i) and v.health>0 then
 				obj = k
 				end

@@ -385,15 +385,16 @@ itemclasses = {
 		color={0.6,0.4,0.9,1}
 	},
 	
-	--medical
+	--new medical items
 	painkiller = {
 		type="pain",
 		name="Painkillers",
 		minheal=4,
 		maxheal=6,
-		stim=20,
+		stim=10,
+		desc="Just a bottle of very fast acting painkillers. Unnaturally fast acting, even. Decently effective enough for now.",
 		char="+",
-		color={0.2,0.8,0.2}
+		color={0.2,0.6,0.15}
 	},
 	adrenaline = {
 		type="pain",
@@ -401,17 +402,19 @@ itemclasses = {
 		minheal=9,
 		maxheal=16,
 		stim=45,
+		desc="Yep, that's the good stuff. May or may not be the over the counter kind. Really, I don't know. It'll do the trick, though.",
 		char="+",
-		color={0.25,0.9,0.2}
+		color={0.25,0.8,0.2}
 	},
 	combatstim = {
 		type="pain",
 		name="Combat Stim",
-		minheal=22,
+		minheal=20,
 		maxheal=27,
 		stim=100,
+		desc="These don't seem to be a commercial product, they're very vaguely labelled. Where did these even come from?",
 		char="+",
-		color={0.4,1.0,0.35}
+		color={0.5,1.0,0.4}
 	},
 	bandage = {
 		type="aid",
@@ -420,8 +423,9 @@ itemclasses = {
 		heal=5,
 		pain=0,
 		uses=4,
+		desc="It's small a bandage roll. Quick and painless to apply.",
 		char="+",
-		color={0.8,0.3,0.3}
+		color={0.9,0.5,0.5}
 	},
 	medikit = {
 		type="aid",
@@ -429,19 +433,21 @@ itemclasses = {
 		usetime=12,
 		heal=10,
 		pain=20,
-		uses=2,
+		uses=3,
+		desc="There's not much here, but the assortment is wide enough for all sorts of stuff. Unfortunately all the ways to effectively stop gunshot wounds hurt like hell.",
 		char="+",
-		color={0.7,0.15,0.1}
+		color={0.75,0.3,0.225}
 	},
 	traumakit = {
 		type="aid",
 		name="Trauma Kit",
-		usetime=20,
-		heal=28,
+		usetime=40,
+		heal=20,
 		pain=45,
-		uses=1,
+		uses=2,
+		desc="This kit is for genuine field medics, those militia guys must have brought it in. Either way, without a field medic handy, this will be very slow and painful to use.",
 		char="+",
-		color={0.65,0.0,0.0}
+		color={0.6,0.0,0.0}
 	},
 }
 
@@ -493,6 +499,18 @@ function inventoryItem(classname,count)
 			o.protection=c.protection
 			o.painfactor=c.painfactor
 			o.shortname=c.shortname
+			end,
+		pain = function(o,c)
+			o.minheal = c.minheal
+			o.maxheal = c.maxheal
+			o.stim = c.stim
+			end,
+		aid = function(o,c)
+			o.usetime = c.usetime
+			o.heal = c.heal
+			o.pain = c.pain
+			o.uses = c.uses
+			o.maxuses = c.uses
 			end,
 	}
 	attributes[o.type](o,c)
