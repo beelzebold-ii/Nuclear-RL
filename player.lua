@@ -446,6 +446,7 @@ function damageplayer(dmg,noarmor,dist)
 			--score based on avg time spent per floor
 			local avgtime = (runtime/levelnum) / 3600 --1.0 at 6 mins per floor, 2.0 at 12 mins, 0.5 at 3 mins
 			avgtime = math.min(avgtime,1.5) --time taken penalty can only go as high as 1.5; this equates to 9 mins
+			avgtime = math.max(avgtime,0.5) --time taken penalty can only go as low as 0.5, or 3 mins (double score)
 			--this means you get extra score for going faster than 6 mins per floor
 			--but you get penalized for going slower than that
 			--3 mins = 200% score, 12 mins = 50% score, 9 mins would be 66% score, 5 mins would be 120% score
