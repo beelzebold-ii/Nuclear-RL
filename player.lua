@@ -446,20 +446,36 @@ function damageplayer(dmg,noarmor,dist)
 		if playerArmor.durability<1 then playerArmor=nil end
 		end
 	
+	--if bleedblock > 50 then it's been a fair enough time since the player was last shot and so we will graciously reduce
+	--the amount of injuries on this hit
+	
 	--guaranteed injuries
 	--skills 1 and 2 have 1/6 injuries, 3 and 4 have 1/4 injuries
-	local injuries = math.floor(dmg / (gameskill > 2 and 4 or 6))
+	local guaranteedinjuryrate = (gameskill > 2 and 4 or 6)
+	--rounded, not floored, cos armor makes many attacks outright less than 4 damage
+	local injuries = math.floor((dmg / guaranteedinjuryrate) + 0.5)
+	--bleedblock stops up to two guaranteed injuries (one on goin nuclear)
+	if pObj.bleedblock > 50 then
+		injuries = math.max(0,injuries - (gameskill > 3 and 1 or 2))
+		end
 	--random injuries
 	--unchanged by gameskill
-	for i=1,math.floor(dmg/4) do --every fourth point of damage rolls for an aditional wound
-		if i>math.floor(dmg/4) then break end
+	local randominjuryrolls = math.floor(dmg/4)
+	--bleedblock reduces random injury rolls by normally zero, but the more guaranteed injuries got through,
+	--the more random injuries it will block.
+	--one extra random injury blocked for every two guaranteed injuries past the limit from before
+	if pObj.bleedblock > 50 then
+		randominjuryrolls = randominjuryrolls - math.floor(injuries / 2)
+		end
+	for i=1,randominjuryrolls do --every fourth point of damage rolls for an aditional wound
+		if i>randominjuryrolls then break end
 		--the base chance for this to succeed is 33%, every point of damage adds an additional 2%
 		if love.math.random()<(0.33 + dmg/50) then
 			injuries = injuries + 1
 			end
 		end
 	if noarmor~=true then
-		pObj.injuries = pObj.injuries + injuries
+		pObj.injuries = pObj.injuries + math.max(injuries,0)
 		end
 	
 	if dist~=nil and dist<3 then
@@ -481,6 +497,8 @@ function damageplayer(dmg,noarmor,dist)
 		--print("aimshield:   "..pBonus.aimshield)
 		--print("waitturns:   "..waitturns)
 		end
+	
+	pObj.bleedblock = 0
 	
 	if pObj.damage + pObj.pain/10 > pObj.maxdamage then
 		--scale 0..1 representing how much overdamage the player has after this attack

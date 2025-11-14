@@ -97,7 +97,7 @@ iObjs={}
 exit={pox=0,poy=0}
 eObjs={}
 localenemycount = 0 --number of enemies in the current level
-pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
+pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 		viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,
 		pointblank=4,damagebonus=0,painfactor=1.0}
 pscore = 0
@@ -1345,7 +1345,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = inventoryItem("secarm")
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--detective
@@ -1354,7 +1354,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
 					end,
 				function()--freelancer
@@ -1363,7 +1363,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("sawnoff")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=9,atktimesemi=0.9,atktimepump=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--war vet
@@ -1372,7 +1372,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("knife")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=9,atktimesemi=0.95,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
 					end
 			}

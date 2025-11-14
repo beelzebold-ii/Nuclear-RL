@@ -655,13 +655,12 @@ aspawntable = {
 --classname, min floor, weight, count
 --on firing blanks you need to be three floors higher to find any given drop
 ispawntable = {
-	{"m99pis",-3,8,12},{"painkiller",-3,2,1},{"bandage",-3,3,1},
-	{"bandage",-2,1,1},
-	{"painkiller",-1,2,1},{"bandage",-1,1,1},{"secarm",-1,4,60},
+	{"m99pis",-3,8,12},{"painkiller",-3,2,1},{"bandage",-3,2,1},
+	{"painkiller",-1,2,1},{"secarm",-1,4,60},
 	{"autopis",0,1,20},
 	{"sawnoff",1,1,2},{"baton",1,1,0},
-	{"sawnoff",2,5,2},{"machete",2,2,0},{"witchmag",2,3,6},{"medikit",2,2,1},{"adrenaline",2,1,1},
-	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},{"adrenaline",3,3,1},
+	{"sawnoff",2,5,2},{"machete",2,2,0},{"witchmag",2,3,6},{"medikit",2,1,1},
+	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},{"adrenaline",3,2,1},
 	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,2,9},{"knuckles",4,1,0},{"bandage",4,2,1},{"medikit",4,3,1},
 	{"sm40smg",5,4,30},{"riotarm",5,3,70},{"knuckles",5,2,0},
 	{"mk23pis",6,2,9},{"huntrifle",6,2,10},{"traumakit",6,1,1},{"medikit",6,2,1},{"adrenaline",6,2,1},

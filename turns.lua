@@ -26,6 +26,8 @@ function playerturnend(timetaken,noclear,moving)
 		pObj.pain = math.floor(math.max(0, pObj.pain * pObj.painfactor - math.floor(timetaken/2)))
 		end
 	
+	pObj.bleedblock = pObj.bleedblock + timetaken
+	
 	if noclear~=true then
 		hudmessage = ""
 		controlmode = M_MOVE

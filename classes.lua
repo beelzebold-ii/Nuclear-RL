@@ -66,7 +66,7 @@ objclasses={
 		xp=22,
 		movetime=11,
 		cooldown=1,
-		aggro=0.70,
+		aggro=0.75,
 		range=10,
 		name="Riot Guard",
 		desc="A riot guard, in riot guard armor. Wields some decent weaponry. Kill him and take it.",
@@ -108,7 +108,7 @@ objclasses={
 		range=10,
 		name="Militia Guard",
 		desc="This highly trained soldier will gladly show you to your grave. Armored, armed, and scary. Kill on sight.",
-		deathmsg="The Militia Guard hits the ground.",
+		deathmsg="The Militia Guard hits the floor.",
 		ammo="5mm",ammocount=17,drops={"sn730rifle","sn730rifle","milarm","riotarm"}
 	},
 	shotmilguard = {
@@ -127,7 +127,7 @@ objclasses={
 		range=9,
 		name="Militia Guard",
 		desc="This highly trained soldier will gladly show you to your grave. Armored, armed, and scary. Kill on sight.",
-		deathmsg="The Militia Guard hits the ground.",
+		deathmsg="The Militia Guard hits the floor.",
 		ammo="12ga",ammocount=6,drops={"ca12shotty","ca12shotty","milarm","riotarm"}
 	},
 	mildog = {
@@ -145,7 +145,7 @@ objclasses={
 		range=1,
 		name="Militia Dog",
 		desc="Puppy! Yeah, no. Better get to firing, cos you're not outrunning this pupper.",
-		deathmsg="The Militia Dog falls to its side."
+		deathmsg="The Militia Dog falls with a yelp."
 	},
 	gundrone = {
 		char="D",
