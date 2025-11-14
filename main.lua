@@ -1335,7 +1335,7 @@ function love.keypressed(key,scancode,isrepeat)
 			local cfunc = {
 				function()--officer
 					playerAmmo = {a9mm=45,a5mm=0,a7mm=0,a12ga=0,["a.35"]=10}
-					playerInventory = {inventoryItem("baton"),inventoryItem("witchmag")}
+					playerInventory = {inventoryItem("baton"),inventoryItem("bandage")}
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = inventoryItem("secarm")
 					
@@ -1344,7 +1344,7 @@ function love.keypressed(key,scancode,isrepeat)
 					end,
 				function()--detective
 					playerAmmo = {a9mm=30,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
-					playerInventory = {}
+					playerInventory = {inventoryItem("bandage")}
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = nil
 					
@@ -1353,7 +1353,7 @@ function love.keypressed(key,scancode,isrepeat)
 					end,
 				function()--freelancer
 					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=12,["a.35"]=0}
-					playerInventory = {}
+					playerInventory = {inventoryItem("bandage")}
 					playerWeapon = inventoryItem("sawnoff")
 					playerArmor = nil
 					
@@ -1362,7 +1362,7 @@ function love.keypressed(key,scancode,isrepeat)
 					end,
 				function()--war vet
 					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
-					playerInventory = {}
+					playerInventory = {inventoryItem("painkiller")}
 					playerWeapon = inventoryItem("knife")
 					playerArmor = nil
 					

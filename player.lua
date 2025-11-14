@@ -346,17 +346,18 @@ function playerusepainkiller(o)
 		end
 	
 	local healamt = love.math.random(o.minheal,o.maxheal)
-	healamt = healamt - math.floor(pObj.pain * 1.1 + 1.0) --using painkillers to heal pain is wasteful compared to damage
+	--using painkillers to heal pain is a bit wasteful compared to damage as pain accumulates more
+	healamt = math.max(healamt - math.floor((pObj.pain * 0.7)),1)
 	pObj.pain = 0 --however, even if the item didn't have enough heal to get to your health damage, all pain is cleared anyway 
 	
-	if healamt > 0 then
+	if healamt > 1 then
 		if pObj.damage > pObj.maxdamage then --heal bonus when overdamaged
 			healamt = healamt + math.floor((healamt/5) + (pObj.maxdamage/6))
 			end
 		pObj.damage = math.max(math.floor(pObj.damage - healamt), 0)
 		else
 		if pObj.damage > pObj.maxdamage then --if no heal due to pain still heal some bonus if overdamaged
-			healamt = math.floor((healamt/5) + (pObj.maxdamage/6))
+			healamt = math.floor((pObj.maxdamage/6))
 			pObj.damage = math.max(math.floor(pObj.damage - healamt), 0)
 			end
 		end
