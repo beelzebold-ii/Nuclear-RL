@@ -825,36 +825,48 @@ function updatescreen(camx,camy)
 			love.graphics.print("+"..aimnum..aimtxt,220,450)
 			end
 		end
-	--target
+	--find targetted object
 	love.graphics.setColor(1,0.2,0.2)
+	local target = -1
+	local targetItem = false
 	if controlmode==M_FIRING then
 		if objat(cursorx,cursory,eObjs)~=-1 then
-			local target = objat(cursorx,cursory,eObjs)
+			target = objat(cursorx,cursory,eObjs)
+			else
+			if objat(cursorx,cursory,iObjs)~=-1 then
+				target = iObjs[objat(cursorx,cursory,iObjs)].item
+				targetItem = true
+				end
+			end
+		else
+		if objat(pObj.pox,pObj.poy,iObjs)~=-1 then
+			target = iObjs[objat(pObj.pox,pObj.poy,iObjs)].item
+			targetItem = true
+			end
+		end
+	--actually draw target info
+	if target~=-1 then
+		if targetItem==false then
 			love.graphics.print("Target: "..eObjs[target].name,555,405)
 			love.graphics.print("Health: "..math.floor((eObjs[target].health/eObjs[target].maxhealth)*100).."%",570,420)
 			love.graphics.print(" [m]ore",570,435)
 			else
-			if objat(cursorx,cursory,iObjs)~=-1 then
-				local target = iObjs[objat(cursorx,cursory,iObjs)].item
-				love.graphics.print("Target:",555,405)
-				love.graphics.print(target.name,570,420)
-				if target.type=="ammo" then
-					love.graphics.print("Count: "..target.amount,570,435)
+			love.graphics.print("Target:",555,405)
+			love.graphics.print(target.name,570,420)
+			if target.type=="ammo" then
+				love.graphics.print("Count: "..target.amount,570,435)
+				end
+			if target.type=="weapon" then
+				love.graphics.print("    ("..target.dice.."d"..target.sides.. (target.dmgtype=="spread" and "x9)" or ")"),570,435)
+				if target.ammotype~="no" then
+					love.graphics.print("Ammo: "..target.ammo.."/"..target.maxammo,570,450)
 					end
-				if target.type=="weapon" then
-					love.graphics.print("    ("..target.dice.."d"..target.sides.. (target.dmgtype=="spread" and "x9)" or ")"),570,435)
-					if target.ammotype~="no" then
-						love.graphics.print("Ammo: "..target.ammo.."/"..target.maxammo,570,450)
-						end
-					end
-				if target.type=="armor" then
-					love.graphics.print("Durability: "..math.floor(target.durability/target.maxdurability*100).."%",570,435)
-					end
-				if target.type=="aid" then
-					love.graphics.print("Uses left: "..target.uses.."/"..target.maxuses,570,435)
-					end
-				else
-				love.graphics.print("Target: NONE",555,405)
+				end
+			if target.type=="armor" then
+				love.graphics.print("Durability: "..math.floor(target.durability/target.maxdurability*100).."%",570,435)
+				end
+			if target.type=="aid" then
+				love.graphics.print("Uses left: "..target.uses.."/"..target.maxuses,570,435)
 				end
 			end
 		else
