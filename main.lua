@@ -1577,10 +1577,14 @@ function love.keypressed(key,scancode,isrepeat)
 						--first time basic upgrade
 						pBonus.shottohit = pBonus.shottohit + 0.03
 						pBonus.shotreload = pBonus.shotreload - 0.05
+						--slight pump firing speed increase
+						pObj.atktimepump = math.max(pObj.atktimepump * 0.95,0.55)
 						else
 						--standard upgrade
 						pBonus.shottohit = pBonus.shottohit + 0.1
 						pBonus.shotreload = pBonus.shotreload - 0.15
+						--slight pump firing speed increase
+						pObj.atktimepump = math.max(pObj.atktimepump * 0.94,0.55)
 						if slv==2 then
 							--max lv bonus
 							pBonus.shotchokebuff = 2
