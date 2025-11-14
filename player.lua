@@ -56,7 +56,7 @@ function playeraim(alt)
 	cursory = pObj.poy
 	
 	local closestenemy = -1
-	local closestdist = 9999
+	local closestdist = pObj.viewdist + 0.1
 	for i,o in ipairs(eObjs) do
 		local rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy,o.id)
 		local los = true
@@ -300,7 +300,15 @@ function playerattack()
 				end
 			end
 		
-		playerturnend(playerWeapon.atktime*pObj.atktime+love.math.random(-1,1),true)
+		local atktime = 1.0;
+		if playerWeapon.weaptype ~= "rapid" then
+			atktime = pObj.atktimesemi
+			end
+		if playerWeapon.weaptype == "shotgun" then
+			atktime = pObj.atktimepump
+			end
+			
+		playerturnend(playerWeapon.atktime*atktime+love.math.random(-1,1),true)
 		else
 		mkHudmessage("Gun's empty!",{1.0,0.4,0.2,1})
 		controlmode = M_MOVE

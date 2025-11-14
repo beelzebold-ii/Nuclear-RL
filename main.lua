@@ -98,14 +98,18 @@ exit={pox=0,poy=0}
 eObjs={}
 localenemycount = 0 --number of enemies in the current level
 pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
-		viewdist=8.1,movetime=10,atktime=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
+		viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 pscore = 0
 --player shit
 controlmode = 0
 M_MOVE = 0
 M_FIRING = 1
 
-defaultnames = {"Niko","Clance","Chloe","Benny","Franziska","Kelsey","Via","Turner","Temmie","Zik","Len","Caroline","Sam","Tommy","Kornel","Taggart","Cass","Romy","Amy","Victor","Marisa","Ash","Ari","Nikki","Index","Dawn","Mira"}
+defaultnames = {"Niko","Clance","Chloe","Benny","Franziska","Kelsey","Via","Turner",
+				"Temmie","Zik","Len","Caroline","Sam","Tommy","Kornel","Taggart",
+				"Cass","Romy","Amy","Victor","Marisa","Ash","Ari","Nikki","Index",
+				"Dawn","Valo","Noelle","Nyxity","Tenny","Sylvia","Luna","Eeva",
+				"Index","Chloe"}
 playerName = defaultnames[love.math.random(1,#defaultnames)]
 pclassnames = {"Field Officer","Detective","Independent Contractor","War Veteran"}
 pclassnameshort = {"Officer","Detective","Freelance","Veteran"}
@@ -1296,7 +1300,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerArmor = inventoryItem("secarm")
 					
 					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=8.1,movetime=10,atktime=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
+						viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--detective
 					playerAmmo = {a9mm=30,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
@@ -1305,7 +1309,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerArmor = nil
 					
 					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=9.1,movetime=10,atktime=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
+						viewdist=9.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
 					end,
 				function()--freelancer
 					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=12,["a.35"]=0}
@@ -1314,7 +1318,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerArmor = nil
 					
 					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=8.1,movetime=9,atktime=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
+						viewdist=8.1,movetime=9,atktimesemi=0.9,atktimepump=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--war vet
 					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
@@ -1323,7 +1327,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerArmor = nil
 					
 					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=9.1,movetime=9,atktime=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
+						viewdist=9.1,movetime=9,atktimesemi=0.95,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
 					end
 			}
 			
@@ -1482,9 +1486,11 @@ function love.keypressed(key,scancode,isrepeat)
 			local statids = {"spd","acc","vit","per"}
 			local lvup = {
 				function()
-					pObj.movetime = math.max(pObj.movetime - 1,6)
-					pObj.atktime = math.max(pObj.atktime * 0.95,0.6)
+					pObj.movetime = math.max(pObj.movetime - 1,5)
 					pObj.reltime = math.max(pObj.reltime - 0.1,0.5)
+					--attack speed modifiers
+					pObj.atktimesemi = math.max(pObj.atktimesemi * 0.92,0.65)
+					pObj.atktimepump = math.max(pObj.atktimepump * 0.87,0.55)
 					end,
 				function()
 					pObj.damagebonus = pObj.damagebonus + 1

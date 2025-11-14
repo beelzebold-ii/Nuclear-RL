@@ -33,6 +33,9 @@ function startgame()
 		ammocapbuff = 0,invcapbuff = 0,pickupspeed = 1.0,freefifthshot = false,
 		meleewaittimefactor = 1.0,meleecritbuff = 0,meleelifesteal = false
 	}
+	
+	playerName = defaultnames[love.math.random(1,#defaultnames)]
+	
 	runtime = 0
 	enemies = 0
 	kills = 0
