@@ -441,7 +441,14 @@ function damageplayer(dmg,noarmor,dist)
 					xdeath = 1
 					end
 				end
-			if kills==enemies then pscore = math.floor(pscore*1.5) end
+			--perfect killrate?
+			if kills >= enemies - localenemycount and levelnum > 1 then pscore = math.floor(pscore*1.3) end
+			--score based on avg time spent per floor
+			local avgtime = (runtime/levelnum) / 3600 --1.0 at 6 mins per floor, 2.0 at 12 mins, 0.5 at 3 mins
+			--this means you get extra score for going faster than 6 mins per floor
+			--but you get penalized for going slower than that
+			--3 mins = 200% score, 12 mins = 50% score, 9 mins would be 66% score, 5 mins would be 120% score
+			pscore = pscore / avgtime
 			mortisinfo = {runtime=runtime,enemies=enemies,kills=kills,score=math.floor(pscore*(gameskill*0.5 + 0.5)),level=pObj.lv,floor=levelnum,class=playerClass,skill=gameskill,pname=playerName,skillsorder=pSkillOrder,stats=pStats,victory=false,xdeath=xdeath}
 			saveMsglog("deathlog_"..os.date("%m.%d.%Y").."-"..playerName)
 			mkHudmessage(hudmessage.." Press enter.")
@@ -464,7 +471,7 @@ function generateMortem(info)
 			end
 		
 		local firefights = "and then a series of firefights broke out shortly thereafter."
-		if love.math.random()<0.4 and info.floor<1 then
+		if love.math.random()<0.4 and info.floor<=1 then
 			firefights = "then immediately began attacking security staff."
 			end
 		local killratio = math.min(1,info.kills/(info.enemies-localenemycount))
