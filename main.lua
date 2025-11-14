@@ -1860,7 +1860,9 @@ function hitscan(x1,y1,x2,y2,onlyobj,novis)
 		local tile = tilemap[math.floor(oy+dy*i)][math.floor(ox+dx*i)]
 		local obj = -1
 		for k,v in ipairs(eObjs) do
-			if v.pox==math.floor(ox+dx*i) and v.poy==math.floor(oy+dy*i) then
+			--I believe I have finally fixed the objat bug. the health check should be here, otherwise
+			--a dead object with a higher id can be selected as the object at the location
+			if v.pox==math.floor(ox+dx*i) and v.poy==math.floor(oy+dy*i) and v.health>0 then
 				obj = k
 				end
 			end
