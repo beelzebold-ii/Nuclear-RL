@@ -394,7 +394,7 @@ itemclasses = {
 		stim=10,
 		desc="Just a bottle of very fast acting painkillers. Will not save you in the middle of getting shot.",
 		char="+",
-		color={0.2,0.6,0.15}
+		color={0.1,0.4,0.08}
 	},
 	adrenaline = {
 		type="pain",
@@ -404,7 +404,7 @@ itemclasses = {
 		stim=45,
 		desc="Yep, that's the good stuff. May or may not be the over the counter kind. Really, I don't know. It'll do the trick, though.",
 		char="+",
-		color={0.25,0.8,0.2}
+		color={0.15,0.8,0.35}
 	},
 	combatstim = {
 		type="pain",
@@ -414,7 +414,7 @@ itemclasses = {
 		stim=100,
 		desc="These don't seem to be a commercial product, they're very vaguely labelled. Where did these even come from?",
 		char="+",
-		color={0.5,1.0,0.4}
+		color={0.5,1.0,0.7}
 	},
 	bandage = {
 		type="aid",

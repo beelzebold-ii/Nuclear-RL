@@ -1573,8 +1573,8 @@ function love.keypressed(key,scancode,isrepeat)
 					pObj.painfactor = pObj.painfactor * 0.85
 					end,
 				function()
-					pObj.viewdist = pObj.viewdist + 1.2
-					pObj.tohitbonus = pObj.tohitbonus + 0.065
+					pObj.viewdist = pObj.viewdist + 1.4
+					pObj.tohitbonus = pObj.tohitbonus + 0.08
 					pObj.pointblank = pObj.pointblank + 1
 					end
 			}

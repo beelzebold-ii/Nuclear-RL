@@ -15,22 +15,26 @@ lvmus = {
 		love.audio.newSource("music/DangerClose.wav","stream"),
 		love.audio.newSource("music/Unnatural.wav","stream"),
 		love.audio.newSource("music/Meltdown.wav","stream"),
+		love.audio.newSource("music/TheHardWay.wav","stream"),
 	},
 	cluster2 = {--floors 4-6
 		love.audio.newSource("music/ArmsRace.wav","stream"),
 		love.audio.newSource("music/BulletDance.wav","stream"),
-		love.audio.newSource("music/CorporateMilitary.wav","stream"),--this is primarily a cluster3 song
+		love.audio.newSource("music/TheHardWay.wav","stream"),
 	},
 	cluster3 = {--floors 7-9
 		love.audio.newSource("music/CorporateMilitary.wav","stream"),
+		love.audio.newSource("music/LongWar.wav","stream"),
 	},
 	cluster4 = {--floors 10-12
 		love.audio.newSource("music/CorporateMilitary.wav","stream"),
+		love.audio.newSource("music/LongWar.wav","stream"),
 	},
 	cluster5 = {--floors 13+
 		love.audio.newSource("music/BulletDance.wav","stream"),
 		love.audio.newSource("music/Meltdown.wav","stream"),
 		love.audio.newSource("music/CorporateMilitary.wav","stream"),
+		love.audio.newSource("music/LongWar.wav","stream"),
 	}
 }
 
