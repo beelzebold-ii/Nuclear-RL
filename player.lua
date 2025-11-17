@@ -163,7 +163,7 @@ function playerattack()
 						
 						damage = math.ceil(damage)
 						--if we're in rapidfire and the damage debuff should apply, lose 1 damage per shot in the volley!
-						if pBonus.rpddmgdebuff==true and fireturns>1 then damage = damage - (fireturns - 1) end
+						if pBonus.rpddmgdebuff==true and fireturns>1 then damage = math.max(damage - (fireturns - 1),0) end
 						--innate bonus damage
 						damage = damage + pObj.damagebonus
 						--and lastly, sidearm only bonus damage

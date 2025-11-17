@@ -656,6 +656,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			local spy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
 			local ray = checkLOS(pObj.pox,pObj.poy,spx,spy,nil,true)
 			
+			ignoreobj = -2
 			local pathmap = makepathmap(true)
 			local path = Luafinding( Vector(string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))), Vector(pObj.pox,pObj.poy), pathmap):GetPath()
 			
@@ -734,17 +735,24 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--place the exit somewhere
 	local exitplaced = false
 	while exitplaced == false do
-		local spawntile = love.math.random(1,#spawnabletiles)
-		
-		local pathmap = makepathmap(true)
-		local path = Luafinding( Vector(string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))), Vector(pObj.pox,pObj.poy), pathmap):GetPath()
-		
-		if path~=nil and #path>=2 then
-			exit.pox = string.byte(string.sub(spawnabletiles[spawntile],1,1))
-			exit.poy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
+		if #spawnabletiles > 1 then
+			local spawntile = love.math.random(1,#spawnabletiles)
+			
+			ignoreobj = -2
+			local pathmap = makepathmap(true)
+			local path = Luafinding( Vector(string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))), Vector(pObj.pox,pObj.poy), pathmap):GetPath()
+			
+			if path~=nil and #path>=2 then
+				exit.pox = string.byte(string.sub(spawnabletiles[spawntile],1,1))
+				exit.poy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
+				exitplaced = true
+				end
+			table.remove(spawnabletiles,spawntile)
+			else
+			exit.pox = pObj.pox
+			exit.poy = pObj.poy
 			exitplaced = true
 			end
-		table.remove(spawnabletiles,spawntile)
 		end
 	
 	local feelingtext = {acidspill = "Your eyes begin to burn.",dogs = "You hear barking and snarling.",vault = "This place seems pretty important.",robotics = "You hear mechanical whirring.",redalert = "Whoops. It seems they expected you."}
