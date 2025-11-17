@@ -71,6 +71,7 @@ tilemap={
 {1,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,1},
 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 }
+seentiles={}
 --more vars related to tiles
 tilecolor={{0.2,0.15,0.15,1},{0.6,0.5,0.5,1},{0.2,0.9,0.2,1}}
 tilechar={".","#","="}
@@ -605,17 +606,46 @@ function drawworld(camx,camy)
 			if dist > pObj.viewdist then brightness = 0.4 end
 			if dist > pObj.viewdist+1 then brightness = 0 end
 			
-			local rayhit = checkLOS(pObj.pox,pObj.poy,tx,ty,-1,true)
-			if rayhit.type~="none" then
-				if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
+			if dist <= pObj.viewdist+1 then
+				local rayhit = checkLOS(pObj.pox,pObj.poy,tx,ty,-1,true)
+				if rayhit.type~="none" then
+					if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
+					end
 				end
 			
-			if revealall == true then brightness = math.max(0.3,brightness) end
+			if revealall == true or seentiles[ty][tx]==1 then brightness = math.max(0.3,brightness) end
 			
+			if brightness > 0 then
+				--if tile is in LOS and hasn't been seen yet, mark it as seen
+				if seentiles[ty][tx]==0 then
+					seentiles[ty][tx]=1
+					end
+				--if this tile is floor or acid and within 6 tiles, mark adjacent walls as seen
+				if tilemap[ty][tx]==0 or tilemap[ty][tx]==2 then
+					if dist < 7 then
+						local vectors = { --direction vectors
+							{0,1},
+							{0,-1},
+							{1,0},
+							{-1,0}
+						}
+						for i=1,4 do --loop through directions and mark walls as seen
+							if tilemap[ty+vectors[i][2]][tx+vectors[i][1]]==1 then
+								seentiles[ty+vectors[i][2]][tx+vectors[i][1]] = 1
+								end
+							end
+						end
+					end
+				end
 			--draw the tile at tx,ty
 			tilecolor[tilemap[ty][tx]+1][4]=brightness
 			love.graphics.setColor(tilecolor[tilemap[ty][tx]+1])
-			love.graphics.print(tilechar[tilemap[ty][tx]+1],(tx*15)+50-7,(ty*15)+15-8)
+			if exit.pox == tx and exit.poy == ty and seentiles[ty][tx]==1 then
+				love.graphics.setColor(0.8,0.5,0.4)
+				love.graphics.print(">",(tx*15)+50-7,(ty*15)+15-8)
+				else
+				love.graphics.print(tilechar[tilemap[ty][tx]+1],(tx*15)+50-7,(ty*15)+15-8)
+				end
 			end
 		end
 	end

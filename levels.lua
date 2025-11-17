@@ -146,6 +146,13 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			tilemap[y][x] = 1
 			end
 		end
+	seentiles = {}
+	for y=1,25 do
+		seentiles[y] = {}
+		for x=1,45 do
+			seentiles[y][x] = 0
+			end
+		end
 	
 	playerDodge = false
 	waitturns = 0
@@ -355,25 +362,121 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 					
 					end,
 				ware = function(x,y)--a bunch o squares
-					local numpillars = love.math.random(4,12)
+					local numpillars = love.math.random(15,33)
 					for i=1,numpillars do
 						local pillarsize = love.math.random(1,3)
-						fillsquare(x+love.math.random(1,10-pillarsize),y+love.math.random(1,10-pillarsize),pillarsize,pillarsize,1)
+						fillsquare(x+love.math.random(2,19-pillarsize),y+love.math.random(2,20-pillarsize),pillarsize,pillarsize,1)
 						end
 					end,
 				acid = function(x,y)--a central vat (or vats) of acid
-					fillsquare(x+1,y+1,17,19,2)
+					fillsquare(x+2,y+2,17,19,2)
 					if love.math.random()<0.55 then
-						line(x+1,y+10,{1,0},11,0)
+						line(x+2,y+12,{1,0},19,0)
 						end
 					if love.math.random()<0.55 then
-						line(x+9,y+1,{0,1},11,0)
+						line(x+11,y+2,{0,1},20,0)
+						end
+					if love.math.random()<0.75 then
+						fillsquare(x+8,y+9,5,5,0)
 						end
 					end,
 				maze = function(x,y)--dfs maze :pensive:
-					
+					fillsquare(x+2,y+2,17,19,1)
+					line(x+2,y+12,{1,0},2,0)
+					line(x+10,y+2,{0,1},2,0)
+					line(x+18,y+12,{1,0},2,0)
+					line(x+12,y+20,{0,1},2,0)
+					if love.math.random()<0.5 then
+						fillsquare(x+2,y+1,1,1,1)
+						fillsquare(x+18,y+21,1,1,1)
+						else
+						fillsquare(x+2,y+21,1,1,1)
+						fillsquare(x+18,y+1,1,1,1)
+						end
+					--IT'S TIME FOR MORE MAZE CODE
+					--well it's just copy pasted and modified but.
+					--maze grid this time is uhhhh ok this is gonna take a bit
+					--17x19 on the outside
+					--that means 15x17 on the inside
+					--I think 8x9?
+					local mazegrid = {}
+					for x=1,8 do
+						mazegrid[x] = {0,0,0,0,0,0,0,0,0}
+						end
+					--select a starting tile
+					local startx,starty = love.math.random(1,8),love.math.random(1,9)
+					--simply direction vectors.
+					local directionvectors = {
+						{0,-1},--up
+						{1,0},--right
+						{0,1},--down
+						{-1,0}--left
+					}
+					--mark the starting cell as visited and clear it out
+					mazegrid[startx][starty] = 1
+					--we use fillsquare here as it correctly populates the spawnabletiles set
+					-- (and everywhere else)^
+					fillsquare((startx*2)+x+1,(starty*2)+y+1,1,1,0)
+					--keep track of the number of (unique) cells we've visited so we know when they've all been visited
+					local visitedcells = 1
+					--keep the history of visited cells, and pull from it like a stack when we need to backtrack
+					--this is initialized to empty. we will add the start pos to it whenever we move from the starting cell.
+					local cellhistory = {}
+					--obviously we need to know what cell we're currently at
+					local curx,cury = startx,starty
+					--for as long as there are cells left to visit, run this loop
+					while visitedcells<8*9 do
+						--unvisited directions, just so we don't have to get stuck in a loop of generating random numbers
+						local unvisdirs = {}
+						--populate that above list
+						for i=1,4 do
+							local dirv = directionvectors[i]
+							--if the tile in this direction is OoB then it can't be visited
+							if not (curx+dirv[1]>8 or curx+dirv[1]<1 or cury+dirv[2]>9 or cury+dirv[2]<1) then
+								if mazegrid[curx+dirv[1]][cury+dirv[2]]==0 then
+									table.insert(unvisdirs,i)
+									end
+								end
+							end
+						--if there are no unvisited directions, backtrack.
+						-- (and do nothing else, the loop will continue from the previous cell as normal)
+						--otherwise continue with the loop
+						if #unvisdirs==0 then--BACKTRACK!!
+							if #cellhistory==0 then--if we're at the start cell and must backtrack, we need to bail.
+								break
+								end
+							curx = cellhistory[#cellhistory][1]
+							cury = cellhistory[#cellhistory][2]
+							table.remove(cellhistory)--should remove the last value in the table, like popping from a stack
+							else--SELECT A DIRECTION
+							--select a random unvisited direction
+							local dir = unvisdirs[love.math.random(1,#unvisdirs)]
+							local dirv = directionvectors[dir]
+							--add current cell to the history as we're about to move off of it
+							table.insert(cellhistory,{curx,cury})
+							--clear the wall between this cell and the next one
+							fillsquare((curx*2)+dirv[1]+x+1,(cury*2)+dirv[2]+y+1,1,1,0)
+							--go to the next cell, clear it, and set it as visited (incrementing visitedcells as well)
+							curx = curx + dirv[1]			--next cell
+							cury = cury + dirv[2]
+							fillsquare((curx*2)+x+1,(cury*2)+y+1,1,1,0)	--clear it
+							mazegrid[curx][cury] = 1		--mark visited
+							visitedcells = visitedcells+1	--increment
+							end
+						end
+					--once the DFS maze is finished generating, go through and knock down a few walls to make it a bit
+					--less linear and claustrophobic
+					local wallstodemolish = love.math.random(6,10)
+					for i=1,wallstodemolish do
+						local demox,demoy = love.math.random(1,7),love.math.random(1,8)
+						fillsquare(demox*2+x+1,demoy*2+y+2,1,1,0)
+						demox,demoy = love.math.random(1,7),love.math.random(1,8)
+						fillsquare(demox*2+x+2,demoy*2+y+1,1,1,0)
+						end
 					end,
 				}
+			local thisroom = rooms[love.math.random(1,#rooms)]
+			thisroom = "maze"
 			roomfunc[thisroom](12,1)
 			end,
 		maze = function() --a grid of MAZE
