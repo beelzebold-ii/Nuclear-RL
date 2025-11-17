@@ -1,3 +1,8 @@
+--this is level generation stuff
+--luafinding is needed to ensure there's a path from every enemy to the player, and from the exit to the player
+local Vector = require( "luafinding/vector" )
+local Luafinding = require("luafinding/luafinding")
+
 function dangerlevel(level,skill)
 	local skillfunc = {
 		function(l)
@@ -163,7 +168,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	iObjs={}
 	
 	--which type of map generation
-	local types = {"dungeon","maze"}
+	local types = {"dungeon","maze","lobby"}
 	if roomtype==nil then
 		roomtype = love.math.random(1,#types)
 		roomtype = types[roomtype]
@@ -359,7 +364,28 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			}
 			local roomfunc = {
 				office = function(x,y)--grid of cubicles
-					
+					makeOffice = function(x,y)
+						linesquare(x+1,y+1,9,9,0,1)
+						fillsquare(x+3,y+1,1,9,0)
+						fillsquare(x+7,y+1,1,9,0)
+						local linesf = {
+							function()
+								fillsquare(x+1,y+5,9,1,1)
+								end,
+							function()
+								fillsquare(x+5,y+1,1,9,1)
+								end,
+							function()
+								fillsquare(x+5,y+1,1,9,1)
+								fillsquare(x+1,y+5,9,1,1)
+								end,
+						}
+						linesf[love.math.random(1,3)]()
+						end
+					makeOffice(x+1,y+1)
+					makeOffice(x+9,y+1)
+					makeOffice(x+1,y+11)
+					makeOffice(x+9,y+11)
 					end,
 				ware = function(x,y)--a bunch o squares
 					local numpillars = love.math.random(15,33)
@@ -476,7 +502,6 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 					end,
 				}
 			local thisroom = rooms[love.math.random(1,#rooms)]
-			thisroom = "maze"
 			roomfunc[thisroom](12,1)
 			end,
 		maze = function() --a grid of MAZE
@@ -630,24 +655,32 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			local spx = string.byte(string.sub(spawnabletiles[spawntile],1,1))
 			local spy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
 			local ray = checkLOS(pObj.pox,pObj.poy,spx,spy,nil,true)
-			if (ray.type == "wall") or love.math.random()<hotstartrate then
-				localenemycount = localenemycount + 1
-				makeObj(enemytable[love.math.random(1,#enemytable)],string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2)))
-				--if ray.hit == nil then
-				--	eObjs[#eObjs].color = {0,1,0,1}
-				--	print("enemy spawned in LOS of player")
-				--	else
-				--	eObjs[#eObjs].color = {1,0,1,1}
-				--	print("enemy spawed outside of LOS of player")
-				--	end
-				if love.math.random()<0.6 and levelfeeling=="redalert" then
-					eObjs[#eObjs].chasing = true
+			
+			local pathmap = makepathmap(true)
+			local path = Luafinding( Vector(string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))), Vector(pObj.pox,pObj.poy), pathmap):GetPath()
+			
+			if path~=nil and #path>=2 then
+				if (ray.type == "wall") or love.math.random()<hotstartrate then
+					localenemycount = localenemycount + 1
+					makeObj(enemytable[love.math.random(1,#enemytable)],string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2)))
+					--if ray.hit == nil then
+					--	eObjs[#eObjs].color = {0,1,0,1}
+					--	print("enemy spawned in LOS of player")
+					--	else
+					--	eObjs[#eObjs].color = {1,0,1,1}
+					--	print("enemy spawed outside of LOS of player")
+					--	end
+					if love.math.random()<0.6 and levelfeeling=="redalert" then
+						eObjs[#eObjs].chasing = true
+						end
+					--dogs have a 40% chance to spawn chasing the player in dog levels
+					if levelfeeling=="dogs" and love.math.random()<0.4 and
+						(eObjs[#eObjs].name=="Security Dog" or eObjs[#eObjs].name=="Militia Dog") then
+						eObjs[#eObjs].chasing = true
+						end
 					end
-				--dogs have a 40% chance to spawn chasing the player in dog levels
-				if levelfeeling=="dogs" and love.math.random()<0.4 and
-					(eObjs[#eObjs].name=="Security Dog" or eObjs[#eObjs].name=="Militia Dog") then
-					eObjs[#eObjs].chasing = true
-					end
+				else
+				enemycount = enemycount + 1
 				end
 			table.remove(spawnabletiles,spawntile)
 			end
@@ -699,10 +732,20 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 		end
 	
 	--place the exit somewhere
-	local spawntile = love.math.random(1,#spawnabletiles)
-	exit.pox = string.byte(string.sub(spawnabletiles[spawntile],1,1))
-	exit.poy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
-	table.remove(spawnabletiles,spawntile)
+	local exitplaced = false
+	while exitplaced == false do
+		local spawntile = love.math.random(1,#spawnabletiles)
+		
+		local pathmap = makepathmap(true)
+		local path = Luafinding( Vector(string.byte(string.sub(spawnabletiles[spawntile],1,1)),string.byte(string.sub(spawnabletiles[spawntile],2,2))), Vector(pObj.pox,pObj.poy), pathmap):GetPath()
+		
+		if path~=nil and #path>=2 then
+			exit.pox = string.byte(string.sub(spawnabletiles[spawntile],1,1))
+			exit.poy = string.byte(string.sub(spawnabletiles[spawntile],2,2))
+			exitplaced = true
+			end
+		table.remove(spawnabletiles,spawntile)
+		end
 	
 	local feelingtext = {acidspill = "Your eyes begin to burn.",dogs = "You hear barking and snarling.",vault = "This place seems pretty important.",robotics = "You hear mechanical whirring.",redalert = "Whoops. It seems they expected you."}
 	local hm = "You descend to floor "..levelnum..". "
