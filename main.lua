@@ -843,7 +843,7 @@ function updatescreen(camx,camy)
 		love.graphics.print("Weapon: NONE",220,420)
 		love.graphics.print("  Ammo: N/A",220,435)
 		else
-		love.graphics.print("Weapon: "..playerWeapon.name.." ("..playerWeapon.dice.."d"..playerWeapon.sides.. (playerWeapon.dmgtype=="spread" and "x9)" or ")"),220,420)
+		love.graphics.print("Weapon: "..playerWeapon.name.." ("..playerWeapon.dice.."d"..playerWeapon.sides.. (playerWeapon.dmgtype=="spread" and "x9"..(playerWeapon.shots==nil and "" or "x"..playerWeapon.shots)..")" or (playerWeapon.shots==nil and "" or "x"..playerWeapon.shots)..")"),220,420)
 		if playerWeapon.ammotype~="no" then
 			love.graphics.print("  Ammo: "..playerWeapon.ammo.."/"..playerWeapon.maxammo.." ("..playerWeapon.ammotype..")",220,435)
 			else
@@ -893,7 +893,7 @@ function updatescreen(camx,camy)
 				love.graphics.print("Count: "..target.amount,570,435)
 				end
 			if target.type=="weapon" then
-				love.graphics.print("    ("..target.dice.."d"..target.sides.. (target.dmgtype=="spread" and "x9)" or ")"),570,435)
+				love.graphics.print("    ("..target.dice.."d"..target.sides.. (target.dmgtype=="spread" and "x9"..(target.shots==nil and "" or "x"..target.shots)..")" or (target.shots==nil and "" or "x"..target.shots)..")"),570,435)
 				if target.ammotype~="no" then
 					love.graphics.print("Ammo: "..target.ammo.."/"..target.maxammo,570,450)
 					end
@@ -957,7 +957,7 @@ function updatescreen(camx,camy)
 			if itemsel~=nil then
 				love.graphics.print(itemsel.name,150,255)
 				if itemsel.type=="weapon" then
-					love.graphics.print("Damage: "..itemsel.dice.."d"..itemsel.sides.. (itemsel.dmgtype=="spread" and " x9" or ""),135,285)
+					love.graphics.print("Damage: "..itemsel.dice.."d"..itemsel.sides.. (itemsel.dmgtype=="spread" and "x9"..(itemsel.shots==nil and "" or "x"..itemsel.shots) or (itemsel.shots==nil and "" or "x"..itemsel.shots)),135,285)
 					love.graphics.print("To Hit: "..itemsel.tohit,135,300)
 					if itemsel.dmgtype=="spread" then
 						love.graphics.print("Choke:  "..itemsel.range-1,135,315)
@@ -1100,7 +1100,7 @@ function updatescreen(camx,camy)
 		if itemsel~=nil then
 			love.graphics.print(itemsel.name,150,255)
 			if itemsel.type=="weapon" then
-				love.graphics.print("Damage: "..itemsel.dice.."d"..itemsel.sides.. (itemsel.dmgtype=="spread" and " x9" or ""),135,285)
+				love.graphics.print("Damage: "..itemsel.dice.."d"..itemsel.sides.. (itemsel.dmgtype=="spread" and "x9"..(itemsel.shots==nil and "" or "x"..itemsel.shots) or (itemsel.shots==nil and "" or "x"..itemsel.shots)),135,285)
 				love.graphics.print("To Hit: "..itemsel.tohit,135,300)
 				if itemsel.dmgtype=="spread" then
 					love.graphics.print("Choke:  "..itemsel.range-1,135,315)
@@ -1640,7 +1640,7 @@ function love.keypressed(key,scancode,isrepeat)
 					table.insert(pSkillOrder,"Rapid")
 					if slv==0 then
 						--first time basic upgrade
-						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.1
+						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.15
 						else
 						--standard upgrade
 						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.25

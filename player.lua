@@ -95,212 +95,216 @@ function playerattack()
 	if playerWeapon.weaptype=="rapid" then
 		fireturns = fireturns + 1
 		end
-	if playerWeapon.ammotype=="no" or playerWeapon.ammo>0 then
+	if playerWeapon.ammotype=="no" or playerWeapon.ammo>=(playerWeapon.ammouse==nil and 1 or playerWeapon.ammouse) then
 		if cursorx==pObj.pox and cursory==pObj.poy then
 			mkHudmessage("That's me, you idiot!")
 			controlmode = M_MOVE
 			return
 			end
-		if pBonus.freefifthshot==true then
-			shots = shots + 1
-			if shots==5 then
-				shots = 0
+		for i=1,playerWeapon.ammouse==nil and 1 or playerWeapon.ammouse do
+			if pBonus.freefifthshot==true then
+				shots = shots + 1
+				if shots==5 then
+					shots = 0
+					else
+					if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
+					end
 				else
 				if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
 				end
-			else
-			if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
 			end
 		sfx[playerWeapon.sound]:stop()
 		sfx[playerWeapon.sound]:play()
-		if playerWeapon.dmgtype~="spread" then
-			if playerWeapon.dmgtype~="melee" then
-				--bullet
-				print("PLAYER ATTACK:")
-				local rayhit = hitscan(pObj.pox,pObj.poy,cursorx,cursory)
-				if rayhit.type~="obj" then
-					mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
-					else
-					local o = rayhit.hit
-					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
-					local tohit = playerWeapon.tohit * pObj.tohit * ((100 - pObj.pain)/100)
-					for i=1,math.ceil(dist) do
-						tohit = tohit*0.95
-						end
-					--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited
-					tohit = tohit + pObj.tohitbonus + (math.min(waitturns,3)*(0.1*pBonus.aimfactor))
-					if fireturns>1 then
-						--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
-						--veteran has an innate 0.7 recoil factor
-						tohit = tohit * (1 - (fireturns-1)*((0.2*pBonus.rpdrecoilfactor)*(playerClass==4 and 0.7 or 1.0)))
-						end
-					
-					print("Target distance: "..dist)
-					print("Base ToHit: "..playerWeapon.tohit)
-					print("Hit chance: "..tohit)
-					
-					if love.math.random()<tohit then
-						makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
-						local damage = 0
-						local pistolminbuff = 0
-						--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
-						--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
-						if playerWeapon.weaptype=="sidearm" then
-							pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
+		for i=1,playerWeapon.shots==nil and 1 or playerWeapon.shots do
+			if playerWeapon.dmgtype~="spread" then
+				if playerWeapon.dmgtype~="melee" then
+					--bullet
+					print("PLAYER ATTACK:")
+					local rayhit = hitscan(pObj.pox,pObj.poy,cursorx,cursory)
+					if rayhit.type~="obj" then
+						mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
+						else
+						local o = rayhit.hit
+						local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+						local tohit = playerWeapon.tohit * pObj.tohit * ((100 - pObj.pain)/100)
+						for i=1,math.ceil(dist) do
+							tohit = tohit*0.95
 							end
-						for i=1,playerWeapon.dice do
-							damage = damage + love.math.random(1+pistolminbuff,playerWeapon.sides)
-							end
-						if dist>pObj.pointblank then
-							damage = damage - (dist - pObj.pointblank) * 0.5
-							damage = math.max(damage,playerWeapon.dice/2)
+						--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited
+						tohit = tohit + pObj.tohitbonus + (math.min(waitturns,3)*(0.1*pBonus.aimfactor))
+						if fireturns>1 then
+							--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
+							--veteran has an innate 0.7 recoil factor
+							tohit = tohit * (1 - (fireturns-1)*((0.2*pBonus.rpdrecoilfactor)*(playerClass==4 and 0.7 or 1.0)))
 							end
 						
-						--if we're aimed and have an aim dmg bonus to apply, apply it fully once for 2 turns of waiting (so at max of 3 waitturns it'd be 1.5x)
-						if waitturns>0 and pBonus.aimdmg>0 then
-							damage = damage + pBonus.aimdmg * (math.min(waitturns,3)/2)
-							end
+						print("Target distance: "..dist)
+						print("Base ToHit: "..playerWeapon.tohit)
+						print("Hit chance: "..tohit)
 						
-						damage = math.ceil(damage)
-						--if we're in rapidfire and the damage debuff should apply, lose 1 damage per shot in the volley!
-						if pBonus.rpddmgdebuff==true and fireturns>1 then damage = math.max(damage - (fireturns - 1),0) end
-						--innate bonus damage
-						damage = damage + pObj.damagebonus
-						--and lastly, sidearm only bonus damage
-						if playerWeapon.weaptype=="sidearm" then
-							damage = damage + pBonus.sidearmdmgbuff
-							end
-						mkHudmessage("The "..o.name.." is hit for "..damage.." damage!",{0.2,1,0.2,1})
-						o.health = o.health-damage
-						if o.health<=0 then
-							mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
-							killObj(o.id)
-							end
-						else
-						mkHudmessage("The shot missed the "..o.name..".",{0.2,1,0.2,1})
-						end
-					end
-				else
-				--melee
-				waitturns = 0
-				local rayhit = hitscan(pObj.pox,pObj.poy,cursorx,cursory)
-				if rayhit.type~="obj" then
-					mkHudmessage("The swing hits nothing.")
-					else
-					local o = rayhit.hit
-					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
-					if dist>1.6 then
-						mkHudmessage("The swing hits nothing.")
-						else
-						local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
-						if waitturns>1 then tohit = tohit + 0.1 end
 						if love.math.random()<tohit then
 							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
 							local damage = 0
-							for i=1,playerWeapon.dice do
-								damage = damage + love.math.random(1,playerWeapon.sides)
-								--officer does guaranteed bonus damage equal to the weapon's damage dice
-								--veteran gets on average half that
-								if playerClass==1 or (playerClass==4 and love.math.random()<0.5) then damage = damage + 1 end
+							local pistolminbuff = 0
+							--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
+							--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
+							if playerWeapon.weaptype=="sidearm" then
+								pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
 								end
-							--deal additional damage from waitturns based on weapon's charge bonus stat
-							if waitturns>0 then damage = damage + playerWeapon.chrgbonus[math.floor(math.min(waitturns,3))] end
-							--every point of vitality = a 20% chance to deal extra damage, as officer every lvl = additional 10% chance
-							if (pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/5>love.math.random() then
-								--bonus is 2 damage plus 1 for every 2 vitality and 1 for every 4 lvls if playing as officer
-								damage = damage + 2 + ((pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/2) + pBonus.meleecritbuff
+							for i=1,playerWeapon.dice do
+								damage = damage + love.math.random(1+pistolminbuff,playerWeapon.sides)
+								end
+							if dist>pObj.pointblank then
+								damage = damage - (dist - pObj.pointblank) * 0.5
+								damage = math.max(damage,playerWeapon.dice/2)
 								end
 							
-							damage = math.floor(damage)
-							mkHudmessage("The "..o.name.." is struck for "..damage.." damage!",{0.2,1,0.2,1})
+							--if we're aimed and have an aim dmg bonus to apply, apply it fully once for 2 turns of waiting (so at max of 3 waitturns it'd be 1.5x)
+							if waitturns>0 and pBonus.aimdmg>0 then
+								damage = damage + pBonus.aimdmg * (math.min(waitturns,3)/2)
+								end
+							
+							damage = math.ceil(damage)
+							--if we're in rapidfire and the damage debuff should apply, lose 1 damage per shot in the volley!
+							if pBonus.rpddmgdebuff==true and fireturns>1 then damage = math.max(damage - (fireturns - 1),0) end
+							--innate bonus damage
+							damage = damage + pObj.damagebonus
+							--and lastly, sidearm only bonus damage
+							if playerWeapon.weaptype=="sidearm" then
+								damage = damage + pBonus.sidearmdmgbuff
+								end
+							mkHudmessage("The "..o.name.." is hit for "..damage.." damage!",{0.2,1,0.2,1})
 							o.health = o.health-damage
 							if o.health<=0 then
 								mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
 								killObj(o.id)
-								if pBonus.meleelifesteal==true then
-									pObj.damage = math.max(pObj.damage-love.math.random(3,6),0)
-									end
 								end
 							else
-							mkHudmessage("The strike missed the "..o.name..".",{0.2,1,0.2,1})
+							mkHudmessage("The shot missed the "..o.name..".",{0.2,1,0.2,1})
 							end
 						end
-					end
-				end
-			else
-			--spread
-			local cursordist = distance(pObj.pox,pObj.poy,cursorx,cursory)
-			local targetx = ((cursorx-pObj.pox)/cursordist)*(playerWeapon.range+pBonus.shotchokebuff)+pObj.pox - 1
-			local targety = ((cursory-pObj.poy)/cursordist)*(playerWeapon.range+pBonus.shotchokebuff)+pObj.poy - 1
-			local hits = 0
-			local totaldmg = 0
-			local killmsg
-			for i=0,8 do
-				local rayhit = hitscan(pObj.pox,pObj.poy,targetx+(i%3),targety+math.floor(i/3))
-				
-				if rayhit.type=="obj" then
-					local o = rayhit.hit
-					local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
-					local tohit = playerWeapon.tohit*pBonus.shottohit
-					--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited (max 1 instead of 3)
-					tohit = tohit + pObj.tohitbonus + (math.min(waitturns,1)*(0.1*pBonus.aimfactor))
-					--freelancer gets 0.1 extra base tohit with shotguns
-					if playerClass==3 then tohit = tohit + 0.1 end
-					
-					if fireturns>1 then
-						--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
-						tohit = tohit * (1 - (fireturns-1)*(0.2*pBonus.rpdrecoilfactor))
-						end
-					for i=1,math.ceil(dist) do
-						--accuracy falloff is 7.5% per tile instead of 5%
-						tohit = tohit*0.925
-						end
-					--tohit multiplier applies 10% less
-					tohit = (tohit + pObj.tohitbonus) * (pObj.tohit * 0.9)
-					
-					if love.math.random()<tohit then
-						makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-2,2),o.poy+love.math.random(-2,2))
-						hits = hits + 1
-						local damage = 0
-						--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
-						--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
-						local pistolminbuff = 0
-						if playerWeapon.weaptype=="sidearm" then
-							pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
-							end
-						for i=1,playerWeapon.dice do
-							damage = damage + love.math.random(1+pistolminbuff,playerWeapon.sides)
-							end
-						if dist>pObj.pointblank then
-							damage = damage - (dist - pObj.pointblank) * 0.5
-							damage = math.max(damage,playerWeapon.dice/2)
-							damage = math.ceil(damage)
-							end
-						--damagebonus per pellet is cut to 1/6
-						if love.math.random()<1/6 then
-							damage = damage + pObj.damagebonus
-							end
-						--so is sidearm damage buff for the sawnoff, but to 1/7
-						if love.math.random()<1/7 then
-							if playerWeapon.weaptype=="sidearm" then
-								damage = damage + pBonus.sidearmdmgbuff
+					else
+					--melee
+					waitturns = 0
+					local rayhit = hitscan(pObj.pox,pObj.poy,cursorx,cursory)
+					if rayhit.type~="obj" then
+						mkHudmessage("The swing hits nothing.")
+						else
+						local o = rayhit.hit
+						local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+						if dist>1.6 then
+							mkHudmessage("The swing hits nothing.")
+							else
+							local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
+							if waitturns>1 then tohit = tohit + 0.1 end
+							if love.math.random()<tohit then
+								makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
+								local damage = 0
+								for i=1,playerWeapon.dice do
+									damage = damage + love.math.random(1,playerWeapon.sides)
+									--officer does guaranteed bonus damage equal to the weapon's damage dice
+									--veteran gets on average half that
+									if playerClass==1 or (playerClass==4 and love.math.random()<0.5) then damage = damage + 1 end
+									end
+								--deal additional damage from waitturns based on weapon's charge bonus stat
+								if waitturns>0 then damage = damage + playerWeapon.chrgbonus[math.floor(math.min(waitturns,3))] end
+								--every point of vitality = a 20% chance to deal extra damage, as officer every lvl = additional 10% chance
+								if (pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/5>love.math.random() then
+									--bonus is 2 damage plus 1 for every 2 vitality and 1 for every 4 lvls if playing as officer
+									damage = damage + 2 + ((pStats.vit+(playerClass==1 and pObj.lv/2 or 0))/2) + pBonus.meleecritbuff
+									end
+								
+								damage = math.floor(damage)
+								mkHudmessage("The "..o.name.." is struck for "..damage.." damage!",{0.2,1,0.2,1})
+								o.health = o.health-damage
+								if o.health<=0 then
+									mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
+									killObj(o.id)
+									if pBonus.meleelifesteal==true then
+										pObj.damage = math.max(pObj.damage-love.math.random(3,6),0)
+										end
+									end
+								else
+								mkHudmessage("The strike missed the "..o.name..".",{0.2,1,0.2,1})
 								end
 							end
-						totaldmg = totaldmg + damage
-						o.health = o.health-damage
-						if o.health<=0 then
-							killmsg = o.deathmsg
-							killObj(o.id)
+						end
+					end
+				else
+				--spread
+				local cursordist = distance(pObj.pox,pObj.poy,cursorx,cursory)
+				local targetx = ((cursorx-pObj.pox)/cursordist)*(playerWeapon.range+pBonus.shotchokebuff)+pObj.pox - 1
+				local targety = ((cursory-pObj.poy)/cursordist)*(playerWeapon.range+pBonus.shotchokebuff)+pObj.poy - 1
+				local hits = 0
+				local totaldmg = 0
+				local killmsg
+				for i=0,8 do
+					local rayhit = hitscan(pObj.pox,pObj.poy,targetx+(i%3),targety+math.floor(i/3))
+					
+					if rayhit.type=="obj" then
+						local o = rayhit.hit
+						local dist = distance(pObj.pox,pObj.poy,o.pox,o.poy)
+						local tohit = playerWeapon.tohit*pBonus.shottohit
+						--if we've been aiming, gain 0.1 (by aim factor) tohit per turn waited (max 1 instead of 3)
+						tohit = tohit + pObj.tohitbonus + (math.min(waitturns,1)*(0.1*pBonus.aimfactor))
+						--freelancer gets 0.1 extra base tohit with shotguns
+						if playerClass==3 then tohit = tohit + 0.1 end
+						
+						if fireturns>1 then
+							--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
+							tohit = tohit * (1 - (fireturns-1)*(0.2*pBonus.rpdrecoilfactor))
+							end
+						for i=1,math.ceil(dist) do
+							--accuracy falloff is 7.5% per tile instead of 5%
+							tohit = tohit*0.925
+							end
+						--tohit multiplier applies 10% less
+						tohit = (tohit + pObj.tohitbonus) * (pObj.tohit * 0.9)
+						
+						if love.math.random()<tohit then
+							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-2,2),o.poy+love.math.random(-2,2))
+							hits = hits + 1
+							local damage = 0
+							--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
+							--the damage is rounded up after all of that is finished, so hopefully no problems will arise.
+							local pistolminbuff = 0
+							if playerWeapon.weaptype=="sidearm" then
+								pistolminbuff = pBonus.sidearmdmgmin/playerWeapon.dice
+								end
+							for i=1,playerWeapon.dice do
+								damage = damage + love.math.random(1+pistolminbuff,playerWeapon.sides)
+								end
+							if dist>pObj.pointblank then
+								damage = damage - (dist - pObj.pointblank) * 0.5
+								damage = math.max(damage,playerWeapon.dice/2)
+								damage = math.ceil(damage)
+								end
+							--damagebonus per pellet is cut to 1/6
+							if love.math.random()<1/6 then
+								damage = damage + pObj.damagebonus
+								end
+							--so is sidearm damage buff for the sawnoff, but to 1/7
+							if love.math.random()<1/7 then
+								if playerWeapon.weaptype=="sidearm" then
+									damage = damage + pBonus.sidearmdmgbuff
+									end
+								end
+							totaldmg = totaldmg + damage
+							o.health = o.health-damage
+							if o.health<=0 then
+								killmsg = o.deathmsg
+								killObj(o.id)
+								end
 							end
 						end
 					end
-				end
-			
-			if hits<1 then
-				mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
-				else
-				mkHudmessage(hits.." pellets hit for "..totaldmg.." total damage!",{0.2,1,0.2,1})
-				if killmsg~=nil then mkHudmessage(killmsg,{0.5,1.0,0.5,1}) end
+				
+				if hits<1 then
+					mkHudmessage("The shot hits nothing.",{1,0.6,0.1,1})
+					else
+					mkHudmessage(hits.." pellets hit for "..totaldmg.." total damage!",{0.2,1,0.2,1})
+					if killmsg~=nil then mkHudmessage(killmsg,{0.5,1.0,0.5,1}) end
+					end
 				end
 			end
 		

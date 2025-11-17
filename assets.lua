@@ -1,8 +1,15 @@
 sfx = {
 	pistol = love.audio.newSource("sounds/pistol.wav","static"),
+	ch9 = love.audio.newSource("sounds/ch9.wav","static"),
+	magnum = love.audio.newSource("sounds/magnum.wav","static"),
 	submachine = love.audio.newSource("sounds/submachine.wav","static"),
-	rifle = love.audio.newSource("sounds/rifle.wav","static"),
-	batrifle = love.audio.newSource("sounds/batrifle.wav","static"),
+	sm41 = love.audio.newSource("sounds/sm41.wav","static"),
+	rifle = love.audio.newSource("sounds/riflesmall.wav","static"),
+	g11 = love.audio.newSource("sounds/g11.wav","static"),
+	machinegun = love.audio.newSource("sounds/machinegun.wav","static"),
+	batrifle = love.audio.newSource("sounds/rifle.wav","static"),
+	shotgun = love.audio.newSource("sounds/batrifle.wav","static"),
+	ssg = love.audio.newSource("sounds/supershotgun.wav","static"),
 	melee = love.audio.newSource("sounds/pistol.wav","static"),
 }
 
