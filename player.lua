@@ -91,20 +91,20 @@ function playeraim(alt)
 	end
 
 function playerattack()
-	waitturns = math.max(waitturns - 0.5,0)
-	if playerWeapon.weaptype=="rapid" then
-		fireturns = fireturns + 1
-		end
 	if playerWeapon.ammotype=="no" or playerWeapon.ammo>=(playerWeapon.ammouse==nil and 1 or playerWeapon.ammouse) then
 		if cursorx==pObj.pox and cursory==pObj.poy then
 			mkHudmessage("That's me, you idiot!")
 			controlmode = M_MOVE
 			return
 			end
+		waitturns = math.max(waitturns - 0.5,0)
+		if playerWeapon.weaptype=="rapid" then
+			fireturns = fireturns + 1
+			end
 		for i=1,playerWeapon.ammouse==nil and 1 or playerWeapon.ammouse do
 			if pBonus.freefifthshot==true then
 				shots = shots + 1
-				if shots==5 then
+				if shots%5 == 0 then
 					shots = 0
 					else
 					if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
