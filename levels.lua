@@ -791,7 +791,17 @@ espawntable = {
 	{"shotmilguard",34,6},	--14, 9, 8, 6
 	{"mildog",35,4},		--14, 9, 8, 6
 	{"riflemilguard",35,4},	--14, 9, 8, 6
-	{"shotmilguard",36,6}	--14,10, 8, 6
+	{"shotmilguard",36,6},	--14,10, 8, 6
+	{"riflemilguard",40,4}, --16,10, 9, 7
+	{"shockdrone",42,5},	--16,11, 9, 7
+	{"gundrone",45,4},		--17,11, 9, 7
+	{"shockdrone",48,3},	--18,12,10, 7
+	{"shotmilguard",50,6},	--19,12,10, 8
+	{"gundrone",52,6},		--19,13,10, 8
+	{"mildog",56,6},		--21,13,11, 8
+	{"riflemilguard",60,8},	--22,14,12, 9
+	{"shockdrone",64,5},	--23,15,12, 9
+	{"gundrone",65,6},		--23,15,12, 9
 }
 --entries are as follows:
 --ammotype, min floor, weight, count
@@ -822,5 +832,9 @@ ispawntable = {
 	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},{"combatstim",8,2,1},{"traumakit",8,3,1},{"medikit",8,2,1},
 	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,2,150},
 	{"traumakit",11,2,1},{"medikit",11,1,1},{"adrenaline",11,2,1},{"combatstim",11,2,1},
-	{"z3rifle",13,6,20},{"balarm",13,4,150},{"nrgarm",13,4,170},
+	{"z3rifle",13,6,20},{"balarm",13,4,150},{"nrgarm",13,4,170},{"ca12shotty",13,5,6},
+	{"nrgarm",14,2,170},{"magsmg",14,6,22},{"z3rifle",14,4,20},{"combatstim",14,4,1},{"traumakit",14,6,1},
+	{"ch9pis",15,5,15},{"g26rifle",15,4,21},{"machinegun",15,4,50},
+	{"autoshotty",16,5,12},{"supershotgun",16,3,2},{"nrgarm",16,3,170},{"magsmg",16,3,22},{"z3rifle",16,4,20},
+	{"traumakit",17,7,1},{"balarm",17,4,150},{"ch9pis",17,5,15},{"supershotgun",17,5,2},
 }
