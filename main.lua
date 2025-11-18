@@ -849,17 +849,24 @@ function updatescreen(camx,camy)
 			else
 			love.graphics.print("  Ammo: N/A",220,435)
 			end
+		
+		local aimnum = math.min(waitturns,3)
+		local aimtxt = ""
 		if waitturns > 0 then
-			local aimnum = math.min(waitturns,3)
 			if playerWeapon.dmgtype=="spread" then
 				aimnum = math.min(waitturns,1)
 				end
-			local aimtxt = " Aim"
+			aimtxt = " Aim"
 			if playerWeapon.dmgtype=="melee" then
 				aimtxt = " Charge"
 				end
-			love.graphics.print("+"..aimnum..aimtxt,280,450)
+			aimtxt = "+"..aimnum..aimtxt
 			end
+		if playerWeapon.weaptype=="rapid" and fireturns > 0 then
+			if #aimtxt > 1 then aimtxt = aimtxt.." / " end
+			aimtxt = aimtxt.."-"..fireturns.." Recoil"
+			end
+		love.graphics.print(aimtxt,280,450)
 		end
 	--find targetted object
 	love.graphics.setColor(1,0.2,0.2)
@@ -932,7 +939,7 @@ function updatescreen(camx,camy)
 				xtratxt = " ("..math.floor(v.durability/v.maxdurability*100).."%)"
 				end
 			if v.type=="aid" then
-				xtratxt = " ("..v.uses.."/"..v.maxuses..")"
+				xtratxt = " ("..v.uses.."/"..v.maxuses..") +"
 				end
 			
 			if menuselect==i and ammoselect==false then
