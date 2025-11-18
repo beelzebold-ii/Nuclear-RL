@@ -91,7 +91,7 @@ function eobjTick(o)
 			local hasLOS = false
 			if rayhit.hit==o then hasLOS = true end
 			
-			if ((not canattack) or (not hasLOS)) and dist>love.math.random(1.2,1.4) then
+			if ((not canattack) or (not hasLOS)) and dist>love.math.random(1.1,1.3) then
 				--better get a better position.
 				print(o.name.." at ("..o.pox..","..o.poy..") is moving")
 				
@@ -111,6 +111,10 @@ function eobjTick(o)
 				--engaging target.
 				print(o.name.." at ("..o.pox..","..o.poy..") is attacking")
 				o.justfired = true
+				--for some reason enemies are attacking without line of sight when directly across a wall
+				--this should put a full stop to it
+				--altho it does waste the enemy's turn
+				if hasLOS==false then o.attacksteps = o.cooldown;return end
 				
 				if sfx[o.atksound]~=nil then
 					sfx[o.atksound]:stop()

@@ -175,6 +175,7 @@ function playerattack()
 								end
 							mkHudmessage("The "..o.name.." is hit for "..damage.." damage!",{0.2,1,0.2,1})
 							o.health = o.health-damage
+							o.chasing = true
 							if o.health<=0 then
 								mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
 								killObj(o.id)
@@ -217,6 +218,7 @@ function playerattack()
 								damage = math.floor(damage)
 								mkHudmessage("The "..o.name.." is struck for "..damage.." damage!",{0.2,1,0.2,1})
 								o.health = o.health-damage
+								o.chasing = true
 								if o.health<=0 then
 									mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
 									killObj(o.id)
@@ -291,6 +293,7 @@ function playerattack()
 								end
 							totaldmg = totaldmg + damage
 							o.health = o.health-damage
+							o.chasing = true
 							if o.health<=0 then
 								killmsg = o.deathmsg
 								killObj(o.id)
