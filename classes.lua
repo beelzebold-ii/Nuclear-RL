@@ -295,8 +295,8 @@ function makeFlrObj(char,color,ox,oy)
 function killObj(oid)
 	local o = eObjs[oid]
 	pscore = (pscore + (o.xp*3) - pObj.pain) + 16
-	if gameskill==1 then o.xp = math.floor(o.xp*0.5) else
-		if gameskill==2 then o.xp = math.floor(o.xp*0.75) end
+	if gameskill==1 then o.xp = math.floor(o.xp*0.8) else
+		if gameskill==2 then o.xp = math.floor(o.xp*0.9) end
 		end
 	pObj.xp = pObj.xp + o.xp
 	if pObj.xp>=pObj.lv*70-20 then

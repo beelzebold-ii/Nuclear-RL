@@ -16,6 +16,7 @@ sfx = {
 mus = {
 	title = love.audio.newSource("music/HalfDeath.wav","stream"),
 	death = love.audio.newSource("music/RadiationIncident.wav","stream"),
+	inter = love.audio.newSource("music/LunchBreak.wav","stream"),
 }
 lvmus = {
 	cluster1 = {--floors 1-3
