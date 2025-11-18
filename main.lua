@@ -1988,8 +1988,10 @@ function hitscan(x1,y1,x2,y2,onlyobj,novis)
 function objat(ox,oy,otable)
 	for i,o in ipairs(otable) do
 		if o.pox==ox and o.poy==oy then
-			if otable==eObjs and o.health<=0 then return -1 end
-			return i
+			--quick dirty fix for objat getting tripped up by ghosts like the hitscan check did
+			if otable==eObjs and o.health<=0 then else
+				return i
+				end
 			end
 		end
 	return -1
