@@ -690,7 +690,8 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--create items
 	local itemcount = love.math.random(2,6) + math.floor(levelnum/2.5) + gameskill
 	local ln = levelnum
-	if gameskill==1 then ln = ln - 3 end
+	if gameskill==1 then ln = ln - 2 end
+	if gameskill==4 then ln = ln + 1 end
 	if levelfeeling=="vault" then ln = ln + 4;itemcount = itemcount + 9 end
 	--spawntable
 	local itemtable = {}
@@ -711,7 +712,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 		end
 	
 	--create ammo
-	local ammocount = love.math.random(1,6) + math.floor(levelnum/2) + (gameskill*2)
+	local ammocount = love.math.random(3,7) + math.floor(levelnum/1.75) + (gameskill*2)
 	local ln = levelnum
 	if levelfeeling=="vault" then ln = ln + 6 end
 	--spawntable
@@ -807,8 +808,8 @@ espawntable = {
 --ammotype, min floor, weight, count
 aspawntable = {
 	{"9mm",0,7,12},
-	{".35",0,1,4},
-	{"12ga",2,3,3},
+	{".35",0,1,6},
+	{"12ga",2,3,3},".35",2,1,10},
 	{"9mm",3,1,30},{"12ga",3,1,4},
 	{"5mm",5,1,20},{"12ga",5,1,5},{".35",5,1,6},
 	{"5mm",7,3,20},{"12ga",7,2,4},
@@ -817,7 +818,8 @@ aspawntable = {
 }
 --entries are as follows:
 --classname, min floor, weight, count
---on firing blanks you need to be three floors higher to find any given drop
+--on firing blanks you need to be two floors higher to find any given drop
+--on goin' nuclear you need to be one floor lower to find them.
 ispawntable = {
 	{"m99pis",-3,8,12},{"painkiller",-3,2,1},{"bandage",-3,2,1},
 	{"painkiller",-1,2,1},{"secarm",-1,4,60},
@@ -827,8 +829,8 @@ ispawntable = {
 	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},{"adrenaline",3,2,1},
 	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,2,9},{"knuckles",4,1,0},{"bandage",4,2,1},{"medikit",4,3,1},
 	{"sm40smg",5,4,30},{"riotarm",5,3,70},{"knuckles",5,2,0},
-	{"mk23pis",6,2,9},{"huntrifle",6,2,10},{"traumakit",6,1,1},{"medikit",6,2,1},{"adrenaline",6,2,1},
-	{"riotarm",7,4,70},{"milarm",7,2,100},{"traumakit",7,4,1},{"combatstim",7,3,1},
+	{"mk23pis",6,2,9},{"huntrifle",6,2,10},{"traumakit",6,1,1},{"medikit",6,2,1},{"adrenaline",6,2,1},{"ca12shotty",6,3,6},
+	{"riotarm",7,4,70},{"milarm",7,2,100},{"traumakit",7,4,1},{"combatstim",7,3,1},{"ca12shotty",7,5,6},
 	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},{"combatstim",8,2,1},{"traumakit",8,3,1},{"medikit",8,2,1},
 	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,2,150},
 	{"traumakit",11,2,1},{"medikit",11,1,1},{"adrenaline",11,2,1},{"combatstim",11,2,1},
