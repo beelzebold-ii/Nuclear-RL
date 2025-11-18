@@ -872,19 +872,22 @@ function updatescreen(camx,camy)
 	love.graphics.setColor(1,0.2,0.2)
 	local target = -1
 	local targetItem = false
-	if controlmode==M_FIRING then
-		if objat(cursorx,cursory,eObjs)~=-1 then
-			target = objat(cursorx,cursory,eObjs)
+	local ray = checkLOS(pObj.pox,pObj.poy,cursorx,cursory,-2,true)
+	if ray.type ~= "wall" then
+		if controlmode==M_FIRING then
+			if objat(cursorx,cursory,eObjs)~=-1 then
+				target = objat(cursorx,cursory,eObjs)
+				else
+				if objat(cursorx,cursory,iObjs)~=-1 then
+					target = iObjs[objat(cursorx,cursory,iObjs)].item
+					targetItem = true
+					end
+				end
 			else
-			if objat(cursorx,cursory,iObjs)~=-1 then
-				target = iObjs[objat(cursorx,cursory,iObjs)].item
+			if objat(pObj.pox,pObj.poy,iObjs)~=-1 then
+				target = iObjs[objat(pObj.pox,pObj.poy,iObjs)].item
 				targetItem = true
 				end
-			end
-		else
-		if objat(pObj.pox,pObj.poy,iObjs)~=-1 then
-			target = iObjs[objat(pObj.pox,pObj.poy,iObjs)].item
-			targetItem = true
 			end
 		end
 	--actually draw target info
