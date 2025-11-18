@@ -2002,7 +2002,7 @@ function makepathmap(fly)
 		pathmap[x] = {}
 		for y=1,25 do
 			local thistile = true
-			if tilemap[y][x] > 0 and (fly==false or tilemap[y][x]~=2) then thistile = false end
+			if tilemap[y][x] > 0 and (fly==nil or tilemap[y][x]~=2) then thistile = false end
 			
 			local oat = objat(x,y,eObjs)
 			if oat~=-1 and eObjs[oat]~=ignoreobj and ignoreobj~=-2 then thistile = false end
