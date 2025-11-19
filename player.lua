@@ -461,6 +461,11 @@ function damageplayer(dmg,noarmor,dist)
 	local guaranteedinjuryrate = (gameskill > 2 and 4 or 6)
 	--rounded, not floored, cos armor makes many attacks outright less than 4 damage
 	local injuries = math.floor((dmg / guaranteedinjuryrate) + 0.5)
+	--if you're overdamaged, you will be severely punished for continuing to rack up hits
+	--because apparently the injuries are very bad at discouraging what they were meant to discourage
+	if pObj.damage + dmg > pObj.maxdamage then
+		injuries = math.floor(injuries * (2 + love.math.random()))
+		end
 	--bleedblock stops up to two guaranteed injuries (one on goin nuclear)
 	if pObj.bleedblock > 50 then
 		injuries = math.max(0,injuries - (gameskill > 3 and 1 or 2))
