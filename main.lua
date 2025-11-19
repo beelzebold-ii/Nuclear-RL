@@ -238,16 +238,21 @@ function love.load()
 			config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
 				KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
 				KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
-				KEY_INV = 'i',KEY_EQUIP = 'e',KEY_GET = 'g',KEY_LOG = 'l',KEY_GIF = 'f12'
+				KEY_INV = 'i',KEY_EQUIP = 'e',KEY_TRAITS = 's',KEY_GET = 'g',KEY_LOG = 'l',
+				KEY_GIF = 'f12'
 				},cfgversion = "040"}
 			print("cfg reset (version incorrect)")
 			love.filesystem.write("nrlcfg.json",json.encode(config))
+			end
+		if config.keybinds.KEY_TRAITS == nil then
+			config.keybinds.KEY_TRAITS = 's'
 			end
 		else
 		config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
 			KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
 			KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
-			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_GET = 'g',KEY_LOG = 'l',KEY_GIF = 'f12'
+			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_TRAITS = 's',KEY_GET = 'g',KEY_LOG = 'l',
+			KEY_GIF = 'f12'
 			},cfgversion = gamecfgversion}
 		print("new default config created :3")
 		love.filesystem.write("nrlcfg.json",json.encode(config))
@@ -444,6 +449,7 @@ function drawMenu()
 				{"KEY_WAIT","key","Wait/Aim"},
 				{"KEY_INV","key","Inventory"},
 				{"KEY_EQUIP","key","Equipment"},
+				{"KEY_TRAITS","key","Skills"},
 				{"KEY_MORE","key","More Info"},
 				{"KEY_LOG","key","Message Log"},
 				{"KEY_GIF","key","Save Replay GIF"},
@@ -468,7 +474,7 @@ function drawMenu()
 		}
 		local menuoptindx = {
 			[STATE_CONF] = {1,2,4,6},
-			[STATE_KEYS] = {2,3,4,5,6,7,8,9,10,11,12,13,15},
+			[STATE_KEYS] = {2,3,4,5,6,7,8,9,10,11,12,13,14,16},
 			[STATE_BUTN] = {2},
 		}
 		local confitems = menudef[gamestate]
@@ -1250,7 +1256,7 @@ function love.keypressed(key,scancode,isrepeat)
 				if menuselect>1 then menuselect = menuselect - 1 end
 				end
 			if key=='down' then
-				local maxsel = {4,4,13,11,math.max(1,#hiscores-12),4,4}
+				local maxsel = {4,4,14,11,math.max(1,#hiscores-12),4,4}
 				if menuselect<maxsel[gamestate] then menuselect = menuselect + 1 end
 				end
 			end
@@ -1313,6 +1319,7 @@ function love.keypressed(key,scancode,isrepeat)
 				{"KEY_WAIT","key"},
 				{"KEY_INV","key"},
 				{"KEY_EQUIP","key"},
+				{"KEY_TRAITS","key"},
 				{"KEY_MORE","key"},
 				{"KEY_LOG","key"},
 				{"KEY_GIF","key"},
@@ -1820,6 +1827,10 @@ function love.keypressed(key,scancode,isrepeat)
 			end
 		if key==config.keybinds.KEY_EQUIP then
 			gamestate = STATE_EQUIP
+			menuselect = 1
+			end
+		if key==config.keybinds.KEY_TRAITS then
+			gamestate = STATE_TRAIT
 			menuselect = 1
 			end
 		if key==config.keybinds.KEY_LOG then
