@@ -45,6 +45,8 @@ function startgame()
 	enemies = 0
 	kills = 0
 	levelnum = 1
+	area = 1
+	layer = 1
 	pscore = 0
 	
 	cheatermode = false
@@ -125,6 +127,10 @@ function pasteprefab(ox,oy,prefab,w,h)
 function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--empty the replay buffer so things don't spill between levels
 	replayBuffer = {}
+	
+	--color walls and floors
+	tilecolor[2] = areacolors[layer][area][1]
+	tilecolor[1] = areacolors[layer][area][2]
 	
 	if levelnum>1 then
 		lvmus["cluster"..muscluster][clustertrack]:stop()

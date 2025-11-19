@@ -42,6 +42,8 @@ bindingkey = false
 ammoselect = false
 
 levelnum = 1
+area = 1
+layer = 1
 --this can be actual static tile data
 --45x25
 tilemap={
@@ -74,6 +76,38 @@ tilemap={
 seentiles={}
 --more vars related to tiles
 tilecolor={{0.2,0.15,0.15,1},{0.6,0.5,0.5,1},{0.2,0.9,0.2,1}}
+areacolors={
+	{--layer 1
+		{--area 1
+			{0.6,0.5,0.5,1},--wall
+			{0.2,0.15,0.15,1},--floor
+		},
+		{--area 2
+			{0.5,0.5,0.5,1},--wall
+			{0.2,0.2,0.2,1},--floor
+		},
+		{--area 3
+			{0.3,0.65,0.65,1},--wall
+			{0.2,0.2,0.15,1},--floor
+		},
+	},
+	{--layer 2
+		{--area 2
+			{0.6,0.3,0.3,1},--wall
+			{0.2,0.2,0.2,1},--floor
+		},
+		{--area 3
+			{0.6,0.6,0.3,1},--wall
+			{0.1,0.25,0.1,1},--floor
+		},
+	},
+	{--layer 3
+		{--area 3
+			{0.2,0.2,0.7,1},--wall
+			{0.1,0.2,0.3,1},--floor
+		},
+	},
+}
 tilechar={".","#","="}
 --plain rendering canvas
 tilecanvas=love.graphics.newCanvas(800,480)
@@ -1848,6 +1882,7 @@ function love.keypressed(key,scancode,isrepeat)
 			end
 		if key=='return' and pObj.pox==exit.pox and pObj.poy==exit.poy then
 			levelnum = levelnum+1
+			area = math.floor((levelnum-1)/4)+1
 			generatenewlevel(nil,true)
 			end
 		if key==config.keybinds.KEY_GET then

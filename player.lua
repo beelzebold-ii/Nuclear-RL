@@ -531,8 +531,9 @@ function damageplayer(dmg,noarmor,dist)
 					xdeath = 1
 					end
 				end
+			pscore = pscore/1.1
 			--perfect killrate?
-			if kills >= enemies - localenemycount and levelnum > 1 then pscore = math.floor(pscore*1.3) end
+			if kills >= enemies - localenemycount and levelnum > 1 then pscore = math.floor(pscore*1.2) end
 			--score based on avg time spent per floor
 			local avgtime = (runtime/levelnum) / 3600 --1.0 at 6 mins per floor, 2.0 at 12 mins, 0.5 at 3 mins
 			avgtime = math.min(avgtime,1.5) --time taken penalty can only go as high as 1.5; this equates to 9 mins
