@@ -557,7 +557,8 @@ function generateMortem(info)
 		--failure report
 		mtxt="Incident Report:\n \n"
 		mtxt=mtxt.."Subject: "..info.pname.." (lv"..info.level.." "..pclassnameshort[info.class]..")\n"
-		mtxt=mtxt.."Found "..xdeathtxt[info.xdeath+1].." on floor "..info.floor.." of Nuclear R&D.\n \n"
+		mtxt=mtxt.."Found "..xdeathtxt[info.xdeath+1].." on floor "..info.floor.." of Nuclear R&D.\n"
+		mtxt=mtxt.."Nuclear Version: "..gameversion.."\n \n"
 		if cheatermode==true then
 			mtxt=mtxt.."Cheats were used during this run.\n \n"
 			end
