@@ -235,7 +235,7 @@ objclasses={
 		aggro=0.7,
 		range=11,
 		name="Elite Guard",
-		desc="These guys are guarding the thing you came here for. Unfortunate.",
+		desc="These guys are guarding the deep research facility. Unfortunate.",
 		deathmsg="The Elite Guard breaths its last breath.",
 		ammo="5mm",ammocount=22,drops={"sn730rifle","sn730rifle","milarm","milarm","balarm"}
 	}
