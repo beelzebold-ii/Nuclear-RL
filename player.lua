@@ -33,6 +33,9 @@ function playermove(key)
 		if playerArmor~=nil then
 			armormovetime = playerArmor.movetime
 			end
+		if pObj.damage>pObj.maxdamage then
+			armormovetime = (armormovetime + 0.1) * 1.1
+			end
 		playerturnend((pObj.movetime*armormovetime)*((100 - pObj.pain)/100),nil,true)
 		end
 	end

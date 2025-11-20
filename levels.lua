@@ -128,9 +128,12 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--empty the replay buffer so things don't spill between levels
 	replayBuffer = {}
 	
+	--set the area number properly
+	area = math.floor((levelnum-1)/4)+1
+	
 	--color walls and floors
-	tilecolor[2] = areacolors[layer][area][1]
-	tilecolor[1] = areacolors[layer][area][2]
+	tilecolor[2] = areacolors[layer][math.min(area,#areacolors[layer])][1]
+	tilecolor[1] = areacolors[layer][math.min(area,#areacolors[layer])][2]
 	
 	if levelnum>1 then
 		lvmus["cluster"..muscluster][clustertrack]:stop()

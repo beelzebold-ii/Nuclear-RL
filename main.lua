@@ -79,31 +79,34 @@ tilecolor={{0.2,0.15,0.15,1},{0.6,0.5,0.5,1},{0.2,0.9,0.2,1}}
 areacolors={
 	{--layer 1
 		{--area 1
-			{0.6,0.5,0.5,1},--wall
+			{0.5,0.5,0.5,1},--wall
 			{0.2,0.15,0.15,1},--floor
 		},
 		{--area 2
-			{0.5,0.5,0.5,1},--wall
+			{0.1,0.35,0.1,1},--wall
 			{0.2,0.2,0.2,1},--floor
 		},
 		{--area 3
-			{0.3,0.65,0.65,1},--wall
-			{0.2,0.2,0.15,1},--floor
+			{0.1,0.32,0.4,1},--wall
+			{0.2,0.1,0.25,1},--floor
 		},
 	},
 	{--layer 2
+		nil,
 		{--area 2
-			{0.6,0.3,0.3,1},--wall
+			{0.4,0.15,0.15,1},--wall
 			{0.2,0.2,0.2,1},--floor
 		},
 		{--area 3
-			{0.6,0.6,0.3,1},--wall
-			{0.1,0.25,0.1,1},--floor
+			{0.4,0.4,0.2,1},--wall
+			{0.1,0.2,0.1,1},--floor
 		},
 	},
 	{--layer 3
+		nil,
+		nil,
 		{--area 3
-			{0.2,0.2,0.7,1},--wall
+			{0.1,0.1,0.4,1},--wall
 			{0.1,0.2,0.3,1},--floor
 		},
 	},
@@ -145,7 +148,12 @@ defaultnames = {"Niko","Clance","Chloe","Benny","Franziska","Kelsey","Via","Turn
 				"Temmie","Zik","Len","Caroline","Sam","Tommy","Kornel","Taggart",
 				"Cass","Romy","Amy","Victor","Marisa","Ash","Ari","Nikki","Index",
 				"Dawn","Valo","Noelle","Nyxity","Tenny","Sylvia","Luna","Eeva",
-				"Index","Chloe"}
+				"Index","Chloe",
+				"Heather","Jericho","Siveine","Sokosim","Finn","Jake","Marceline",
+				--wife names
+				"Court","Kaylee","Emma","Taylor","Sierra","Katelyn","Leo","Ash",
+				"Keiran","Ren","Ren","Alyx","Dizzy","Namine","Roxas","Saai","K",
+				"Lance","Aabria","Abby"}
 playerName = defaultnames[love.math.random(1,#defaultnames)]
 pclassnames = {"Field Officer","Detective","Independent Contractor","War Veteran"}
 pclassnameshort = {"Officer","Detective","Freelance","Veteran"}
@@ -913,7 +921,7 @@ function updatescreen(camx,camy)
 	local target = -1
 	local targetItem = false
 	local ray = checkLOS(pObj.pox,pObj.poy,cursorx,cursory,-2,true)
-	if ray.type ~= "wall" then
+	if ray.type ~= "wall" or controlmode~=M_FIRING then
 		if controlmode==M_FIRING then
 			if objat(cursorx,cursory,eObjs)~=-1 then
 				target = objat(cursorx,cursory,eObjs)
@@ -1882,7 +1890,6 @@ function love.keypressed(key,scancode,isrepeat)
 			end
 		if key=='return' and pObj.pox==exit.pox and pObj.poy==exit.poy then
 			levelnum = levelnum+1
-			area = math.floor((levelnum-1)/4)+1
 			generatenewlevel(nil,true)
 			end
 		if key==config.keybinds.KEY_GET then
