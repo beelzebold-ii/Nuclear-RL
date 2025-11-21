@@ -594,6 +594,10 @@ function inventoryItem(classname,count)
 	local o = {}
 	local c = itemclasses[classname]
 	
+	if c==nil then
+		print("INVALID ITEM CLASS: \n"..classname)
+		end
+	
 	o.type = c.type
 	if o.type=="weapon" then
 		o.ammo = count

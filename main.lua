@@ -2183,6 +2183,25 @@ function love.quit()
 
 --cheats hehehehehe
 function love.filedropped(file)
+	--check for level file
+	if gamestate == STATE_GAME and runtime == 0 then
+		file:open("r")
+		local lvstr = file:read()
+		file:close()
+		local ok,result = pcall(LoadLevel,lvstr)
+		if ok==false then
+			print("Error loading level file: \n"..result)
+			mkHudmessage("Error loading level file:")
+			mkHudmessage(result)
+			print(lvstr)
+			else
+			mkHudmessage("Highscores/Incident reports will not be logged.")
+			cheatermode = true
+			mkHudmessage("Loaded custom level!")
+			end
+		end
+	
+	--check for cmd file
 	local cmdfunc = {
 		test = function(a1,a2)
 			mkHudmessage("niko is gay")

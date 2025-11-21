@@ -3,6 +3,8 @@
 local Vector = require( "luafinding/vector" )
 local Luafinding = require("luafinding/luafinding")
 
+require("customlevel")
+
 function dangerlevel(level,skill)
 	local skillfunc = {
 		function(l)
