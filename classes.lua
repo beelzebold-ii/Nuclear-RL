@@ -231,7 +231,7 @@ objclasses={
 		tohit=0.7,
 		shots=3,
 		xp=30,
-		movetime=16,
+		movetime=18,
 		cooldown=0,
 		aggro=0.8,
 		range=11,
@@ -252,7 +252,7 @@ objclasses={
 		tohit=0.8,
 		shots=2,
 		xp=40,
-		movetime=12,
+		movetime=16,
 		cooldown=0,
 		aggro=0.8,
 		range=11,
@@ -339,6 +339,7 @@ function makeObj(classname,ox,oy)
 	o.aggro=c.aggro--the chance (0 to 1.0) for the obj to attack if it can
 	o.range=c.range--attack range of the enemy
 	o.fly=c.fly--if fly is true they move freely over acid
+	o.nomoving=c.nomoving--self explanatory, object cannot move
 	o.name=c.name--displayed on the info screen and when hovered
 	o.desc=c.desc--same as above
 	o.deathmsg=c.deathmsg--message displayed when you kill the object
@@ -389,19 +390,21 @@ function killObj(oid)
 			makeAmmoObj(o.ammo,amt,o.pox,o.poy)
 			else
 			--drop a random item
-			local drop = o.drops[love.math.random(1,#o.drops)]
-			local maxcounts = {
-				m99pis = 12,
-				sawnoff = 2,
-				sm40smg = 30,
-				ca12shotty = 6,
-				sn730rifle = 30,
-				secarm = 60,
-				riotarm = 70,
-				milarm = 100,
-				balarm = 150
-			}
-			makeItemObj(drop,love.math.random(1,maxcounts[drop]),o.pox,o.poy)
+			if o.drops~=nil then
+				local drop = o.drops[love.math.random(1,#o.drops)]
+				local maxcounts = {
+					m99pis = 12,
+					sawnoff = 2,
+					sm40smg = 30,
+					ca12shotty = 6,
+					sn730rifle = 30,
+					secarm = 60,
+					riotarm = 70,
+					milarm = 100,
+					balarm = 150
+				}
+				makeItemObj(drop,love.math.random(1,maxcounts[drop]),o.pox,o.poy)
+				end
 			end
 		end
 	
