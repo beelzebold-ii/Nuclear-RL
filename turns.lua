@@ -102,8 +102,12 @@ function eobjTick(o)
 				if path==nil or #path<2 then
 					print("no path...")
 					else
-					o.pox = path[2].x
-					o.poy = path[2].y
+					if o.nomoving~=true then
+						o.pox = path[2].x
+						o.poy = path[2].y
+						else
+						print("object is stationary.")
+						end
 					end
 				
 				o.attacksteps = o.attacksteps - 1
