@@ -361,7 +361,7 @@ function playerusepainkiller(o)
 	
 	local healamt = love.math.random(o.minheal,o.maxheal)
 	--using painkillers to heal pain is a bit wasteful compared to damage as pain isn't quite as important to clear fast
-	healamt = math.max(healamt - math.floor((pObj.pain * 0.5)),1)
+	--healamt = math.max(healamt - math.floor((pObj.pain * 0.5)),1) --removing to buff painkillers
 	pObj.pain = 0 --however, even if the item didn't have enough heal to get to your health damage, all pain is cleared anyway 
 	
 	if healamt > 1 then
@@ -386,13 +386,14 @@ function playerusefirstaid(o)
 	
 	local usetime = o.usetime + (pObj.pain / 3)
 	
-	pObj.pain = math.floor( pObj.pain + ( o.pain * (1.0 + love.math.random()) ) )
-	
 	pObj.injuries = math.max(pObj.injuries - o.heal, 0)
 	
 	--importantly, time is taken *after* the item is used
 	mkHudmessage("Used "..o.name.." to heal "..o.heal.." injuries.",{0.2,1,0.2,1})
 	playerturnend(usetime,true)
+	
+	--also importantly, pain is inflicted after the time is taken
+	pObj.pain = math.floor( pObj.pain + ( o.pain * (1.0 + love.math.random()) ) )
 	end
 
 
