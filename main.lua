@@ -2183,21 +2183,48 @@ function love.quit()
 
 --cheats hehehehehe
 function love.filedropped(file)
-	--check for level file
-	if gamestate == STATE_GAME and runtime == 0 then
-		file:open("r")
-		local lvstr = file:read()
-		file:close()
-		local ok,result = pcall(LoadLevel,lvstr)
-		if ok==false then
-			print("Error loading level file: \n"..result)
-			mkHudmessage("Error loading level file:")
-			mkHudmessage(result)
-			print(lvstr)
-			else
-			mkHudmessage("Highscores/Incident reports will not be logged.")
+	--check for json file
+	file:open("r")
+	local jsonstr = file:read()
+	file:close()
+	local ok,result = pcall(json.decode,jsonstr)
+	if ok==true then
+		if result.jsonfile=="nrlpstate" then
+			--json file is presumed to be a player state
+			local oldpos = {pObj.pox,pObj.poy}
+			pObj = result.pObj
+			pObj.pox = oldpos[1]
+			pObj.poy = oldpos[2]
+			pBonus = result.pBonus
+			pSkills = result.pSkills
+			pSkillOrder = result.pSkillOrder
+			playerClass = result.playerClass
+			pStats = result.pStats
+			playerAmmo = result.playerAmmo
+			playerInventory = result.playerInventory
+			playerWeapon = result.playerWeapon
+			playerArmor = result.playerArmor
+			playerName = result.playerName
 			cheatermode = true
-			mkHudmessage("Loaded custom level!")
+			mkHudmessage("Cheater mode enabled.")
+			mkHudmessage("Loaded player state!")
+			end
+		if result.jsonfile=="nrllevel" then
+			--json file is presumed to be a level
+			if gamestate == STATE_GAME and runtime == 0 then
+				local ok2,result2 = pcall(LoadLevel,jsonstr)
+				if ok2==false then
+					print("Error loading level file: \n"..result2)
+					mkHudmessage("Error loading level file:")
+					mkHudmessage(result2)
+					print(jsonstr)
+					else
+					mkHudmessage("Highscores/Incident reports will not be logged.")
+					cheatermode = true
+					mkHudmessage("Loaded custom level!")
+					return
+					end
+				end
 			end
 		end
 	
@@ -2409,6 +2436,29 @@ function love.filedropped(file)
 				return
 				end
 			generatenewlevel(a1,false,a2)
+			end,
+		saveplayerstate = function(a1,a2)
+			local playerstate = {
+				pObj = pObj,
+				pBonus = pBonus,
+				pSkills = pSkills,
+				pSkillOrder = pSkillOrder,
+				playerClass = playerClass,
+				pStats = pStats,
+				playerAmmo = playerAmmo,
+				playerInventory = playerInventory,
+				playerWeapon = playerWeapon,
+				playerArmor = playerArmor,
+				playerName = playerName,
+				jsonfile = "nrlpstate"
+			}
+			local playerstr = json.encode(playerstate)
+			local filename = "playerstate_"..playerName.."_"..os.date("!%Y-%m-%d_%H-%M-%S")..".json"
+			local statefile = love.filesystem.newFile(filename)
+			statefile:open("w")
+			statefile:write(playerstr)
+			statefile:close()
+			mkHudmessage("Saved as "..filename)
 			end,
 	}
 	
