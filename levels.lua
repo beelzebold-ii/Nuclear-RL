@@ -627,7 +627,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--hook up enemy spawntable
 	local enemytable = {}
 	local dlevel = dangerlevel(levelnum,gameskill)
-	if levelfeeling=="vault" then dlevel = dlevel + 10 end
+	if levelfeeling=="vault" then dlevel = dlevel + 10 + (3 * gameskill) end
 	for _,v in ipairs(espawntable) do
 		if dlevel>v[2]-1 then
 			for i=1,v[3] do
