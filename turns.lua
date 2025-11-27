@@ -23,7 +23,10 @@ function playerturnend(timetaken,noclear,moving)
 			pObj.regentime = pObj.regentime - timeToRegen
 			end
 		else
-		pObj.pain = math.floor(math.max(0, pObj.pain * pObj.painfactor - math.floor(timetaken/2)))
+		--don't regen away pain while using medical equipment
+		if playerUsingMeds~=true then
+			pObj.pain = math.floor(math.max(0, pObj.pain * pObj.painfactor - math.floor(timetaken/2)))
+			end
 		end
 	
 	pObj.bleedblock = pObj.bleedblock + timetaken
@@ -71,6 +74,8 @@ function playerturnend(timetaken,noclear,moving)
 	if iat~=-1 and hudmessage=="" then
 		mkHudmessage("Press "..config.keybinds.KEY_GET.." to get "..iObjs[iat].item.name)
 		end
+	
+	playerUsingMeds = false
 	
 	update = true
 	end

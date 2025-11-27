@@ -228,6 +228,8 @@ playerDead = false
 waitturns = 0
 fireturns = 0
 
+playerUsingMeds = false
+
 shots = 1
 
 --general gamestats

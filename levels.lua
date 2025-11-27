@@ -45,6 +45,8 @@ function startgame()
 	
 	playerName = defaultnames[love.math.random(1,#defaultnames)]
 	
+	playerUsingMeds = true
+	
 	runtime = 0
 	enemies = 0
 	kills = 0
@@ -704,11 +706,11 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			end
 		
 		--create items
-		local itemcount = love.math.random(2,6) + math.floor(levelnum/2.5) + gameskill
+		local itemcount = love.math.random(3,6) + math.floor(levelnum/2) + gameskill
 		local ln = levelnum
 		if gameskill==1 then ln = ln - 2 end
 		if gameskill==4 then ln = ln + 1 end
-		if levelfeeling=="vault" then ln = ln + 4;itemcount = itemcount + 9 end
+		if levelfeeling=="vault" then ln = ln + 4;itemcount = itemcount + 8 + math.floor(levelnum/2) end
 		--spawntable
 		local itemtable = {}
 		for _,v in ipairs(ispawntable) do
@@ -730,7 +732,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 		--create ammo
 		local ammocount = love.math.random(3,7) + math.floor(levelnum/1.75) + (gameskill*2)
 		local ln = levelnum
-		if levelfeeling=="vault" then ln = ln + 6 end
+		if levelfeeling=="vault" then ln = ln + 6;ammocount = math.floor(ammocount * 1.5) end
 		--spawntable
 		local ammotable = {}
 		for _,v in ipairs(aspawntable) do
@@ -862,17 +864,58 @@ ispawntable = {
 	{"sawnoff",2,5,2},{"machete",2,2,0},{"witchmag",2,4,6},{"medikit",2,1,1},{"bandage",2,2,1},
 	{"sm40smg",3,3,30},{"sawnoff",3,1,2},{"secarm",3,3,60},{"riotarm",3,1,70},{"adrenaline",3,2,1},
 	{"riotarm",4,5,70},{"machete",4,1,0},{"mk23pis",4,4,9},{"knuckles",4,1,0},{"bandage",4,2,1},{"medikit",4,3,1},
-	{"sm40smg",5,4,30},{"riotarm",5,3,70},{"knuckles",5,2,0},{"huntrifle",5,3,10},{"ch7pis",5,3,15},
-	{"mk23pis",6,2,9},{"huntrifle",6,4,10},{"traumakit",6,1,1},{"medikit",6,2,1},{"adrenaline",6,2,1},{"ca12shotty",6,3,6},
-	{"riotarm",7,4,70},{"milarm",7,2,100},{"traumakit",7,4,1},{"combatstim",7,3,1},{"ca12shotty",7,5,6},
+	{"sm40smg",5,4,30},{"riotarm",5,3,70},{"knuckles",5,2,0},{"huntrifle",5,3,10},{"ch7pis",5,4,15},
+	{"mk23pis",6,2,9},{"huntrifle",6,4,10},{"traumakit",6,1,1},{"medikit",6,2,1},{"adrenaline",6,2,1},{"ca12shotty",6,3,6},{"milarm",6,2,100},
+	{"riotarm",7,4,70},{"milarm",7,4,100},{"traumakit",7,4,1},{"combatstim",7,3,1},{"ca12shotty",7,5,6},
 	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},{"combatstim",8,2,1},{"traumakit",8,3,1},{"medikit",8,2,1},
-	{"bossrifle",9,4,8},{"huntrifle",9,1,10},{"z3rifle",9,1,20},{"ch9pis",9,1,15},
-	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,2,150},
-	{"traumakit",11,2,1},{"medikit",11,1,1},{"adrenaline",11,2,1},{"combatstim",11,2,1},{"ch9pis",11,2,15},
+	{"bossrifle",9,4,8},{"huntrifle",9,1,10},{"z3rifle",9,1,20},{"ch9pis",9,3,15},{"milarm",9,6,100},
+	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},{"balarm",10,3,150},
+	{"traumakit",11,2,1},{"medikit",11,1,1},{"adrenaline",11,2,1},{"combatstim",11,2,1},{"ch9pis",11,3,15},
 	{"bossrifle",12,4,8},{"z3rifle",12,3,20},{"ca12shotty",12,5,6},
-	{"z3rifle",13,4,20},{"balarm",13,4,150},{"nrgarm",13,4,170},
-	{"nrgarm",14,2,170},{"magsmg",14,6,22},{"z3rifle",14,4,20},{"combatstim",14,4,1},{"traumakit",14,6,1},
+	{"z3rifle",13,4,20},{"balarm",13,5,150},{"nrgarm",13,4,170},
+	{"nrgarm",14,4,170},{"magsmg",14,6,22},{"z3rifle",14,4,20},{"combatstim",14,4,1},{"traumakit",14,6,1},
 	{"ch9pis",15,5,15},{"g26rifle",15,4,21},{"machinegun",15,3,50},
-	{"autoshotty",16,5,12},{"supershotgun",16,3,2},{"nrgarm",16,3,170},{"magsmg",16,3,22},{"z3rifle",16,4,20},
-	{"traumakit",17,7,1},{"balarm",17,4,150},{"ch9pis",17,5,15},{"supershotgun",17,5,2},
+	{"autoshotty",16,5,12},{"supershotgun",16,4,2},{"nrgarm",16,5,170},{"magsmg",16,4,22},{"z3rifle",16,4,20},
+	{"traumakit",17,7,1},{"balarm",17,6,150},{"ch9pis",17,5,15},{"supershotgun",17,5,2},
+}
+--just weapons
+ispawntablew = {
+	{"m99pis",-3,8,12},
+	{"autopis",0,1,20},
+	{"sawnoff",1,1,2},{"baton",1,1,0},
+	{"sawnoff",2,5,2},{"machete",2,2,0},{"witchmag",2,4,6},
+	{"sm40smg",3,3,30},{"sawnoff",3,1,2},
+	{"machete",4,1,0},{"mk23pis",4,4,9},{"knuckles",4,1,0},
+	{"sm40smg",5,4,30},{"knuckles",5,2,0},{"huntrifle",5,3,10},{"ch7pis",5,4,15},
+	{"mk23pis",6,2,9},{"huntrifle",6,4,10},{"ca12shotty",6,3,6},
+	{"ca12shotty",7,5,6},
+	{"sn730rifle",8,4,30},{"ch7pis",8,4,15},
+	{"bossrifle",9,4,8},{"huntrifle",9,1,10},{"z3rifle",9,1,20},{"ch9pis",9,3,15},
+	{"ca12shotty",10,5,6},{"sn730rifle",10,5,30},{"ch7pis",10,3,15},{"z3rifle",10,3,20},
+	{"ch9pis",11,3,15},
+	{"z3rifle",12,3,20},{"ca12shotty",12,5,6},
+	{"z3rifle",13,4,20},
+	{"magsmg",14,6,22},{"z3rifle",14,4,20},
+	{"ch9pis",15,5,15},{"g26rifle",15,4,21},{"machinegun",15,3,50},
+	{"autoshotty",16,5,12},{"supershotgun",16,4,2},{"magsmg",16,4,22},{"z3rifle",16,4,20},
+	{"ch9pis",17,5,15},{"supershotgun",17,5,2},
+}
+--just armor
+ispawntablea = {
+	{"secarm",-1,4,60},
+	{"secarm",3,3,60},{"riotarm",3,1,70},
+	{"riotarm",4,5,70},
+	{"riotarm",5,3,70},
+	{"milarm",6,2,100},
+	{"riotarm",7,4,70},{"milarm",7,4,100},
+	{"milarm",9,6,100},
+	{"balarm",10,3,150},
+	{"balarm",13,5,150},{"nrgarm",13,4,170},
+	{"nrgarm",14,4,170},
+	{"nrgarm",16,5,170},
+	{"balarm",17,6,150},
+}
+--just medical equipment
+ispawntablem = {
+	
 }

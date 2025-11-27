@@ -390,10 +390,13 @@ function playerusefirstaid(o)
 	
 	--importantly, time is taken *after* the item is used
 	mkHudmessage("Used "..o.name.." to heal "..o.heal.." injuries.",{0.2,1,0.2,1})
-	playerturnend(usetime,true)
 	
-	--also importantly, pain is inflicted after the time is taken
+	--also importantly, pain is inflicted before the time is taken
 	pObj.pain = math.floor( pObj.pain + ( o.pain * (1.0 + love.math.random()) ) )
+	
+	playerUsingMeds = true
+	
+	playerturnend(usetime,true)
 	end
 
 
@@ -437,6 +440,11 @@ function damageplayer(dmg,noarmor,dist)
 	dmg = dmg * ( 0.9 + (pObj.injuries*0.02) )
 	makeFlrObj(".",{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
 	
+	--punish player for using medical equipment while getting shot at
+	if playerUsingMeds == true then
+		dmg = dmg * 1.1 + 1
+		end
+	
 	if gameskill>1 then dmg = dmg*1.05 + 0.5 end
 	if gameskill>3 then dmg = dmg + 1 end
 	local pain = (dmg * 1.1 + 1) * pObj.painfactor
@@ -465,6 +473,11 @@ function damageplayer(dmg,noarmor,dist)
 	local guaranteedinjuryrate = (gameskill > 2 and 4 or 6)
 	--rounded, not floored, cos armor makes many attacks outright less than 4 damage
 	local injuries = math.floor((dmg / guaranteedinjuryrate) + 0.5)
+	--if you're actively using medical equipment, you will be severely punished for continuing to rack up hits
+	if playerUsingMeds == true then
+		injuries = math.floor(injuries * (2 + love.math.random()))
+		pObj.bleedblock = 0
+		end
 	--if you're overdamaged, you will be severely punished for continuing to rack up hits
 	--because apparently the injuries are very bad at discouraging what they were meant to discourage
 	if pObj.damage + dmg > pObj.maxdamage then
