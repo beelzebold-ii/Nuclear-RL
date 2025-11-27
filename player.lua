@@ -406,7 +406,7 @@ function playerLvUp()
 	pObj.sp = pObj.sp + 1
 	
 	pObj.maxdamage = pObj.maxdamage + 3
-	pObj.tohit = pObj.tohit + 0.1
+	pObj.tohit = pObj.tohit + 0.05
 	pObj.painfactor = pObj.painfactor * 0.95
 	
 	gamestate = STATE_LVUP
@@ -418,8 +418,8 @@ function playerLvUp()
 			pObj.painfactor = pObj.painfactor * 0.95
 			end,
 		function() --detective - gets quite more accurate
-			pObj.tohit = pObj.tohit + 0.05
-			pObj.tohitbonus = pObj.tohitbonus + 0.05
+			pObj.tohit = pObj.tohit + 0.025
+			pObj.tohitbonus = pObj.tohitbonus + 0.025
 			pObj.pointblank = pObj.pointblank + 0.5
 			if pObj.lv%2==0 then
 				pObj.damagebonus = pObj.damagebonus + 1
