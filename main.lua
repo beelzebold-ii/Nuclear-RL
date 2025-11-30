@@ -501,6 +501,7 @@ function drawMenu()
 				{"KEY_INV","key","Inventory"},
 				{"KEY_EQUIP","key","Equipment"},
 				{"KEY_TRAITS","key","Skills"},
+				{"KEY_RUNINF","key","Run Info"},
 				{"KEY_MORE","key","More Info"},
 				{"KEY_LOG","key","Message Log"},
 				{"KEY_GIF","key","Save Replay GIF"},
@@ -525,7 +526,7 @@ function drawMenu()
 		}
 		local menuoptindx = {
 			[STATE_CONF] = {1,2,4,6},
-			[STATE_KEYS] = {2,3,4,5,6,7,8,9,10,11,12,13,14,16},
+			[STATE_KEYS] = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,17},
 			[STATE_BUTN] = {2},
 		}
 		local confitems = menudef[gamestate]
@@ -1336,7 +1337,7 @@ function love.keypressed(key,scancode,isrepeat)
 				if menuselect>1 then menuselect = menuselect - 1 end
 				end
 			if key=='down' then
-				local maxsel = {4,4,14,11,math.max(1,#hiscores-12),4,4}
+				local maxsel = {4,4,15,11,math.max(1,#hiscores-12),4,4}
 				if menuselect<maxsel[gamestate] then menuselect = menuselect + 1 end
 				end
 			end
@@ -1400,6 +1401,7 @@ function love.keypressed(key,scancode,isrepeat)
 				{"KEY_INV","key"},
 				{"KEY_EQUIP","key"},
 				{"KEY_TRAITS","key"},
+				{"KEY_RUNINF","key"},
 				{"KEY_MORE","key"},
 				{"KEY_LOG","key"},
 				{"KEY_GIF","key"},
