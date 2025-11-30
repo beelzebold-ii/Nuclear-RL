@@ -13,6 +13,7 @@ presetlevels = {
 	[8] = {
 		{
 			name = "Waste Refinery Center",
+			filename = "refinery.json",
 			entrytext = "Entering the refinery. Do I have to go down there?",
 			calmtext = "All is calm. Now I gotta go before my lungs collapse.",
 			music = love.audio.newSource("music/LongWar.wav","stream"),
@@ -38,7 +39,7 @@ presetlevels = {
 			music = love.audio.newSource("music/LongWar.wav","stream"),
 		},
 		{
-			name = "Drone Swarm",
+			name = "Main Lab",
 			entrytext = "Entering the main lab. What's that sound...? Uh oh.",
 			calmtext = "All is calm. Now where can I lay down to die in peace?",
 			music = love.audio.newSource("music/LongWar.wav","stream"),

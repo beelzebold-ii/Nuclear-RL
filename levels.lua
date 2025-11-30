@@ -134,6 +134,10 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	--empty the replay buffer so things don't spill between levels
 	replayBuffer = {}
 	
+	--label the level
+	levelname = "Floor "..levelnum
+	levelvibes = "None"
+	
 	--set the area number properly
 	area = math.floor((levelnum-1)/4)+1
 	
@@ -222,6 +226,17 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			end
 		if forcefeeling~=nil then
 			levelfeeling = forcefeeling
+			end
+		--displayed name for levelfeelings
+		feelingvibes = {
+			acidspill = "Acid Spill",
+			dogs = "Kennels",
+			vault = "Vault",
+			redalert = "Red Alert",
+			robotics = "Robotics",
+		}
+		if levelfeeling~=nil then
+			levelvibes = feelingvibes[levelfeeling]
 			end
 		
 		--generate map
@@ -790,8 +805,24 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 		plevel.music:setVolume(config.mus/15)
 		plevel.music:setLooping(true)
 		plevel.music:play()
-		mkHudmessage("You descend to "..plevel.name)
+		--mkHudmessage("You descend to "..plevel.name)
 		mkHudmessage(plevel.entrytext)
+		
+		levelname = plevel.name
+		
+		feelingvibes = {
+			acidspill = "Acid Spill",
+			dogs = "Kennels",
+			vault = "Vault",
+			redalert = "Red Alert",
+			robotics = "Robotics",
+		}
+		if plevel.feeling~=nil then
+			levelvibes = feelingvibes[plevel.feeling]
+			else
+			levelvibes = "None"
+			end
+		
 		levelstr = love.filesystem.read("levels/"..plevel.filename)
 		LoadLevel(levelstr)
 		end
@@ -878,6 +909,8 @@ ispawntable = {
 	{"autoshotty",16,5,12},{"supershotgun",16,4,2},{"nrgarm",16,5,170},{"magsmg",16,4,22},{"z3rifle",16,4,20},
 	{"traumakit",17,7,1},{"balarm",17,6,150},{"ch9pis",17,5,15},{"supershotgun",17,5,2},
 }
+--separated spawntables in preparation for a more organized system with the ability to selectively spawn different types of items
+
 --just weapons
 ispawntablew = {
 	{"m99pis",-3,8,12},

@@ -34,14 +34,18 @@ STATE_MORE=		10
 STATE_LVUP=		11
 STATE_TRAIT=	12
 STATE_EQUIP=	13
-STATE_LOG=		14
-STATE_MORTIS=	15
+STATE_RUNSTAT=	14
+STATE_LOG=		15
+STATE_MORTIS=	16
 
 menuselect = 1
 bindingkey = false
 ammoselect = false
 
 levelnum = 1
+levelname = "Floor 1"
+levelvibes = "None"
+
 area = 1
 layer = 1
 --this can be actual static tile data
@@ -282,7 +286,7 @@ function love.load()
 			config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
 				KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
 				KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
-				KEY_INV = 'i',KEY_EQUIP = 'e',KEY_TRAITS = 's',KEY_GET = 'g',KEY_LOG = 'l',
+				KEY_INV = 'i',KEY_EQUIP = 'e',KEY_TRAITS = 's',KEY_GET = 'g',KEY_RUNINF = 'tab',KEY_LOG = 'l',
 				KEY_GIF = 'f12'
 				},cfgversion = "040"}
 			print("cfg reset (version incorrect)")
@@ -291,11 +295,14 @@ function love.load()
 		if config.keybinds.KEY_TRAITS == nil then
 			config.keybinds.KEY_TRAITS = 's'
 			end
+		if config.keybinds.KEY_RUNINF == nil then
+			config.keybinds.KEY_RUNINF = 'tab'
+			end
 		else
 		config = {sfx = 10,mus = 10,rbuf = 10,keybinds = {
 			KEY_UP = 'up',KEY_RIGHT = 'right',KEY_DOWN = 'down',KEY_LEFT = 'left',
 			KEY_WAIT = 'w',KEY_FIRE = 'f',KEY_RELOAD = 'r',KEY_MORE = 'm',
-			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_TRAITS = 's',KEY_GET = 'g',KEY_LOG = 'l',
+			KEY_INV = 'i',KEY_EQUIP = 'e',KEY_TRAITS = 's',KEY_GET = 'g',KEY_RUNINF = 'tab',KEY_LOG = 'l',
 			KEY_GIF = 'f12'
 			},cfgversion = gamecfgversion}
 		print("new default config created :3")
@@ -1097,9 +1104,7 @@ function updatescreen(camx,camy)
 		love.graphics.rectangle("fill",0,0,800,480)
 		love.graphics.setColor(1,0.2,0.2)
 		love.graphics.print("EQUIPMENT",150,60)
-		love.graphics.print("STATS",500,75)
-		love.graphics.print("Total runtime: "..timerText(runtime/10),485,90)
-		love.graphics.print("Kills: "..kills.."/"..enemies.." ("..localenemycount.." left)",485,105)
+		love.graphics.print("STATS",500,100)
 		if playerArmor==nil then
 			love.graphics.print("Move time:   "..math.floor(pObj.movetime + 0.5)/10 .."s",485,135)
 			else
@@ -1128,10 +1133,21 @@ function updatescreen(camx,camy)
 			else
 			love.graphics.print("To Hit: "..pObj.tohit-0.05 .."x",485,195)
 			end
-		love.graphics.print("Bonus: +"..(pObj.tohitbonus+(math.min(waitturns,3)*0.1))*100-5 .."%",485,210)
-		love.graphics.print("Difficulty:",485,240)
-		local diffname = {"easy","normal","hard","hardest"}
-		love.graphics.print(skillnames[gameskill].." ("..diffname[gameskill]..")",485,255)
+		if (pObj.tohitbonus+(math.min(waitturns,3)*0.1))%1==0 then
+			love.graphics.print("Bonus: +"..(pObj.tohitbonus+(math.min(waitturns,3)*0.1))..".0",485,210)
+			else
+			love.graphics.print("Bonus: +"..(pObj.tohitbonus+(math.min(waitturns,3)*0.1)),485,210)
+			end
+		
+		local thistohit = playerWeapon.tohit * pObj.tohit * ((100 - pObj.pain)/100)
+		thistohit = thistohit + pObj.tohitbonus + (math.min(waitturns,3)*(0.1*pBonus.aimfactor))
+		if fireturns>1 then
+			--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
+			--veteran has an innate 0.7 recoil factor
+			thistohit = thistohit * (1 - (fireturns-1)*((0.2*pBonus.rpdrecoilfactor)*(playerClass==4 and 0.7 or 1.0)))
+			end
+		love.graphics.print("Final ToHit: "..math.floor(thistohit*20)/20,485,225)
+		
 		local equipment = {playerWeapon,playerArmor}
 		local equipnames = {"Weapon: ","Armor:  "}
 		for i=1,2 do
@@ -1192,6 +1208,26 @@ function updatescreen(camx,camy)
 				love.graphics.printf(itemsel.desc,135,330,500)
 				end
 			end
+		end
+	if gamestate==STATE_RUNSTAT then
+		love.graphics.setColor(0,0,0,0.75)
+		love.graphics.rectangle("fill",0,0,800,480)
+		love.graphics.setColor(1,0.2,0.2)
+		love.graphics.print("RUN INFO",120,40)
+		
+		local diffname = {"easy","normal","hard","hardest"}
+		
+		--score based on avg time spent per floor
+		local avgtime = (runtime/levelnum) / 3600 --1.0 at 6 mins per floor, 2.0 at 12 mins, 0.5 at 3 mins
+		avgtime = math.min(avgtime,1.5) --time taken penalty can only go as high as 1.5; this equates to 9 mins
+		avgtime = math.max(avgtime,0.5) --time taken penalty can only go as low as 0.5, or 3 mins (double score)
+		
+		love.graphics.print("Location:     "..levelname,100,80)
+		love.graphics.print("Feeling:      "..levelvibes,100,95)
+		love.graphics.print("Runtime:      "..timerText(runtime/10).." (avg "..timerText((runtime/levelnum)/10)..")",100,125)
+		love.graphics.print("Kills:        "..kills.."/"..enemies.." ("..localenemycount.." left)",100,140)
+		love.graphics.print("Difficulty:   "..skillnames[gameskill].." ("..diffname[gameskill]..")",100,170)
+		love.graphics.print("Score:        "..math.floor(((pscore/1.1)/avgtime)*(gameskill*0.5 + 0.5)),100,185)
 		end
 	if gamestate==STATE_LOG then
 		love.graphics.setColor(0,0,0,0.95)
@@ -1676,6 +1712,7 @@ function love.keypressed(key,scancode,isrepeat)
 		return
 		end
 	if gamestate==STATE_TRAIT then
+		if key=='escape' then menuselect=1;gamestate=STATE_GAME end
 		if key=='up' then menuselect=math.max(1,menuselect-1) end
 		if key=='down' then menuselect=math.min(9,menuselect+1) end
 		if key=='return' then
@@ -1825,10 +1862,19 @@ function love.keypressed(key,scancode,isrepeat)
 				lvup[menuselect](pSkills[statids[menuselect]])
 				pSkills[statids[menuselect]] = pSkills[statids[menuselect]] + 1
 				else
-				
+				--TODO: incorrect buzzer sound?
 				end
 			end
 		return
+		end
+	if gamestate==STATE_RUNSTAT then
+		--for some fucked up reason specifically in this exact case it refuses to accept the 'tab' keypress even when
+		--checking for it directly. it accepts the 'return' keypress but when I replace that string with 'tab' it doesn't
+		--accept it. even though it accepts the exact same keyconst when entering the menu. what the fuck man.
+		if key=='escape' or key=='return' or key==config.keybinds.KEY_RUNINF then
+			gamestate = STATE_GAME
+			menuselect = 1
+			end
 		end
 	if gamestate==STATE_LOG then
 		if key==config.keybinds.KEY_LOG or key=='escape' or key=='return' then
@@ -1876,6 +1922,9 @@ function love.keypressed(key,scancode,isrepeat)
 		if key==config.keybinds.KEY_TRAITS then
 			gamestate = STATE_TRAIT
 			menuselect = 1
+			end
+		if key==config.keybinds.KEY_RUNINF then
+			gamestate = STATE_RUNSTAT
 			end
 		if key==config.keybinds.KEY_LOG then
 			gamestate = STATE_LOG
