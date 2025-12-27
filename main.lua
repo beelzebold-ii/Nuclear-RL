@@ -133,6 +133,7 @@ require("player")
 require("turns")
 require("items")
 require("levels")
+require("mods")
 
 fObjs={}
 iObjs={}
@@ -307,6 +308,39 @@ function love.load()
 			},cfgversion = gamecfgversion}
 		print("new default config created :3")
 		love.filesystem.write("nrlcfg.json",json.encode(config))
+		end
+	
+	--attempt to mount the base directory for acquiring mods
+	--if it fails, love2d will automagically fallback to any directory named "content" that it has access to
+	local basedir = love.filesystem.getSourceBaseDirectory()
+	print("base directory: "..basedir)
+	local basesuccess = love.filesystem.mount(basedir,"content")
+	if basesuccess then
+		print("successfully mounted base directory as \"content\"")
+		else
+		print("failed to mount base directory")
+		end
+	
+	--then attempt to load all mods from content/mods
+	for k,file in ipairs(love.filesystem.getDirectoryItems("content/mods")) do
+		print(k..". "..file)
+		local ok,value = pcall(LoadModData,file)
+		if ok then
+			if mod_data[file].err~=nil then
+				print(mod_data[file].err)
+				if mod_data[file].errdetail ~= nil then
+					print(mod_data[file].errdetail)
+					else
+					print("Error details missing. Stop messing around, damnit!!!")
+					end
+				else
+				print("Mod loaded without error")
+				end
+			else
+			mod_data[file] = {err = "Lua script failed with parsing error"}
+			print("Lua script failed with parsing error")
+			print(value)
+			end
 		end
 	
 	updateVol()

@@ -149,7 +149,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 		lvmus["cluster"..muscluster][clustertrack]:stop()
 		end
 	
-	if presetlevels[levelnum]==nil or ENABLE_PRESET_LEVELS~=true then
+	if (presetlevels[levelnum]==nil or presetlevels[levelnum][layer]==nil) or ENABLE_PRESET_LEVELS~=true then
 		--generate a level
 		local thiscluster = math.floor((levelnum-1)/3)+1
 		thiscluster = math.min(thiscluster,5)
