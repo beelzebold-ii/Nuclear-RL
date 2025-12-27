@@ -72,7 +72,7 @@ function CheckWeaponDef(def)
 		end
 	
 	if type(def.atktime)~="number" or def.atktime<0 then return "atktime" end
-	if type(def.reltime)~="number" or def.reltime<0 then return "reltime" end
+	if def.ammotype~="no" and (type(def.reltime)~="number" or def.reltime<0) then return "reltime" end
 	if type(def.range)~="number" or def.range<3 then def.range = 3 end
 	if type(def.sound)~="string" then return "sound" end
 	if type(def.dice)~="number" or def.dice<1 then return "dice" end

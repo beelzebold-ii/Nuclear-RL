@@ -1,5 +1,5 @@
 --global vars
-gameversion = "0.7.0"
+gameversion = "0.8.0"
 gamedate = "Nov 30, 2025"
 --this only changes when the cfg format is altered!!!
 gamecfgversion = "040"
@@ -327,19 +327,19 @@ function love.load()
 		local ok,value = pcall(LoadModData,file)
 		if ok then
 			if mod_data[file].err~=nil then
-				print(mod_data[file].err)
+				print("  "..mod_data[file].err)
 				if mod_data[file].errdetail ~= nil then
-					print(mod_data[file].errdetail)
+					print("  "..mod_data[file].errdetail)
 					else
-					print("Error details missing. Stop messing around, damnit!!!")
+					print("  Error details missing. Stop messing around, damnit!!!")
 					end
 				else
-				print("Mod loaded without error")
+				print("  Mod loaded without error")
 				end
 			else
 			mod_data[file] = {err = "Lua script failed with parsing error"}
-			print("Lua script failed with parsing error")
-			print(value)
+			print("  Lua script failed with parsing error")
+			print("  "..value)
 			end
 		end
 	
