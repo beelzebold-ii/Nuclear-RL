@@ -322,26 +322,33 @@ function love.load()
 		end
 	
 	--then attempt to load all mods from content/mods
+	local folders = 0
 	for k,file in ipairs(love.filesystem.getDirectoryItems("content/mods")) do
-		print(k..". "..file)
-		local ok,value = pcall(LoadModData,file)
-		if ok then
-			if mod_data[file].err~=nil then
-				print("  "..mod_data[file].err)
-				if mod_data[file].errdetail ~= nil then
-					print("  "..mod_data[file].errdetail)
+		if not love.filesystem.isFile("content/mods/"..file) then
+			folders = folders + 1
+			else
+			print(k - folders ..". "..file)
+			local ok,value = pcall(LoadModData,file)
+			if ok then
+				if mod_data[file].err~=nil then
+					print("  "..mod_data[file].err)
+					if mod_data[file].errdetail ~= nil then
+						print("  "..mod_data[file].errdetail)
+						else
+						print("  Error details missing. Stop messing around, damnit!!!")
+						end
 					else
-					print("  Error details missing. Stop messing around, damnit!!!")
+					print("  Mod loaded without error  :3")
 					end
 				else
-				print("  Mod loaded without error")
+				mod_data[file] = {err = "Lua script failed with parsing error"}
+				print("  Lua script failed with parsing error")
+				print("  "..value)
 				end
-			else
-			mod_data[file] = {err = "Lua script failed with parsing error"}
-			print("  Lua script failed with parsing error")
-			print("  "..value)
 			end
 		end
+	
+	ApplyModData()
 	
 	updateVol()
 	

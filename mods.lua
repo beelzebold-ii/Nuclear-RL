@@ -3,7 +3,7 @@ mod_data = {
 	
 }
 applied_mods = {
-	
+	"base.lua"
 }
 
 --table holding the environment for mod lua scripts
@@ -11,11 +11,14 @@ local mod_env = {
 	math = math,
 	string = string,
 	musicfile = function(filename)
+		filename = "content/mods/assets_"..filename
 		return love.audio.newSource(filename,"stream")
 		end,
 	soundfile = function(filename)
+		filename = "content/mods/assets_"..filename
 		return love.audio.newSource(filename,"static")
 		end,
+	love = {audio = {newSource = love.audio.newSource}},
 }
 
 --functions for sanity checking various definitions in the mod
@@ -95,6 +98,61 @@ function CheckArmorDef(def)
 	if type(def.movetime)~="number" or def.movetime<0 then def.movetime = 1.0 end
 	return nil
 	end
+function CheckSoundDef(def)
+	--if def.TypeOf("Source") then return nil end
+	if type(def)=="userdata" and def.typeOf and def:typeOf("Source") then return nil end
+	return "invalid"
+	end
+function CheckLevelDef(def)
+	if type(def.floor)~="number" or def.floor<1 then return "floor" end
+	if type(def.layer)~="number" then def.layer = 1 end
+	if type(def.name)~="string" then return "name" end
+	if CheckSoundDef(def.music)~=nil then return "music" end
+	if type(def.entrytext)~="string" then return "entrytext" end
+	if type(def.calmtext)~="string" then return "calmtext" end
+	--the only check I can be arsed to add for the level file itself is if it actually exists
+	if type(def.filename)~="string" then return "filename" end
+	def.filename = "content/mods/assets_"..def.filename
+	if not love.filesystem.isFile(def.filename) then
+		return "level file"
+		end
+	return nil
+	end
+
+function DoesEnemyExist(classname,mdat)
+	return (
+		(type(mdat.enemies)=="table" and type(mdat.items[classname])=="table") or
+		type(objclasses[classname])=="table"
+		)
+	end
+function DoesItemExist(classname,mdat)
+	return (
+		(type(mdat.items)=="table" and type(mdat.items[classname])=="table") or
+		type(itemclasses[classname])=="table"
+		)
+	end
+
+function CheckEnemyEntry(def,mdat)
+	if type(def[1])=="string" then
+		if not DoesEnemyExist(def[1],mdat) then return "classname" end
+		else
+		return "1"
+		end
+	if type(def[2])~="number" then return "2" end
+	if type(def[3])~="number" or def[3]<1 then return "3" end
+	return nil
+	end
+function CheckItemEntry(def,mdat)
+	if type(def[1])=="string" then
+		if not DoesItemExist(def[1],mdat) then return "classname" end
+		else
+		return "1"
+		end
+	if type(def[2])~="number" then return "2" end
+	if type(def[3])~="number" or def[3]<1 then return "3" end
+	if type(def[4])~="number" or def[4]<0 then return "4" end
+	return nil
+	end
 
 --functions for loading/checking and applying mods
 function LoadModData(filename)
@@ -112,6 +170,7 @@ function LoadModData(filename)
 	
 	--try to run our file; if it has a runtime error we'll catch it here
 	local ok,value = pcall(chunk)
+	--fail if our script had a runtime error
 	if not ok then
 		mod_data[filename] = {err = "Lua script failed with runtime error",errdetail = value}
 		print(value)
@@ -129,6 +188,14 @@ function LoadModData(filename)
 		end
 	
 	--validate blocks and their contents
+	local medicalitems = {
+		bandage = true,
+		painkiller = true,
+		medikit = true,
+		adrenaline = true,
+		traumakit = true,
+		combatstim = true
+	}
 	for k,v in pairs(value) do
 		if k=="enemies" then
 			for k2,v2 in pairs(v) do
@@ -141,9 +208,49 @@ function LoadModData(filename)
 			end
 		if k=="items" then
 			for k2,v2 in pairs(v) do
+				if medicalitems[k2]==true then
+					mod_data[filename] = {err = "Mod failed with definition error",errdetail = "items: cannot overwrite "..k2.." as it is a medical item"}
+					return
+					end
 				local valid = CheckItemDef(v2)
 				if valid~=nil then
 					mod_data[filename] = {err = "Mod failed with definition error",errdetail = "items: "..k2.." property "..valid.." is missing or invalid"}
+					return
+					end
+				end
+			end
+		if k=="enemyspawntable" then
+			for k2,v2 in ipairs(v) do
+				local valid = CheckEnemyEntry(v2,value)
+				if valid~=nil then
+					mod_data[filename] = {err = "Mod failed with definition error",errdetail = "enemyspawntable: entry "..k2.." property "..valid.." missing or invalid"}
+					return
+					end
+				end
+			end
+		if k=="itemspawntable" then
+			for k2,v2 in ipairs(v) do
+				local valid = CheckItemEntry(v2,value)
+				if valid~=nil then
+					mod_data[filename] = {err = "Mod failed with definition error",errdetail = "itemspawntable: entry "..k2.." property "..valid.." missing or invalid"}
+					return
+					end
+				end
+			end
+		if k=="soundfx" then
+			for k2,v2 in pairs(v) do
+				local valid = CheckSoundDef(v2)
+				if valid~=nil then
+					mod_data[filename] = {err = "Mod failed with definition error",errdetail = "soundfx: "..k2.." isn't a valid soundfile()"}
+					return
+					end
+				end
+			end
+		if k=="presetlevels" then
+			for k2,v2 in ipairs(v) do
+				local valid = CheckLevelDef(v2)
+				if valid~=nil then
+					mod_data[filename] = {err = "Mod failed with definition error",errdetail = "presetlevels: level["..k2.."] property "..valid.." is missing or invalid"}
 					return
 					end
 				end
@@ -183,6 +290,39 @@ function ApplyModData()
 				if k=="items" then
 					for classname,class in pairs(v) do
 						itemclasses[classname] = class
+						end
+					end
+				
+				if k=="enemyspawntable" then
+					for _,entry in ipairs(v) do
+						table.insert(espawntable,entry)
+						end
+					end
+				
+				if k=="itemspawntable" then
+					for _,entry in ipairs(v) do
+						table.insert(ispawntable,entry)
+						if entry[5]=="w" then
+							table.insert(ispawntablew,entry)
+							end
+						if entry[5]=="a" then
+							table.insert(ispawntablea,entry)
+							end
+						end
+					end
+				
+				if k=="soundfx" then
+					for sndname,entry in pairs(v) do
+						sfx[sndname] = entry
+						end
+					end
+				
+				if k=="presetlevels" then
+					for i,lvl in ipairs(v) do
+						if presetlevels[lvl.floor]==nil then
+							presetlevels[lvl.floor] = {}
+							end
+						presetlevels[lvl.floor][lvl.layer] = lvl
 						end
 					end
 				

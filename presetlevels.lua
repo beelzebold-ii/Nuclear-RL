@@ -4,7 +4,7 @@ presetlevels = {
 	[4] = {
 		{
 			name = "Security Checkpoint",
-			filename = "checkpoint.json",
+			filename = "levels/checkpoint.json",
 			entrytext = "Entering the checkpoint. High security, what hospitality.",
 			calmtext = "All is calm. But my documents were all in order!",
 			music = love.audio.newSource("music/Meltdown.wav","stream"),
@@ -13,7 +13,7 @@ presetlevels = {
 	[8] = {
 		{
 			name = "Waste Refinery Center",
-			filename = "refinery.json",
+			filename = "levels/refinery.json",
 			entrytext = "Entering the refinery. Do I have to go down there?",
 			calmtext = "All is calm. Now I gotta go before my lungs collapse.",
 			music = love.audio.newSource("music/LongWar.wav","stream"),

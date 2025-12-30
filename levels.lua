@@ -5,7 +5,7 @@ local Luafinding = require("luafinding/luafinding")
 
 require("customlevel")
 require("presetlevels")
---local ENABLE_PRESET_LEVELS = true
+local ENABLE_PRESET_LEVELS = true
 
 function dangerlevel(level,skill)
 	local skillfunc = {
@@ -145,8 +145,10 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 	tilecolor[2] = areacolors[layer][math.min(area,#areacolors[layer])][1]
 	tilecolor[1] = areacolors[layer][math.min(area,#areacolors[layer])][2]
 	
-	if levelnum>1 then
+	if muscluster then
 		lvmus["cluster"..muscluster][clustertrack]:stop()
+		else
+		love.audio.stop()
 		end
 	
 	if (presetlevels[levelnum]==nil or presetlevels[levelnum][layer]==nil) or ENABLE_PRESET_LEVELS~=true then
@@ -823,7 +825,7 @@ function generatenewlevel(roomtype,nofeeling,forcefeeling)
 			levelvibes = "None"
 			end
 		
-		levelstr = love.filesystem.read("levels/"..plevel.filename)
+		levelstr = love.filesystem.read(plevel.filename)
 		LoadLevel(levelstr)
 		end
 	end

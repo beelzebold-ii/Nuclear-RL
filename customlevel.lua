@@ -5,6 +5,7 @@ function LoadLevel(levelstring)
 	local leveldat = nil
 	if ok == false then
 		print("error decoding level JSON!")
+		print(result)
 		return
 		else
 		leveldat = result
@@ -15,9 +16,9 @@ function LoadLevel(levelstring)
 	replayBuffer = {}
 	
 	seentiles = {}
-	for y=1,25 do
+	for y=0,25 do
 		seentiles[y] = {}
-		for x=1,45 do
+		for x=0,45 do
 			seentiles[y][x] = 0
 			end
 		end
