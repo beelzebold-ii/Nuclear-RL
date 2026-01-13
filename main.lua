@@ -1584,7 +1584,7 @@ function love.keypressed(key,scancode,isrepeat)
 			local iat = objat(pObj.pox,pObj.poy,iObjs)
 			if iat==-1 then
 				local itemsel = playerInventory[menuselect]
-				local i = {pox=pObj.pox,poy=pObj.poy,item=itemsel,color=itemsel.color,char=itemsel.char}
+				local i = {pox=pObj.pox,poy=pObj.poy,item=itemsel,color=itemsel.color,char=itemsel.char,graphic=itemsel.graphic}
 				table.insert(iObjs,i)
 				table.remove(playerInventory,menuselect)
 				else

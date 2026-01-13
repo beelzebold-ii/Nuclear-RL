@@ -237,10 +237,9 @@ function objDrawGRAPHIC(o,camx,camy,alwaysdraw)
 			else
 			love.graphics.print(o.char,sx+12,sy+6)
 			love.graphics.print("graphic missing",sx+6,sy+20)
-			if o.graphic~=nil then love.graphics.print(o.graphic,sx+6,sy+34) else
-				love.graphics.print("nil",sx+6,sy+34)
+			if o.graphic==nil then
+				love.graphics.print("(nil)",sx+6,sy+34)
 				end
 			end
 		end
-	--love.graphics.print(camx..","..camy,sx+6,sy+6+15)
 	end

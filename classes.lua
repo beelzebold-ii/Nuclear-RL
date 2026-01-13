@@ -328,14 +328,6 @@ function makeObj(classname,ox,oy)
 	o.char=c.char--the character representing the obj
 	if c.graphic==nil then
 		print(classname.." graphic nil")
-		print(classname.." is:")
-		for k,v in pairs(c) do
-			if type(v)~="table" then
-				print(k.."="..v)
-				else
-				print(k.."=[table]")
-				end
-			end
 		end
 	o.graphic=c.graphic--the graphical icon for the obj
 	o.color=c.color--the color of said char

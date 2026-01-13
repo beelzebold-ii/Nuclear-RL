@@ -87,6 +87,9 @@ graphx = {
 		corpse = love.graphics.newImage("graphics/objects/corpse.png"),
 		player = love.graphics.newImage("graphics/objects/player.png"),
 		secguard = love.graphics.newImage("graphics/objects/secguard.png"),
+		pistol = love.graphics.newImage("graphics/objects/pistol.png"),
+		revolver = love.graphics.newImage("graphics/objects/revolver.png"),
+		sawnoff = love.graphics.newImage("graphics/objects/sawnoff.png"),
 	},
 }
 function getwalltiles()

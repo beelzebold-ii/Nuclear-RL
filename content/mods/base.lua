@@ -341,6 +341,7 @@ return{
 			weaptype="sidearm",
 			desc="An old but very popular handgun. Accurate and reliable. It'll do the trick for now.",
 			char="}",
+			graphic="pistol",
 			color={0.5,0.5,0.5,1}
 		},
 		baton = {
@@ -395,6 +396,7 @@ return{
 			weaptype="sidearm",
 			desc="A sawed-off double barreled shotgun. Very cheap, but rather ineffective.",
 			char="}",
+			graphic="sawnoff",
 			color={0.7,0.5,0.45,1}
 		},
 		sm40smg = {
@@ -448,6 +450,7 @@ return{
 			weaptype="sidearm",
 			desc="The CH7 Handgun is a very popular military service pistol, and with good reason.",
 			char="}",
+			graphic="pistol",
 			color={0.5,0.7,0.6,1}
 		},
 		machete = {
@@ -558,6 +561,7 @@ return{
 			weaptype="sidearm",
 			desc="What an ancient firearm. Kicks like a mule, pretty reliably.",
 			char="}",
+			graphic="revolver",
 			color={0.4,0.65,0.5,1}
 		},
 		mk23pis = {
@@ -575,6 +579,7 @@ return{
 			weaptype="sidearm",
 			desc="This magnum pistol packs a lovely kick in an almost manageable package. Sadly not the most reliable, as the cartridge is a bit to hefty for the gun.",
 			char="}",
+			graphic="pistol",
 			color={0.1,0.55,0.15,1}
 		},
 		huntrifle = {
@@ -709,6 +714,7 @@ return{
 			pickupmsg="This doesn't seem remotely fair.",
 			desc="Some kinda fuckin' supershotgun. No identifying marks. Something deeply empowering about the way it fits in my hands.",
 			char="}",
+			graphic="sawnoff",
 			color={1.0,0.0,0.25,1}
 		},
 		ch9pis = {
@@ -728,6 +734,7 @@ return{
 			weaptype="sidearm",
 			desc="This is just a CH7 with a burstfire funswitch. Otherwise identical. Absolutely stellar gun.",
 			char="}",
+			graphic="pistol",
 			color={0.1,0.3,0.2,1}
 		},
 		g26rifle = {

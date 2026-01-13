@@ -5,7 +5,7 @@ local Luafinding = require("luafinding/luafinding")
 
 require("customlevel")
 require("presetlevels")
-local ENABLE_PRESET_LEVELS = true
+--local ENABLE_PRESET_LEVELS = true
 
 function dangerlevel(level,skill)
 	local skillfunc = {
