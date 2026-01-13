@@ -67,3 +67,34 @@ function updateVol()
 		v:setVolume(config.sfx/15)
 		end
 	end
+
+--graphics!
+graphx = {
+	wall = {
+		love.graphics.newImage("graphics/wallSet1.png"),
+	},
+	walltile = {},
+	floor = {
+		love.graphics.newImage("graphics/floor1.png"),
+		love.graphics.newImage("graphics/floor2.png"),
+		love.graphics.newImage("graphics/floor3.png"),
+		love.graphics.newImage("graphics/floor4.png"),
+		love.graphics.newImage("graphics/floor5.png"),
+	},
+	
+	obj = {
+		ammo = love.graphics.newImage("graphics/objects/ammo.png"),
+		corpse = love.graphics.newImage("graphics/objects/corpse.png"),
+		player = love.graphics.newImage("graphics/objects/player.png"),
+		secguard = love.graphics.newImage("graphics/objects/secguard.png"),
+	},
+}
+function getwalltiles()
+	graphx.walltile = {}
+	for x = 0,7 do
+		graphx.walltile[x] = {}
+		for y = 0,3 do
+			graphx.walltile[x][y] = love.graphics.newQuad(x*24,y*24,24,24,graphx.wall[1])
+			end
+		end
+	end

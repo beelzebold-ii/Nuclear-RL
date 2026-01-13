@@ -146,7 +146,7 @@ function playerattack()
 						print("Hit chance: "..tohit)
 						
 						if love.math.random()<tohit then
-							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
+							makeFlrObj(".",nil,{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
 							local damage = 0
 							local pistolminbuff = 0
 							--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
@@ -202,7 +202,7 @@ function playerattack()
 							local tohit = playerWeapon.tohit * ((120 - pObj.pain)/120)
 							if waitturns>1 then tohit = tohit + 0.1 end
 							if love.math.random()<tohit then
-								makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
+								makeFlrObj(".",nil,{0.3,0,0,1},o.pox+love.math.random(-1,1),o.poy+love.math.random(-1,1))
 								local damage = 0
 								for i=1,playerWeapon.dice do
 									damage = damage + love.math.random(1,playerWeapon.sides)
@@ -267,7 +267,7 @@ function playerattack()
 						tohit = (tohit + pObj.tohitbonus) * (pObj.tohit * 0.9)
 						
 						if love.math.random()<tohit then
-							makeFlrObj(".",{0.3,0,0,1},o.pox+love.math.random(-2,2),o.poy+love.math.random(-2,2))
+							makeFlrObj(".",nil,{0.3,0,0,1},o.pox+love.math.random(-2,2),o.poy+love.math.random(-2,2))
 							hits = hits + 1
 							local damage = 0
 							--if we should apply sidearmory's minimum damage buff, we apply it by evenly distributing the buff among the dice's minimum rolls
@@ -438,7 +438,7 @@ function playerLvUp()
 
 function damageplayer(dmg,noarmor,dist)
 	dmg = dmg * ( 0.9 + (pObj.injuries*0.02) )
-	makeFlrObj(".",{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
+	makeFlrObj(".",nil,{0.3,0,0,1},pObj.pox+love.math.random(-1,1),pObj.poy+love.math.random(-1,1))
 	
 	--punish player for using medical equipment while getting shot at
 	if playerUsingMeds == true then

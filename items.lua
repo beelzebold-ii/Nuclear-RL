@@ -612,6 +612,7 @@ function inventoryItem(classname,count)
 	o.desc=c.desc
 	o.pickupmsg=c.pickupmsg
 	o.char=c.char
+	o.graphic=c.graphic
 	o.color=c.color
 	local attributes = {
 		weapon = function(o,c)
@@ -671,6 +672,7 @@ function makeItemObj(classname,count,ox,oy)
 		end
 	local o={pox=ox,poy=oy,item=inventoryItem(classname,count)}
 	o.char=o.item.char
+	o.graphic=o.item.graphic
 	o.color=o.item.color
 	o.id=#iObjs+1
 	table.insert(iObjs,o)
@@ -682,8 +684,9 @@ function makeAmmoObj(ammotype,count,ox,oy)
 		return
 		end
 	local ammocolors={a9mm={0.7,0.7,0.7,1},["a.35"]={0.7,0.7,0.3,1},a5mm={0.6,0.4,0.2,1},a7mm={0.9,0.7,0.2,1},a12ga={1,0.5,0.5,1}}
-	local o={pox=ox,poy=oy,item={type="ammo",name=ammotype.." ammo",ammotype=ammotype,amount=count,char="*",color=ammocolors["a"..ammotype]}}
+	local o={pox=ox,poy=oy,item={type="ammo",name=ammotype.." ammo",ammotype=ammotype,amount=count,char="*",graphic="ammo",color=ammocolors["a"..ammotype]}}
 	o.char=o.item.char
+	o.graphic=o.item.graphic
 	o.color=o.item.color
 	o.id=#iObjs+1
 	table.insert(iObjs,o)

@@ -4,6 +4,7 @@ return{
 	enemies = {
 		pissecguard = {
 			char="S",
+			graphic="secguard",
 			color={0,0.6,0.9,1},
 			health=25,
 			atksound="pistol",
@@ -23,6 +24,7 @@ return{
 		},
 		shotsecguard = {
 			char="S",
+			graphic="secguard",
 			color={0,0.6,0.9,1},
 			health=25,
 			atksound="shotgun",

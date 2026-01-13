@@ -6,6 +6,12 @@ applied_mods = {
 	"base.lua"
 }
 
+enemyfactor = 1.0
+itemfactor = 1.0
+
+playerinvoverride = nil
+playerammooverride = nil
+
 --table holding the environment for mod lua scripts
 local mod_env = {
 	math = math,
@@ -113,7 +119,7 @@ function CheckLevelDef(def)
 	--the only check I can be arsed to add for the level file itself is if it actually exists
 	if type(def.filename)~="string" then return "filename" end
 	def.filename = "content/mods/assets_"..def.filename
-	if not love.filesystem.isFile(def.filename) then
+	if not love.filesystem.getInfo(def.filename,"file") then
 		return "level file"
 		end
 	return nil
@@ -262,6 +268,11 @@ function LoadModData(filename)
 	end
 
 function ApplyModData()
+	enemyfactor = 1.0
+	itemfactor = 1.0
+	playerinvoverride = nil
+	playerammooverride = nil
+	
 	for _,mod_name in ipairs(applied_mods) do
 		local mod = mod_data[mod_name]
 		
@@ -273,7 +284,6 @@ function ApplyModData()
 				ispawntable = {}
 				ispawntablew = {}
 				ispawntablea = {}
-				ispawntablem = {}
 				end
 			if mod.clearlevels==true then
 				presetlevels = {}
@@ -326,6 +336,18 @@ function ApplyModData()
 						end
 					end
 				
+				if k=="enemyrate" then
+					enemyfactor = enemyfactor*v
+					end
+				if k=="itemrate" then
+					itemfactor = itemfactor*v
+					end
+				if k=="playerinventory" then
+					playerinvoverride = v
+					end
+				if k=="playerammo" then
+					playerammooverride = v
+					end
 				end
 			end
 		

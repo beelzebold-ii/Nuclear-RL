@@ -45,9 +45,9 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords) {
 	}
 	
 	//scanlines
-	if (mod(affected_coords.y,0.0075) < 0.005) {
+	if (mod(affected_coords.y,0.01) < 0.005) {
 		return texturecolor * color;
 	} else {
-		return (texturecolor * color) * 0.6667;
+		return (texturecolor * color) * 0.85;
 	}
 }

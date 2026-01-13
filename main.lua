@@ -128,6 +128,8 @@ screencanvas=love.graphics.newCanvas(800,480)
 gifcat = require("gifcat")
 
 --real shit
+require("walltiles")
+require("drawworld")
 require("classes")
 require("player")
 require("turns")
@@ -324,7 +326,7 @@ function love.load()
 	--then attempt to load all mods from content/mods
 	local folders = 0
 	for k,file in ipairs(love.filesystem.getDirectoryItems("content/mods")) do
-		if not love.filesystem.isFile("content/mods/"..file) then
+		if love.filesystem.getInfo("content/mods/"..file,"file")==nil then
 			folders = folders + 1
 			else
 			print(k - folders ..". "..file)
@@ -350,6 +352,8 @@ function love.load()
 	
 	ApplyModData()
 	
+	--init some asset stuff
+	getwalltiles()
 	updateVol()
 	
 	consolas = love.graphics.newFont("consola.ttf",20)
@@ -696,108 +700,6 @@ function drawMenu()
 	love.graphics.setCanvas()
 	end
 
-function drawworld(camx,camy)
-	for ty=camy,camy+24 do
-		for tx=camx,camx+44 do
-			local brightness = 1
-			local dist = distance(tx,ty,pObj.pox,pObj.poy)
-			if dist > pObj.viewdist-1 then brightness = 0.7 end
-			if dist > pObj.viewdist then brightness = 0.4 end
-			if dist > pObj.viewdist+1 then brightness = 0 end
-			
-			if dist <= pObj.viewdist+1 then
-				local rayhit = checkLOS(pObj.pox,pObj.poy,tx,ty,-1,true)
-				if rayhit.type~="none" then
-					if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
-					end
-				end
-			
-			if revealall == true or seentiles[ty][tx]==1 then brightness = math.max(0.3,brightness) end
-			
-			if brightness > 0 then
-				--if tile is in LOS and hasn't been seen yet, mark it as seen
-				if seentiles[ty][tx]==0 then
-					seentiles[ty][tx]=1
-					end
-				--if this tile is floor or acid and within 6 tiles, mark adjacent walls as seen
-				if tilemap[ty][tx]==0 or tilemap[ty][tx]==2 then
-					if dist < 7 then
-						local vectors = { --direction vectors
-							{0,1},
-							{0,-1},
-							{1,0},
-							{-1,0}
-						}
-						for i=1,4 do --loop through directions and mark walls as seen
-							if tilemap[ty+vectors[i][2]][tx+vectors[i][1]]==1 then
-								seentiles[ty+vectors[i][2]][tx+vectors[i][1]] = 1
-								end
-							end
-						end
-					end
-				end
-			--draw the tile at tx,ty
-			tilecolor[tilemap[ty][tx]+1][4]=brightness
-			love.graphics.setColor(tilecolor[tilemap[ty][tx]+1])
-			if exit.pox == tx and exit.poy == ty and seentiles[ty][tx]==1 then
-				love.graphics.setColor(0.8,0.5,0.4)
-				love.graphics.print(">",(tx*15)+50-7,(ty*15)+15-8)
-				else
-				love.graphics.print(tilechar[tilemap[ty][tx]+1],(tx*15)+50-7,(ty*15)+15-8)
-				end
-			end
-		end
-	end
-function drawObjs(camx,camy)
-	foreach(fObjs,objDraw)
-	foreach(iObjs,objDraw)
-	objDraw({pox=exit.pox,poy=exit.poy,char=">",color={0.5,0.5,0.5,1}})
-	if localenemycount==0 then
-		objDraw({pox=exit.pox,poy=exit.poy,char=">",color={0.5,0.5,0.7,1}},true)
-		end
-	foreach(eObjs,objDraw)
-	objDraw(pObj)
-	if controlmode==M_FIRING then
-		objDraw({pox=cursorx,poy=cursory,char="X",color={0.5,0,0,1}},true)
-		end
-	end
---actual function that draws individual objs
-function objDraw(o,alwaysdraw)
-	local isfobj = false
-	if o.health==nil then isfobj = true end
-	if alwaysdraw==nil then
-		if o.health ~= nil and o.health<=0 then return end
-		local stairtrackdist = 0
-		if pObj.pox==exit.pox and pObj.poy==exit.poy and waitturns>0 and pBonus.stairtracking==true then stairtrackdist=99 end
-		if revealall == true then stairtrackdist=99 end
-		if distance(o.pox,o.poy,pObj.pox,pObj.poy)>pObj.viewdist+pBonus.trackdist+stairtrackdist then return end
-		if o ~= pObj and distance(o.pox,o.poy,pObj.pox,pObj.poy)>pBonus.trackdist+stairtrackdist+1 then
-			local rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy,o.id)
-			if rayhit.type ~= "obj" or rayhit.hit ~= o then
-				rayhit = checkLOS(pObj.pox,pObj.poy,o.pox,o.poy,0,true,nil)
-				if rayhit.type ~= "none" then
-					return
-					end
-				end
-			end
-		end
-	
-	local sx,sy=(o.pox*15)+50-7,(o.poy*15)+15-8
-	love.graphics.setColor(0,0,0)
-	love.graphics.rectangle("fill",sx,sy,15,15)
-	love.graphics.setColor(o.color)
-	if o.pox>45 or o.poy>25 or o.pox<1 or o.poy<1 then return end
-	if isfobj==true and tilemap[o.poy][o.pox]==2 then--apparently this fucking explodes somehow but I'm too lazy to fix it rn so TODO: that lmao :3
-		love.graphics.setColor(tilecolor[3][1],tilecolor[3][2],tilecolor[3][3],1)
-		end
-	
-	if o.justfired==true and frames%10<5 then love.graphics.setColor(1,0.6,0,1) end
-	if isfobj==true and tilemap[o.poy][o.pox]==1 then
-		love.graphics.print("#",sx,sy)
-		else
-		love.graphics.print(o.char,sx,sy)
-		end
-	end
 function updatescreen(camx,camy)
 	local ttt = love.timer.getTime()
 	
@@ -1515,7 +1417,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = inventoryItem("secarm")
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="player",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--detective
@@ -1524,7 +1426,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="player",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
 					end,
 				function()--freelancer
@@ -1533,7 +1435,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("sawnoff")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="player",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=9,atktimesemi=0.9,atktimepump=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--war vet
@@ -1542,7 +1444,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("knife")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="player",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=9,atktimesemi=0.95,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
 					end
 			}

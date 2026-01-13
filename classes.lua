@@ -1,6 +1,7 @@
 objclasses={
 	pissecguard = {
 		char="S",
+		graphic="secguard",
 		color={0,0.6,0.9,1},
 		health=25,
 		atksound="pistol",
@@ -20,6 +21,7 @@ objclasses={
 	},
 	shotsecguard = {
 		char="S",
+		graphic="secguard",
 		color={0,0.6,0.9,1},
 		health=25,
 		atksound="shotgun",
@@ -324,6 +326,18 @@ function makeObj(classname,ox,oy)
 	local c=objclasses[classname]
 	if c==nil then print("invalid object classname!");mkHudmessage("invalid object classname!");return end
 	o.char=c.char--the character representing the obj
+	if c.graphic==nil then
+		print(classname.." graphic nil")
+		print(classname.." is:")
+		for k,v in pairs(c) do
+			if type(v)~="table" then
+				print(k.."="..v)
+				else
+				print(k.."=[table]")
+				end
+			end
+		end
+	o.graphic=c.graphic--the graphical icon for the obj
 	o.color=c.color--the color of said char
 	o.health=c.health
 	o.atksound=c.atksound--sound made when the obj attacks
@@ -358,16 +372,18 @@ function makeObj(classname,ox,oy)
 	
 	enemies = enemies + 1
 	end
-function makeFlrObj(char,color,ox,oy)
+function makeFlrObj(char,graphic,color,ox,oy)
 	print("made flr obj")
 	local foat = objat(ox,oy,fObjs)
 	if foat~=-1 then
 		fObjs[foat].char = char
+		fObjs[foat].graphic = graphic
 		fObjs[foat].color = color
 		return
 		end
 	local o={pox=ox,poy=oy}
 	o.char=char
+	o.graphic=graphic
 	o.color=color
 	o.id=#fObjs+1
 	table.insert(fObjs,o)
@@ -382,7 +398,7 @@ function killObj(oid)
 	if pObj.xp>=pObj.lv*70-20 then
 		playerLvUp()
 		end
-	makeFlrObj("%",{o.color[1]*0.4,o.color[2]*0.4,o.color[3]*0.4,o.color[4]},o.pox,o.poy)
+	makeFlrObj("%","corpse",{o.color[1]*0.4,o.color[2]*0.4,o.color[3]*0.4,o.color[4]},o.pox,o.poy)
 	if (love.math.random()<0.7 or gameskill<3) and o.ammo~=nil then
 		if love.math.random()<0.7 then
 			--drop ammo
