@@ -903,15 +903,6 @@ return{
 	--if clearlevels is set to true then any already loaded preset levels will be removed, so only your mod's levels are loaded
 	clearlevels = true,
 	presetlevels = {
-		{--1,1
-			floor = 1,
-			layer = 1,
-			name = "dogtest",
-			filename = "basea/levels/dogtest.json",
-			entrytext = "Entering the checkpoint. High security, what hospitality.",
-			calmtext = "All is calm. But my documents were all in order!",
-			music = love.audio.newSource("music/Meltdown.wav","stream"),
-		},
 		{--4,1
 			floor = 4,
 			layer = 1,
