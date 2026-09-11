@@ -102,6 +102,7 @@ return{
 		},
 		riflemilguard = {
 			char="M",
+			graphic="milguard",
 			color={0,0.5,0,1},
 			health=90,
 			atksound="rifle",
@@ -121,6 +122,7 @@ return{
 		},
 		shotmilguard = {
 			char="M",
+			graphic="milguard",
 			color={0,0.5,0,1},
 			health=90,
 			atksound="shotgun",

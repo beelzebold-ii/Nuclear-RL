@@ -88,6 +88,7 @@ graphx = {
 		player = love.graphics.newImage("graphics/objects/player.png"),
 		secguard = love.graphics.newImage("graphics/objects/secguard.png"),
 		tacguard = love.graphics.newImage("graphics/objects/tacguard.png"),
+		milguard = love.graphics.newImage("graphics/objects/milguard.png"),
 		dog = love.graphics.newImage("graphics/objects/dog.png"),
 		pistol = love.graphics.newImage("graphics/objects/pistol.png"),
 		revolver = love.graphics.newImage("graphics/objects/revolver.png"),
