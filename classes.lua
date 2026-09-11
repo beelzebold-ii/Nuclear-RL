@@ -1,3 +1,5 @@
+-- NOTE: THESE ARE NOW UNUSED DATA!!!
+
 objclasses={
 	pissecguard = {
 		char="S",
@@ -58,6 +60,7 @@ objclasses={
 	},
 	smgtacguard = {
 		char="R",
+		graphic="tacguard",
 		color={0.6,0.6,0.6,1},
 		health=50,
 		atksound="submachine",
@@ -77,6 +80,7 @@ objclasses={
 	},
 	rifletacguard = {
 		char="R",
+		graphic="tacguard",
 		color={0.6,0.6,0.6,1},
 		health=50,
 		atksound="rifle",

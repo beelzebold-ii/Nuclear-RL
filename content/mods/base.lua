@@ -44,6 +44,7 @@ return{
 		},
 		secdog = {
 			char="s",
+			graphic="dog",
 			color={0,0.6,0.9,1},
 			health=10,
 			dice=4,
@@ -61,6 +62,7 @@ return{
 		},
 		smgtacguard = {
 			char="R",
+			graphic="tacguard",
 			color={0.6,0.6,0.6,1},
 			health=50,
 			atksound="submachine",
@@ -80,6 +82,7 @@ return{
 		},
 		rifletacguard = {
 			char="R",
+			graphic="tacguard",
 			color={0.6,0.6,0.6,1},
 			health=50,
 			atksound="rifle",
@@ -137,6 +140,7 @@ return{
 		},
 		mildog = {
 			char="m",
+			graphic="dog",
 			color={0,0.5,0,1},
 			health=40,
 			dice=5,
@@ -899,6 +903,15 @@ return{
 	--if clearlevels is set to true then any already loaded preset levels will be removed, so only your mod's levels are loaded
 	clearlevels = true,
 	presetlevels = {
+		{--1,1
+			floor = 1,
+			layer = 1,
+			name = "dogtest",
+			filename = "basea/levels/dogtest.json",
+			entrytext = "Entering the checkpoint. High security, what hospitality.",
+			calmtext = "All is calm. But my documents were all in order!",
+			music = love.audio.newSource("music/Meltdown.wav","stream"),
+		},
 		{--4,1
 			floor = 4,
 			layer = 1,

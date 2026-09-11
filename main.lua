@@ -2205,6 +2205,7 @@ function love.filedropped(file)
 			mkHudmessage("Cheater mode enabled.")
 			mkHudmessage("Loaded player state!")
 			end
+		
 		if result.jsonfile=="nrllevel" then
 			--json file is presumed to be a level
 			if gamestate == STATE_GAME and runtime == 0 then

@@ -1,4 +1,4 @@
---
+-- to enable graphical rendering / tile mode
 --graphicalrender = true
 function drawworld(camx,camy)
 	camx = math.min(math.max(pObj.pox-7,1),45-14)
