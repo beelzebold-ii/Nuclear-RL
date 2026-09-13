@@ -155,8 +155,8 @@ defaultnames = {"Niko","Clance","Chloe","Benny","Franziska","Kelsey","Via","Turn
 				"Temmie","Zik","Len","Caroline","Sam","Tommy","Kornel","Taggart",
 				"Cass","Romy","Amy","Victor","Marisa","Ash","Ari","Nikki","Index",
 				"Dawn","Valo","Noelle","Nyxity","Tenny","Sylvia","Luna","Eeva",
-				"Index","Chloe",
-				"Heather","Jericho","Siveine","Sokosim","Finn","Jake","Marceline",
+				"Index","Chloe","Nova","Flora","Aqua",
+				"Heather","Jericho","Charlotte","Sokosim","Finn","Jake","Marceline",
 				--wife names
 				"Court","Kaylee","Emma","Taylor","Sierra","Katelyn","Leo","Ash",
 				"Keiran","Ren","Ren","Alyx","Dizzy","Namine","Roxas","Saai","K",
