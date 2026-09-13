@@ -213,8 +213,8 @@ pBonus = {}
 
 playerAmmo = {}
 playerInventory = {}
-playerWeapon = inventoryItem("sm40smg")
-playerArmor = inventoryItem("secarm")
+playerWeapon = nil
+playerArmor = nil
 
 -- I believe this is a CONSTANT. thanks for specifying, past me. JERK
 maxPlayerInventory = 6

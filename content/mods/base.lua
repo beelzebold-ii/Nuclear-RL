@@ -763,6 +763,7 @@ return{
 			color={0.4,0.4,0.15,1}
 		},
 		
+		-- armor!
 		secarm = {
 			type="armor",
 			name="Security Armor",
