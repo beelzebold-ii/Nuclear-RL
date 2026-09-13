@@ -822,16 +822,21 @@ function updatescreen(camx,camy)
 	--player
 	love.graphics.setColor(0.2,0.2,1)
 	love.graphics.print(playerName,45,405)
-	love.graphics.print(math.floor(pObj.damage/pObj.maxdamage*100).."% Damage",45,420)
+	love.graphics.print(math.floor(pObj.damage/pObj.maxdamage*100).."% Damage ",45,420)
 	local painandinjuries = ""
 	if pObj.injuries > 0 then
 		painandinjuries = painandinjuries.. pObj.injuries.." Wounds"
 		end
-	if pObj.pain>0 then
+	if pObj.pain > 0 and pObj.stim < 1 then
 		if pObj.injuries > 0 then painandinjuries = painandinjuries.. " / " end
 		painandinjuries = painandinjuries.. math.floor(pObj.pain+0.5).."% Pain"
 		end
 	love.graphics.setColor(0.5,0,0,1)
+	if pObj.stim > 0 then
+		if pObj.injuries > 0 then painandinjuries = painandinjuries.. " / " end
+		painandinjuries = painandinjuries.. "("..pObj.stim / 10 .."s Stim)"
+		love.graphics.setColor(0.3,0.8,0.3,1)
+		end
 	love.graphics.print(painandinjuries,45,450)
 	love.graphics.setColor(0.2,0.2,1)
 	if playerArmor==nil then
@@ -867,7 +872,11 @@ function updatescreen(camx,camy)
 			if #aimtxt > 1 then aimtxt = aimtxt.." / " end
 			aimtxt = aimtxt.."-"..fireturns.." Recoil"
 			end
-		love.graphics.print(aimtxt,280,450)
+		love.graphics.setColor(0.3,0.8,0.3,1)
+		if fireturns >= waitturns - 0.5 then
+			love.graphics.setColor(0.5,0,0,1)
+			end
+		love.graphics.print(aimtxt,300,450)
 		end
 	--find targetted object
 	love.graphics.setColor(1,0.2,0.2)
@@ -1417,7 +1426,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = inventoryItem("secarm")
 					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--detective
@@ -1426,7 +1435,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("m99pis")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
 					end,
 				function()--freelancer
@@ -1435,7 +1444,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("sawnoff")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=8.1,movetime=9,atktimesemi=0.9,atktimepump=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
 					end,
 				function()--war vet
@@ -1444,7 +1453,7 @@ function love.keypressed(key,scancode,isrepeat)
 					playerWeapon = inventoryItem("knife")
 					playerArmor = nil
 					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
 						viewdist=9.1,movetime=9,atktimesemi=0.95,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
 					end
 			}

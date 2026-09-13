@@ -359,6 +359,8 @@ function playerusepainkiller(o)
 		usetime = usetime + (pObj.pain / 5)
 		end
 	
+	pObj.stim = o.stim + 8
+	
 	local healamt = love.math.random(o.minheal,o.maxheal)
 	--using painkillers to heal pain is a bit wasteful compared to damage as pain isn't quite as important to clear fast
 	--healamt = math.max(healamt - math.floor((pObj.pain * 0.5)),1) --removing to buff painkillers
@@ -511,6 +513,12 @@ function damageplayer(dmg,noarmor,dist)
 		local bonusdmg = 3.5-dist
 		dmg = dmg + math.floor(bonusdmg*0.4)
 		pain = pain + math.ceil(bonusdmg*2.5)
+		end
+	
+	-- right before damage is applied, if the player has stim buff, half the damage (round up)
+	if pObj.stim > 0 then
+		dmg = math.floor(dmg / 2 + 0.9)
+		pain = 0
 		end
 	
 	pObj.damage = pObj.damage + dmg
