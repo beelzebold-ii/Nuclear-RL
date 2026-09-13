@@ -167,8 +167,9 @@ function drawworldGRAPHIC(camx,camy)
 					end
 				end
 			--draw the tile at tx,ty
-			--draw floors darker than they rly are
+			--draw floors/acid darker than they rly are
 			if tilemap[ty][tx] == 0 then brightness = brightness * 0.55 end
+			if tilemap[ty][tx] == 2 then brightness = brightness * 0.15 end
 			tilecolor[tilemap[ty][tx]+1][4]=brightness
 			love.graphics.setColor(tilecolor[tilemap[ty][tx]+1])
 			
@@ -178,6 +179,10 @@ function drawworldGRAPHIC(camx,camy)
 				end
 			if tilemap[ty][tx] == 0 then
 				love.graphics.draw(graphx.floor[5],((tx+1-camx)*48)+17-7,((ty+1-camy)*48)+(-18)-8,0,2,2)
+				end
+			if tilemap[ty][tx] == 2 then
+				love.graphics.draw(graphx.floor[5],((tx+1-camx)*48)+17-7,((ty+1-camy)*48)+(-18)-8,0,2,2)
+				love.graphics.draw(graphx.acid,((tx+1-camx)*48)+17-7,((ty+1-camy)*48)+(-18)-8,0,2,2)
 				end
 			
 			-- draw the exit stairs if they've already been seen

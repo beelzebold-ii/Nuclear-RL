@@ -81,6 +81,7 @@ graphx = {
 		love.graphics.newImage("graphics/floor4.png"),
 		love.graphics.newImage("graphics/floor5.png"),
 	},
+	acid = love.graphics.newImage("graphics/acid.png"),
 	
 	obj = {
 		corpse = love.graphics.newImage("graphics/objects/corpse.png"),
