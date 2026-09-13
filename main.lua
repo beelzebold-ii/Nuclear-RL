@@ -196,6 +196,7 @@ skillnames = {"Firing Blanks","Radioactive","Schadenfreude","Goin' Nuclear!"}
 -- per 	- longer viewdist, more tohit bonus, longer pointblank distance 	- more capable at long range
 pStats = {}
 
+--NOTE: not all of this is still accurate
 --all skills cap out at level 3, and require 1 + the current level points. 1 skillpoint per level up.
 --first level is always weaker than the other two, third comes with a bonus.	- level 3 bonuses:
 -- sidearmory - draw sidearms faster, hit more reliably							- sidearms always deal +2 damage

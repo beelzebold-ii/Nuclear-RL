@@ -137,7 +137,7 @@ function drawworldGRAPHIC(camx,camy)
 			
 			if dist <= pObj.viewdist+1 then
 				local rayhit = checkLOS(pObj.pox,pObj.poy,tx,ty,-1,true)
-				if rayhit.type~="none" then
+				if rayhit.type~="none" and tx~=pObj.pox and ty~=pObj.pox then
 					if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
 					end
 				end
@@ -179,6 +179,11 @@ function drawworldGRAPHIC(camx,camy)
 			if tilemap[ty][tx] == 0 then
 				love.graphics.draw(graphx.floor[5],((tx+1-camx)*48)+17-7,((ty+1-camy)*48)+(-18)-8,0,2,2)
 				end
+			
+			-- draw the exit stairs if they've already been seen
+			if exit.pox == tx and exit.poy == ty and seentiles[ty][tx]==1 then
+				objDrawGRAPHIC({pox=exit.pox,poy=exit.poy,graphic="stairs",color={0.8,0.5,0.4,1}},camx,camy,true)
+				end
 			end
 		end
 	end
@@ -189,16 +194,16 @@ function drawObjsGRAPHIC(camx,camy)
 	for i,o in ipairs(iObjs) do
 		objDrawGRAPHIC(o,camx,camy)
 		end
-	--objDrawGRAPHIC({pox=exit.pox,poy=exit.poy,char=">",color={0.5,0.5,0.5,1}},camx,camy)
+	objDrawGRAPHIC({pox=exit.pox,poy=exit.poy,graphic="stairs",color={0.5,0.5,0.5,1}},camx,camy)
 	if localenemycount==0 then
-		--objDrawGRAPHIC({pox=exit.pox,poy=exit.poy,char=">",color={0.5,0.5,0.7,1}},camx,camy,true)
+		objDrawGRAPHIC({pox=exit.pox,poy=exit.poy,graphic="stairs",color={0.5,0.5,0.7,1}},camx,camy,true)
 		end
 	for i,o in ipairs(eObjs) do
 		objDrawGRAPHIC(o,camx,camy)
 		end
 	objDrawGRAPHIC(pObj,camx,camy)
 	if controlmode==M_FIRING then
-		--objDrawGRAPHIC({pox=cursorx,poy=cursory,char="X",color={0.5,0,0,1}},camx,camy,true)
+		objDrawGRAPHIC({pox=cursorx,poy=cursory,graphic="cursor",color={1,1,1,1}},camx,camy,true)
 		end
 	end
 function objDrawGRAPHIC(o,camx,camy,alwaysdraw)
@@ -223,23 +228,22 @@ function objDrawGRAPHIC(o,camx,camy,alwaysdraw)
 	
 	local sx,sy=((o.pox+1-camx)*48)+17-7,((o.poy+1-camy)*48)+(-18)-8
 	love.graphics.setColor(o.color)
-	if o.pox-camx>15 or o.poy-camy>8 or o.pox-camx<0 or o.poy-camy<0 then return end
-	if isfobj==true and tilemap[o.poy][o.pox]==2 then--apparently this fucking explodes somehow but I'm too lazy to fix it rn so TODO: that lmao :3
+	if o.pox-camx>14 or o.poy-camy>7 or o.pox-camx<0 or o.poy-camy<0 then
+		-- object offscreen - if it's an enemy we want to indicate this to the player
+		return
+		end
+	if isfobj==true and tilemap[o.poy][o.pox]==2 and alwaysdraw~=true then--apparently this fucking explodes somehow but I'm too lazy to fix it rn so TODO: that lmao :3
 		love.graphics.setColor(tilecolor[3][1],tilecolor[3][2],tilecolor[3][3],1)
 		end
 	
 	if o.justfired==true and frames%10<5 then love.graphics.setColor(1,0.6,0,1) end
-	if isfobj==true and tilemap[o.poy][o.pox]==1 then
-		--love.graphics.print("#",sx,sy)
+	if isfobj==true and tilemap[o.poy][o.pox]==1 and alwaysdraw~=true then
 		else
 		if o.graphic and graphx.obj[o.graphic] then
 			love.graphics.draw(graphx.obj[o.graphic],sx,sy,0,2,2)
 			else
 			love.graphics.print(o.char,sx+12,sy+6)
-			love.graphics.print("graphic missing",sx+6,sy+20)
-			if o.graphic==nil then
-				love.graphics.print("(nil)",sx+6,sy+34)
-				end
+			--love.graphics.print("graphic missing",sx+6,sy+20)
 			end
 		end
 	end
