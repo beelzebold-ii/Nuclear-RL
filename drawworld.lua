@@ -93,7 +93,7 @@ function objDrawASCII(o,alwaysdraw)
 	if alwaysdraw==nil then
 		if o.health ~= nil and o.health<=0 then return end
 		local stairtrackdist = 0
-		if pObj.pox==exit.pox and pObj.poy==exit.poy and waitturns>0 and pBonus.stairtracking==true then stairtrackdist=99 end
+		if waitturns>0 and pBonus.stairtracking==true then stairtrackdist=99 end
 		if revealall == true then stairtrackdist=99 end
 		if distance(o.pox,o.poy,pObj.pox,pObj.poy)>pObj.viewdist+pBonus.trackdist+stairtrackdist then return end
 		if o ~= pObj and distance(o.pox,o.poy,pObj.pox,pObj.poy)>pBonus.trackdist+stairtrackdist+1 then

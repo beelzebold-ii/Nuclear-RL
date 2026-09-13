@@ -155,7 +155,7 @@ defaultnames = {"Niko","Clance","Chloe","Benny","Franziska","Kelsey","Via","Turn
 				"Temmie","Zik","Len","Caroline","Sam","Tommy","Kornel","Taggart",
 				"Cass","Romy","Amy","Victor","Marisa","Ash","Ari","Nikki","Index",
 				"Dawn","Valo","Noelle","Nyxity","Tenny","Sylvia","Luna","Eeva",
-				"Index","Chloe","Nova","Flora","Aqua",
+				"Index","Chloe","Nova","Flora","Aqua","Emmie","Citrine","Vera",
 				"Heather","Jericho","Charlotte","Sokosim","Finn","Jake","Marceline",
 				--wife names
 				"Court","Kaylee","Emma","Taylor","Sierra","Katelyn","Leo","Ash",
@@ -218,8 +218,8 @@ pBonus = {
 	shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
 	passivedodgerate = 0.0,activedodgerate = 0.1,dodgeshield = false,
 	trackdist = 0,stairtracking = false,
-	ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,freefifthshot = false,
-	meleewaittimefactor = 1.0, meleecritbuff = 0, meleelifesteal = false
+	ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,packreload = 1.0,freeshot = false,
+	meleewaittimefactor = 1.0, meleecritbuff = 0, meleemovespeed = 1.0, meleelifesteal = false
 }
 
 playerAmmo = {a9mm=50,a5mm=50,a7mm=0,a12ga=20,["a.35"]=10,abattery=0}
@@ -791,8 +791,8 @@ function updatescreen(camx,camy)
 			"\"I just think they're neat.\"\n \nFire shotguns with slightly more accuracy, and reload them faster.",
 			"\"Nobody can hit me, man!\"\n \nIncrease to both passive and active dodge rate.",
 			"\"If you stay quiet, you can hear them moving...\"\n \nSee enemies from further, and hear them through walls a short distance.",
-			"\"The humanity! My gun is out of bullets!\"\n \nCarry more ammo and items, and pick things up faster.",
-			"\"For guts and motherfucking glory.\"\n \nDeal bonus melee crit damage, take less time waiting with melee weapons equipped."
+			"\"The humanity! My gun is out of bullets!\"\n \nCarry more ammo and items, and reload faster.",
+			"\"For guts and motherfucking glory.\"\n \nDeal bonus melee crit damage, move and charge strikes faster when wielding a melee weapon."
 		}
 		local legendarybuff = {
 			"Deal +2 damage with sidearms.",
@@ -800,9 +800,9 @@ function updatescreen(camx,camy)
 			"Feel no pain while waiting still.",
 			"All shotguns have tighter choke.",
 			"Feel no pain while running, successful dodges aim for you automatically.",
-			"See all enemies while waiting on the exit.",
-			"Get pickups instantly. Every fifth shot is free.",
-			"Heal slightly on every melee kill."
+			"See all enemies while waiting still.",
+			"Get pickups instantly. Every third shot consumes no ammo.",
+			"Heal slightly and gain Stim time on every melee kill."
 		}
 		if menuselect<9 then
 			love.graphics.setColor(1,0.2,0.2)
@@ -1076,7 +1076,7 @@ function updatescreen(camx,camy)
 				end
 			love.graphics.print("Fire time:   "..math.floor(playerWeapon.atktime * atktime + 0.5)/10 .."s",485,150)
 			if playerWeapon.ammotype~="no" then
-				love.graphics.print("Reload time: "..math.floor(playerWeapon.reltime * pObj.reltime + 0.5)/10 .."s",485,165)
+				love.graphics.print("Reload time: "..math.floor(playerWeapon.reltime * pObj.reltime * pBonus.packreload + 0.5)/10 .."s",485,165)
 				else
 				love.graphics.print("Reload time: N/A",485,165)
 				end
@@ -1676,11 +1676,11 @@ function love.keypressed(key,scancode,isrepeat)
 					table.insert(pSkillOrder,"Side")
 					if slv==0 then
 						--first time basic upgrade
-						pBonus.sidearmdraw = pBonus.sidearmdraw - 0.1
+						pBonus.sidearmdraw = pBonus.sidearmdraw - 0.3
 						pBonus.sidearmdmgmin = pBonus.sidearmdmgmin + 1
 						else
 						--standard upgrade
-						pBonus.sidearmdraw = pBonus.sidearmdraw - 0.15
+						pBonus.sidearmdraw = pBonus.sidearmdraw - 0.2
 						pBonus.sidearmdmgmin = pBonus.sidearmdmgmin + 1
 						if slv==2 then
 							--max lv bonus
@@ -1692,10 +1692,10 @@ function love.keypressed(key,scancode,isrepeat)
 					table.insert(pSkillOrder,"Rapid")
 					if slv==0 then
 						--first time basic upgrade
-						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.15
+						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.25
 						else
 						--standard upgrade
-						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.25
+						pBonus.rpdrecoilfactor = pBonus.rpdrecoilfactor - 0.2
 						if slv==2 then
 							--max lv bonus
 							pBonus.rpddmgdebuff = false
@@ -1706,7 +1706,7 @@ function love.keypressed(key,scancode,isrepeat)
 					table.insert(pSkillOrder,"Steady")
 					if slv==0 then
 						--first time basic upgrade
-						pBonus.aimfactor = pBonus.aimfactor + 0.1
+						pBonus.aimfactor = pBonus.aimfactor + 0.15
 						pBonus.aimdmg = pBonus.aimdmg + 1
 						--slight semi firing speed increase
 						pObj.atktimesemi = math.max(pObj.atktimesemi * 0.97,0.65)
@@ -1746,11 +1746,11 @@ function love.keypressed(key,scancode,isrepeat)
 					table.insert(pSkillOrder,"Dodge")
 					if slv==0 then
 						--first time basic upgrade
-						pBonus.activedodgerate = pBonus.activedodgerate + 0.1
+						pBonus.activedodgerate = pBonus.activedodgerate + 0.15
 						else
 						--standard upgrade
 						pBonus.activedodgerate = pBonus.activedodgerate + 0.1
-						pBonus.passivedodgerate = pBonus.passivedodgerate + 0.05
+						pBonus.passivedodgerate = pBonus.passivedodgerate + 0.08
 						if slv==2 then
 							--max lv bonus
 							pBonus.dodgeshield = true
@@ -1775,17 +1775,19 @@ function love.keypressed(key,scancode,isrepeat)
 					table.insert(pSkillOrder,"Pack")
 					if slv==0 then
 						--first time basic upgrade
-						pBonus.ammocapbuff = pBonus.ammocapbuff + 20
+						pBonus.ammocapbuff = pBonus.ammocapbuff + 40
 						pBonus.invcapbuff = pBonus.invcapbuff + 1
-						pBonus.pickupspeed = pBonus.pickupspeed - 0.15
+						pBonus.pickupspeed = pBonus.pickupspeed - 0.25
+						pBonus.packreload = pBonus.packreload - 0.1
 						else
 						--standard upgrade
 						pBonus.ammocapbuff = pBonus.ammocapbuff + 50
 						pBonus.invcapbuff = pBonus.invcapbuff + 1
 						pBonus.pickupspeed = pBonus.pickupspeed - 0.25
+						pBonus.packreload = pBonus.packreload - 0.1
 						if slv==2 then
 							--max lv bonus
-							pBonus.freefifthshot = true
+							pBonus.freeshot = true
 							pBonus.pickupspeed = 0.0
 							end
 						end
@@ -1796,10 +1798,12 @@ function love.keypressed(key,scancode,isrepeat)
 						--first time basic upgrade
 						pBonus.meleewaittimefactor = pBonus.meleewaittimefactor - 1/6
 						pBonus.meleecritbuff = pBonus.meleecritbuff + 1
+						pBonus.meleemovespeed = pBonus.meleemovespeed - 0.2
 						else
 						--standard upgrade
 						pBonus.meleewaittimefactor = pBonus.meleewaittimefactor - 2/6
 						pBonus.meleecritbuff = pBonus.meleecritbuff + 1
+						pBonus.meleemovespeed = pBonus.meleemovespeed - 0.2
 						if slv==2 then
 							--max lv bonus
 							pBonus.meleelifesteal = true

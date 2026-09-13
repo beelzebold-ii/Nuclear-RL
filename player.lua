@@ -105,9 +105,9 @@ function playerattack()
 			fireturns = fireturns + 1
 			end
 		for i=1,playerWeapon.ammouse==nil and 1 or playerWeapon.ammouse do
-			if pBonus.freefifthshot==true then
+			if pBonus.freeshot==true then
 				shots = shots + 1
-				if shots%5 == 0 then
+				if shots%3 == 0 then
 					shots = 0
 					else
 					if playerWeapon.ammotype~="no" then playerWeapon.ammo = playerWeapon.ammo-1 end
@@ -226,7 +226,8 @@ function playerattack()
 									mkHudmessage(o.deathmsg,{0.5,1.0,0.5,1})
 									killObj(o.id)
 									if pBonus.meleelifesteal==true then
-										pObj.damage = math.max(pObj.damage-love.math.random(3,6),0)
+										pObj.damage = math.max(pObj.damage-love.math.random(5,8),0)
+										pObj.stim = math.floor(love.math.random(8,12))
 										end
 									end
 								else
@@ -346,7 +347,7 @@ function tryplayerreload()
 		local detectivebonusspd = 1.0
 		if playerClass==2 then detectivebonusspd = 0.80 end
 		
-		playerturnend((playerWeapon.reltime*pObj.reltime+love.math.random(-1,1)) * shotgunbonusspd * detectivebonusspd)
+		playerturnend((playerWeapon.reltime*pObj.reltime+love.math.random(-1,1)) * shotgunbonusspd * detectivebonusspd * pBonus.packreload)
 		end
 	end
 
