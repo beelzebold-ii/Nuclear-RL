@@ -27,25 +27,8 @@ function dangerlevel(level,skill)
 
 function startgame()
 	mus.title:stop()
-	pStats = {spd = 0,acc = 0,vit = 0,per = 0}
 	
-	pSkills = {side = 0,rapid = 0,marks = 0,shot = 0,dodge = 0,track = 0,pack = 0,brute = 0}
-	pSkillOrder = {}
-
-	pBonus = {
-		sidearmdraw = 1.0,sidearmdmgmin = 0,sidearmdmgbuff = 0,
-		rpdrecoilfactor = 1.0,rpddmgdebuff = true,
-		aimfactor = 1.0,aimdmg = 0,aimshield = false,
-		shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
-		passivedodgerate = 0.0,activedodgerate = 0.1,dodgeshield = false,
-		trackdist = 0,stairtracking = false,
-		ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,packreload = 1.0,freeshot = false,
-		meleewaittimefactor = 1.0, meleecritbuff = 0, meleemovespeed = 1.0, meleelifesteal = false
-	}
-	
-	playerName = defaultnames[love.math.random(1,#defaultnames)]
-	
-	playerUsingMeds = true
+	playerinit()
 	
 	runtime = 0
 	enemies = 0

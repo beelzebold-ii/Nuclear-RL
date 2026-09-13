@@ -29,11 +29,6 @@ function playerturnend(timetaken,noclear,moving)
 			end
 		end
 	
-	if pObj.stim > 0 then
-		pObj.stim = math.max(0, pObj.stim - timetaken)
-		pObj.pain = 0
-		end
-	
 	pObj.bleedblock = pObj.bleedblock + timetaken
 	
 	if noclear~=true then
@@ -64,6 +59,12 @@ function playerturnend(timetaken,noclear,moving)
 		o.justfired = false
 		end
 	for i=1,timetaken do
+		-- drain stim every tick instead of just per turn
+		if pObj.stim > 0 then
+			pObj.stim = pObj.stim - 1
+			pObj.pain = 0
+			end
+		
 		foreach(eObjs,eobjTick)
 		end
 	hitscanlines = {}

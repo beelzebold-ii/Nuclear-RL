@@ -142,9 +142,7 @@ iObjs={}
 exit={pox=0,poy=0}
 eObjs={}
 localenemycount = 0 --number of enemies in the current level
-pObj={pox=23,poy=13,char="@",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
-		viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,
-		pointblank=4,damagebonus=0,painfactor=1.0}
+pObj={}
 pscore = 0
 --player shit
 controlmode = 0
@@ -196,7 +194,7 @@ skillnames = {"Firing Blanks","Radioactive","Schadenfreude","Goin' Nuclear!"}
 -- acc 	- more tohit, more damagebonus 										- more reliable shots
 -- vit 	- higher damage threshold, pain lasts less time 					- more resilient to damage
 -- per 	- longer viewdist, more tohit bonus, longer pointblank distance 	- more capable at long range
-pStats = {spd = 0,acc = 0,vit = 0,per = 0}
+pStats = {}
 
 --all skills cap out at level 3, and require 1 + the current level points. 1 skillpoint per level up.
 --first level is always weaker than the other two, third comes with a bonus.	- level 3 bonuses:
@@ -208,25 +206,18 @@ pStats = {spd = 0,acc = 0,vit = 0,per = 0}
 -- tracker    - spot enemies from further and hear them through walls			- see all enemies when you wait on the stairs
 -- packrat    - carry more ammo/items and get pickups faster					- pick up items instantly, every 5th shot is free
 -- slayer	  - wait faster when wielding melee weapons, more melee crit dmg	- melee kills heal
-pSkills = {side = 0,rapid = 0,marks = 0,shot = 0,dodge = 0,track = 0,pack = 0,brute = 0}
+pSkills = {}
 pSkillOrder = {}
 
-pBonus = {
-	sidearmdraw = 1.0,sidearmdmgmin = 0,sidearmdmgbuff = 0,
-	rpdrecoilfactor = 1.0,rpddmgdebuff = true,
-	aimfactor = 1.0,aimdmg = 0,aimshield = false,
-	shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
-	passivedodgerate = 0.0,activedodgerate = 0.1,dodgeshield = false,
-	trackdist = 0,stairtracking = false,
-	ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,packreload = 1.0,freeshot = false,
-	meleewaittimefactor = 1.0, meleecritbuff = 0, meleemovespeed = 1.0, meleelifesteal = false
-}
+pBonus = {}
 
-playerAmmo = {a9mm=50,a5mm=50,a7mm=0,a12ga=20,["a.35"]=10,abattery=0}
+playerAmmo = {}
 playerInventory = {}
-maxPlayerInventory = 6
 playerWeapon = inventoryItem("sm40smg")
 playerArmor = inventoryItem("secarm")
+
+-- I believe this is a CONSTANT. thanks for specifying, past me. JERK
+maxPlayerInventory = 6
 
 playerDodge = false
 
@@ -256,7 +247,7 @@ altfiring = false
 replayBuffer = {}
 takescreenshot = false
 
---no more setting hudmessage directly (soon)
+--no more setting hudmessage directly (mostly)
 hudmessage = ""
 msglog = {{"Game set!",0}}
 
@@ -1419,46 +1410,9 @@ function love.keypressed(key,scancode,isrepeat)
 	if gamestate==STATE_START then
 		if key=='return' then
 			playerClass = menuselect
-			local cfunc = {
-				function()--officer
-					playerAmmo = {a9mm=45,a5mm=0,a7mm=0,a12ga=0,["a.35"]=10}
-					playerInventory = {inventoryItem("baton"),inventoryItem("bandage")}
-					playerWeapon = inventoryItem("m99pis")
-					playerArmor = inventoryItem("secarm")
-					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
-					end,
-				function()--detective
-					playerAmmo = {a9mm=30,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
-					playerInventory = {inventoryItem("bandage")}
-					playerWeapon = inventoryItem("m99pis")
-					playerArmor = nil
-					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=9.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.1,pointblank=5,damagebonus=1,painfactor=1.0}
-					end,
-				function()--freelancer
-					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=12,["a.35"]=0}
-					playerInventory = {inventoryItem("bandage")}
-					playerWeapon = inventoryItem("sawnoff")
-					playerArmor = nil
-					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=8.1,movetime=9,atktimesemi=0.9,atktimepump=0.9,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=1.0}
-					end,
-				function()--war vet
-					playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
-					playerInventory = {inventoryItem("painkiller")}
-					playerWeapon = inventoryItem("knife")
-					playerArmor = nil
-					
-					pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
-						viewdist=9.1,movetime=9,atktimesemi=0.95,atktimepump=1.0,reltime=1.0,tohit=1.05,tohitbonus=0.05,pointblank=4,damagebonus=0,painfactor=0.9}
-					end
-			}
 			
-			cfunc[menuselect]()
+			-- CLASS STATS HAVE BEEN RELOCATED!
+			
 			gamestate = STATE_SKILL
 			menuselect = 2
 			return

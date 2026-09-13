@@ -682,3 +682,72 @@ function generateMortem(info)
 	
 	return mtxt
 	end
+
+function playerinit()
+	playerName = defaultnames[love.math.random(1,#defaultnames)]
+	
+	pObj={pox=23,poy=13,char="@",graphic="secguard",color={0.2,0.2,1,1},damage=0,maxdamage=25,pain=0,injuries=0,stim=0,bleedblock=51,xp=0,lv=1,sp=0,regentime=0,
+		viewdist=8.1,movetime=10,atktimesemi=1.0,atktimepump=1.0,reltime=1.0,tohit=1.10,tohitbonus=0.05,
+		pointblank=4,damagebonus=0,painfactor=1.0}
+	
+	pStats = {spd = 0,acc = 0,vit = 0,per = 0}
+	
+	pSkills = {side = 0,rapid = 0,marks = 0,shot = 0,dodge = 0,track = 0,pack = 0,brute = 0}
+	pSkillOrder = {}
+
+	pBonus = {
+		sidearmdraw = 1.0,sidearmdmgmin = 0,sidearmdmgbuff = 0,
+		rpdrecoilfactor = 1.0,rpddmgdebuff = true,
+		aimfactor = 1.0,aimdmg = 0,aimshield = false,
+		shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
+		passivedodgerate = 0.0,activedodgerate = 0.1,dodgeshield = false,
+		trackdist = 0,stairtracking = false,
+		ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,packreload = 1.0,freeshot = false,
+		meleewaittimefactor = 1.0, meleecritbuff = 0, meleemovespeed = 1.0, meleelifesteal = false
+	}
+	
+	playerUsingMeds = true
+	
+	-- per class init
+	
+	-- OFFICER
+	if playerClass == 1 then
+		playerAmmo = {a9mm=45,a5mm=0,a7mm=0,a12ga=0,["a.35"]=10}
+		playerInventory = {inventoryItem("bandage"),inventoryItem("baton")}
+		playerWeapon = inventoryItem("m99pis")
+		playerArmor = inventoryItem("secarm")
+		end
+	-- DETECTIVE
+	if playerClass == 2 then
+		playerAmmo = {a9mm=30,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
+		playerInventory = {inventoryItem("bandage")}
+		playerWeapon = inventoryItem("m99pis")
+		playerArmor = nil
+		
+		pObj.viewdist = pObj.viewdist + 1
+		pObj.tohitbonus = pObj.tohitbonus * 2
+		pObj.pointblank = pObj.pointblank + 1
+		pObj.damagebonus = pObj.damagebonus + 1
+		end
+	-- FREELANCER
+	if playerClass == 3 then
+		playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=12,["a.35"]=0}
+		playerInventory = {inventoryItem("bandage")}
+		playerWeapon = inventoryItem("sawnoff")
+		playerArmor = nil
+		
+		pObj.movetime = pObj.movetime - 1
+		pObj.atktimesemi = 0.9
+		pObj.atktimepump = 0.9
+		end
+	-- WAR VETERAN
+	if playerClass == 4 then
+		playerAmmo = {a9mm=0,a5mm=0,a7mm=0,a12ga=0,["a.35"]=0}
+		playerInventory = {inventoryItem("bandage"),inventoryItem("painkiller")}
+		playerWeapon = inventoryItem("knife")
+		playerArmor = nil
+		
+		pObj.movetime = pObj.movetime - 1
+		pObj.atktimesemi = 0.95
+		end
+	end
