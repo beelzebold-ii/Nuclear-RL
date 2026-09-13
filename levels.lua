@@ -37,10 +37,10 @@ function startgame()
 		rpdrecoilfactor = 1.0,rpddmgdebuff = true,
 		aimfactor = 1.0,aimdmg = 0,aimshield = false,
 		shottohit = 1.0,shotreload = 1.0,shotchokebuff = 0,
-		passivedodgerate = 0.0,activedodgerate = 0.0,dodgeshield = false,
+		passivedodgerate = 0.0,activedodgerate = 0.1,dodgeshield = false,
 		trackdist = 0,stairtracking = false,
-		ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,freefifthshot = false,
-		meleewaittimefactor = 1.0,meleecritbuff = 0,meleelifesteal = false
+		ammocapbuff = 0,invcapbuff = 2,pickupspeed = 1.0,packreload = 1.0,freeshot = false,
+		meleewaittimefactor = 1.0, meleecritbuff = 0, meleemovespeed = 1.0, meleelifesteal = false
 	}
 	
 	playerName = defaultnames[love.math.random(1,#defaultnames)]
