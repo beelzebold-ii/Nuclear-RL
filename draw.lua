@@ -16,15 +16,31 @@
 
 -- this is all a lot so I think I'm gonna start tearing relevant shit apart and rewriting.
 
+
 require("drawworld")
+
+--plain rendering canvas, appears to be used for everything
+gametilecanvas=love.graphics.newCanvas(800,480)
+if graphicalrender == true then
+	gametilecanvas=love.graphics.newCanvas(1200,720)
+	end
+--hud canvas, also used for menus
+gamehudcanvas=love.graphics.newCanvas(800,480)
+--horizontally blurred here
+gamehorzblurcanvas=love.graphics.newCanvas(800,480)
+--curved view is rendered here
+--and so is the fully blurred pixels
+gamescreencanvas=love.graphics.newCanvas(800,480)
 
 function updatescreen(camx,camy)
 	local ttt = love.timer.getTime()
 	
-	love.graphics.setCanvas(tilecanvas)
+	love.graphics.setCanvas(gametilecanvas)
 	love.graphics.clear(0,0,0,1)
 	drawworld(camx,camy)
 	drawObjs(camx,camy)
+	love.graphics.setCanvas(gamehudcanvas)
+	love.graphics.clear(0,0,0,0)
 	--message
 	love.graphics.setColor(1,1,1)
 	love.graphics.print(hudmessage,65,2)
@@ -521,12 +537,19 @@ function updatescreen(camx,camy)
 	
 	--debug hitscan rays
 	if hitscandebug == true then
-		love.graphics.setColor(0.8,0,0,0.3)
-		for k,v in ipairs(hitscanlines) do
-			love.graphics.line(v)
+		if graphicalrender == false then
+			love.graphics.setColor(0.8,0,0,0.3)
+			for k,v in ipairs(hitscanlines) do
+				love.graphics.line(v)
+				end
+			love.graphics.setColor(1,1,1,1)
+			love.graphics.points(hitscanpoints)
+			else
+			love.graphics.setColor(0.8,0,0,0.3)
+			for k,v in ipairs(hitscanlines) do
+				--love.graphics.line(v[1],v[2],v[3],v[4])
+				end
 			end
-		love.graphics.setColor(1,1,1,1)
-		love.graphics.points(hitscanpoints)
 		end
 	
 	if gamestate==STATE_MORTIS then
@@ -551,34 +574,49 @@ function updatescreen(camx,camy)
 	love.graphics.line(0,479,800,479)
 	love.graphics.setColor(1,1,1)
 	
-	local gaussianblurradius = 0.1
+	local gaussianblurradius = 0.05
 	
 	--curveshader pass
-	love.graphics.setCanvas(screencanvas)
+	love.graphics.setCanvas(gamescreencanvas)
 	love.graphics.clear(0,0,0,1)
-	--drop shadow like effect
-	local brightness = love.math.random()*0.05+0.25
-	love.graphics.setColor(brightness,brightness,brightness)
-	love.graphics.setShader(curveshader)
-	--disabling this as I want to replace it with real chromatic aberration
-	--love.graphics.draw(tilecanvas,-(((400*1.01)-(400*1))/1),-(((240*1.01)-(240*1))/1),0,1.01)
 	love.graphics.setColor(1,1,1)
-	love.graphics.draw(tilecanvas,0,0,0,1)
+	love.graphics.setShader(curveshader)
+	local scale = love.graphics.getHeight()/gametilecanvas:getHeight()
+	local xofs = (love.graphics.getWidth()-(gametilecanvas:getWidth()*scale))/2
+	love.graphics.draw(gametilecanvas,xofs,0,0,scale,scale)
+	scale = love.graphics.getHeight()/gamehudcanvas:getHeight()
+	xofs = (love.graphics.getWidth()-(gamehudcanvas:getWidth()*scale))/2
+	love.graphics.setBlendMode("alpha","premultiplied")
+	love.graphics.draw(gamehudcanvas,xofs,0,0,scale,scale)
+	love.graphics.setBlendMode("alpha","alphamultiply")
 	--horizontal blur pass
 	love.graphics.setShader(horzblurshader)
-	love.graphics.setCanvas(horzblurcanvas)
+	love.graphics.setCanvas(gamehorzblurcanvas)
 	horzblurshader:send("radius",gaussianblurradius)
 	love.graphics.clear()
-	love.graphics.draw(screencanvas,0,0)
+	love.graphics.draw(gamescreencanvas,0,0)
 	--vertical blur pass
 	love.graphics.setShader(vertblurshader)
-	love.graphics.setCanvas(screencanvas)
+	love.graphics.setCanvas(gamescreencanvas)
 	vertblurshader:send("radius",gaussianblurradius)
 	love.graphics.clear()
-	love.graphics.draw(horzblurcanvas,0,0)
+	love.graphics.draw(gamehorzblurcanvas,0,0)
 	--and finally we are done
 	love.graphics.setShader()
 	love.graphics.setCanvas()
 	
 	--print("screen rendering took "..(love.timer.getTime()-ttt)*1000 .."ms")
+	end
+
+function presentscreen()
+	--local scale = love.graphics.getHeight()/480
+	local scale = 1.0
+	local xofs = (love.graphics.getWidth()-(800*scale))/2
+	
+	love.graphics.draw(gamescreencanvas,0,0,0,scale,scale)
+	end
+
+function love.resize(w,h)
+	gamehorzblurcanvas = love.graphics.newCanvas(w,h)
+	gamescreencanvas = love.graphics.newCanvas(w,h)
 	end

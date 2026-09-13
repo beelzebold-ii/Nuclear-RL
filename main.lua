@@ -116,10 +116,6 @@ areacolors={
 	},
 }
 tilechar={".","#","="}
---world rendering canvas, used to render specifically the world
-worldcanvas = love.graphics.newCanvas(800,480)
---hud canvas, self explanatory. also used for menus in gameplay states.
-hudcanvas = love.graphics.newCanvas(800,480)
 --plain rendering canvas, appears to be used for everything
 tilecanvas=love.graphics.newCanvas(800,480)
 --horizontally blurred here
@@ -383,6 +379,7 @@ function love.draw()
 			updatescreen(camx,camy)
 			update = false
 			end
+		presentscreen()
 		else
 		if gamestate == STATE_INTRO then
 			love.graphics.setCanvas(tilecanvas)
@@ -440,10 +437,12 @@ function love.draw()
 			end
 		end
 	
-	local scale = love.graphics.getHeight()/480
-	xofs = (love.graphics.getWidth()-(800*scale))/2
-	
-	love.graphics.draw(screencanvas,xofs,0,0,scale,scale)
+	if gamestate < STATE_GAME then
+		local scale = love.graphics.getHeight()/480
+		xofs = (love.graphics.getWidth()-(800*scale))/2
+		
+		love.graphics.draw(screencanvas,xofs,0,0,scale,scale)
+		end
 	
 	--record to the replay buffer
 	if takescreenshot==true then

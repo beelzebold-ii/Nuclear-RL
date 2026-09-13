@@ -1,8 +1,8 @@
 -- to enable graphical rendering / tile mode
---graphicalrender = true
+graphicalrender = true
 function drawworld(camx,camy)
-	camx = math.min(math.max(pObj.pox-7,1),45-14)
-	camy = math.min(math.max(pObj.poy-4,1),25-7)
+	camx = math.min(math.max(pObj.pox-11,1),45-21)
+	camy = math.min(math.max(pObj.poy-6,1),25-11)
 	if graphicalrender then
 		drawworldGRAPHIC(camx,camy)
 		else
@@ -10,8 +10,8 @@ function drawworld(camx,camy)
 		end
 	end
 function drawObjs(camx,camy)
-	camx = math.min(math.max(pObj.pox-7,1),45-14)
-	camy = math.min(math.max(pObj.poy-4,1),25-7)
+	camx = math.min(math.max(pObj.pox-11,1),45-21)
+	camy = math.min(math.max(pObj.poy-6,1),25-11)
 	if graphicalrender then
 		drawObjsGRAPHIC(camx,camy)
 		else
@@ -127,8 +127,8 @@ function objDrawASCII(o,alwaysdraw)
 
 --GRAPHICAL drawing functions!!
 function drawworldGRAPHIC(camx,camy)
-	for ty=camy,camy+7 do
-		for tx=camx,camx+14 do
+	for ty=camy,camy+11 do
+		for tx=camx,camx+21 do
 			local brightness = 1
 			local dist = distance(tx,ty,pObj.pox,pObj.poy)
 			if dist > pObj.viewdist-1 then brightness = 0.7 end
@@ -233,8 +233,17 @@ function objDrawGRAPHIC(o,camx,camy,alwaysdraw)
 	
 	local sx,sy=((o.pox+1-camx)*48)+17-7,((o.poy+1-camy)*48)+(-18)-8
 	love.graphics.setColor(o.color)
-	if o.pox-camx>14 or o.poy-camy>7 or o.pox-camx<0 or o.poy-camy<0 then
+	if o.pox-camx>21 or o.poy-camy>11 or o.pox-camx<0 or o.poy-camy<0 then
 		-- object offscreen - if it's an enemy we want to indicate this to the player
+		if isfobj==false then
+			local angleto = math.atan2(o.pox - (camx+11), o.poy - (camy+6))
+			love.graphics.setColor(1,1,1,0.8)
+			love.graphics.draw(graphx.arrow,600 + math.sin(angleto) * 270,320 + math.cos(angleto) * 240,-angleto + math.pi,3,3,12,12)
+			love.graphics.setColor(o.color)
+			if o.graphic and graphx.obj[o.graphic] then
+				love.graphics.draw(graphx.obj[o.graphic],600 + math.sin(angleto) * 260,320 + math.cos(angleto) * 230,0,1.5,1.5,12,12)
+				end
+			end
 		return
 		end
 	if isfobj==true and tilemap[o.poy][o.pox]==2 and alwaysdraw~=true then--apparently this fucking explodes somehow but I'm too lazy to fix it rn so TODO: that lmao :3
