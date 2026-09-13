@@ -83,8 +83,8 @@ graphx = {
 	},
 	
 	obj = {
-		ammo = love.graphics.newImage("graphics/objects/ammo.png"),
 		corpse = love.graphics.newImage("graphics/objects/corpse.png"),
+		blood = love.graphics.newImage("graphics/objects/blood.png"),
 		player = love.graphics.newImage("graphics/objects/player.png"),
 		stairs = love.graphics.newImage("graphics/objects/stairs.png"),
 		cursor = love.graphics.newImage("graphics/objects/cursor.png"),
@@ -95,6 +95,8 @@ graphx = {
 		smallammo = love.graphics.newImage("graphics/objects/9ammo.png"),
 		rifleammo = love.graphics.newImage("graphics/objects/5ammo.png"),
 		shellammo = love.graphics.newImage("graphics/objects/12ammo.png"),
+		armor = love.graphics.newImage("graphics/objects/armor.png"),
+		health = love.graphics.newImage("graphics/objects/medical.png"),
 		pistol = love.graphics.newImage("graphics/objects/pistol.png"),
 		revolver = love.graphics.newImage("graphics/objects/revolver.png"),
 		sawnoff = love.graphics.newImage("graphics/objects/sawnoff.png"),

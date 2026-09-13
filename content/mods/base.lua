@@ -774,6 +774,7 @@ return{
 			movetime=1.0,
 			desc="Lightweight security armor that will only really serve to stop small attacks. At least it lasts a while.",
 			char="[",
+			graphic="armor",
 			color={0.2,0.4,0.6,1}
 		},
 		riotarm = {
@@ -786,6 +787,7 @@ return{
 			movetime=1.25,
 			desc="A suit of riot armor that will stop a fair bit of those annoying bullets. It won't hold up long to any heavy fire.",
 			char="[",
+			graphic="armor",
 			color={0.7,0.7,0.7,1}
 		},
 		milarm = {
@@ -798,6 +800,7 @@ return{
 			movetime=1.15,
 			desc="Finally, some quality armor. Easy to move in hybrid armor that's likely to hold up to a lot of punishment.",
 			char="[",
+			graphic="armor",
 			color={0.2,0.6,0.2,1}
 		},
 		balarm = {
@@ -811,6 +814,7 @@ return{
 			pickupmsg="It's... REALLY heavy.",
 			desc="This heavy ballistic armor is prepared for anything from a battle rifle round to a point-blank shotgun shell. Makes it rather hard to move, though...",
 			char="[",
+			graphic="armor",
 			color={0.1,0.2,0.1,1}
 		},
 		nrgarm = {
@@ -824,6 +828,7 @@ return{
 			pickupmsg="Glorious day it is!",
 			desc="A chest mounted passive energy shield. Given Nuclear's track record, I don't think I wanna know what kind of radiation this'd pump into you... At least it'll last you ages.",
 			char="[",
+			graphic="armor",
 			color={0.6,0.4,0.9,1}
 		},
 	},

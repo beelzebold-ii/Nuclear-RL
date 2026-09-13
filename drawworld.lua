@@ -137,7 +137,7 @@ function drawworldGRAPHIC(camx,camy)
 			
 			if dist <= pObj.viewdist+1 then
 				local rayhit = checkLOS(pObj.pox,pObj.poy,tx,ty,-1,true)
-				if rayhit.type~="none" and tx~=pObj.pox and ty~=pObj.pox then
+				if rayhit.type~="none" and dist > 0 then
 					if rayhit.type=="error" or math.abs(rayhit.hit.pox-tx)>=1. or math.abs(rayhit.hit.poy-ty)>=1. then brightness = 0 end
 					end
 				end

@@ -115,6 +115,7 @@ itemclasses = {
 		stim=10,
 		desc="Just a bottle of very fast acting painkillers. Will not save you in the middle of getting shot.",
 		char="+",
+		graphic="health",
 		color={0.1,0.4,0.08}
 	},
 	adrenaline = {
@@ -125,6 +126,7 @@ itemclasses = {
 		stim=35,
 		desc="Yep, that's the good stuff. May or may not be the over the counter kind. Really, I don't know. It'll do the trick, though.",
 		char="+",
+		graphic="health",
 		color={0.15,0.8,0.35}
 	},
 	combatstim = {
@@ -135,6 +137,7 @@ itemclasses = {
 		stim=55,
 		desc="These don't seem to be a commercial product, they're very vaguely labelled. Where did these even come from?",
 		char="+",
+		graphic="health",
 		color={0.5,1.0,0.7}
 	},
 	bandage = {
@@ -146,6 +149,7 @@ itemclasses = {
 		uses=5,
 		desc="It's small a bandage roll. Quick and painless to apply.",
 		char="+",
+		graphic="health",
 		color={0.9,0.5,0.5}
 	},
 	medikit = {
@@ -157,6 +161,7 @@ itemclasses = {
 		uses=4,
 		desc="There's not much here, but the assortment is wide enough for all sorts of stuff. Unfortunately all the ways to effectively stop gunshot wounds hurt like hell.",
 		char="+",
+		graphic="health",
 		color={0.75,0.3,0.225}
 	},
 	traumakit = {
@@ -168,6 +173,7 @@ itemclasses = {
 		uses=3,
 		desc="This kit is for genuine field medics, those militia guys must have brought it in. Either way, without a field medic handy, this will be very slow and painful to use.",
 		char="+",
+		graphic="health",
 		color={0.6,0.0,0.0}
 	},
 }
