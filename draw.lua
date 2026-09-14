@@ -426,14 +426,18 @@ function updatescreen(camx,camy)
 			love.graphics.print("Bonus: +"..(pObj.tohitbonus+(math.min(waitturns,3)*0.1)),485,210)
 			end
 		
-		local thistohit = playerWeapon.tohit * pObj.tohit * ((100 - pObj.pain)/100)
-		thistohit = thistohit + pObj.tohitbonus + (math.min(waitturns,3)*(0.1*pBonus.aimfactor))
-		if fireturns>1 then
-			--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
-			--veteran has an innate 0.7 recoil factor
-			thistohit = thistohit * (1 - (fireturns-1)*((0.2*pBonus.rpdrecoilfactor)*(playerClass==4 and 0.7 or 1.0)))
+		if playerWeapon~=nil then
+			local thistohit = playerWeapon.tohit * pObj.tohit * ((100 - pObj.pain)/100)
+			thistohit = thistohit + pObj.tohitbonus + (math.min(waitturns,3)*(0.1*pBonus.aimfactor))
+			if fireturns>1 then
+				--if we're rapidfiring for over 1 shot, lose 0.2 (by recoil factor) tohit per shot
+				--veteran has an innate 0.7 recoil factor
+				thistohit = thistohit * (1 - (fireturns-1)*((0.2*pBonus.rpdrecoilfactor)*(playerClass==4 and 0.7 or 1.0)))
+				end
+			love.graphics.print("Final ToHit: "..math.floor(thistohit*20)/20,485,225)
+			else
+			love.graphics.print("Final ToHit: N/A",485,225)
 			end
-		love.graphics.print("Final ToHit: "..math.floor(thistohit*20)/20,485,225)
 		
 		local equipment = {playerWeapon,playerArmor}
 		local equipnames = {"Weapon: ","Armor:  "}
@@ -545,10 +549,13 @@ function updatescreen(camx,camy)
 			love.graphics.setColor(1,1,1,1)
 			love.graphics.points(hitscanpoints)
 			else
+			--[[ sigh. I hate this
 			love.graphics.setColor(0.8,0,0,0.3)
-			for k,v in ipairs(hitscanlines) do
-				--love.graphics.line(v[1],v[2],v[3],v[4])
+			local camx,camy = getcam()
+			if #hitscantilelines > 0 then
+				love.graphics.line((hitscantilelines[1]-camx)*48+10,(hitscantilelines[2]-camy)*48-26,(hitscantilelines[3]-camx)*48+10,(hitscantilelines[4]-camy)*48-26)
 				end
+			--]]
 			end
 		end
 	

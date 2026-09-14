@@ -1,8 +1,13 @@
 -- to enable graphical rendering / tile mode
 graphicalrender = true
+function getcam()
+	local camx = math.min(math.max(pObj.pox-11,1),45-21)
+	local camy = math.min(math.max(pObj.poy-6,1),25-11)
+	return camx,camy
+	end
+
 function drawworld(camx,camy)
-	camx = math.min(math.max(pObj.pox-11,1),45-21)
-	camy = math.min(math.max(pObj.poy-6,1),25-11)
+	camx,camy = getcam()
 	if graphicalrender then
 		drawworldGRAPHIC(camx,camy)
 		else
@@ -10,8 +15,7 @@ function drawworld(camx,camy)
 		end
 	end
 function drawObjs(camx,camy)
-	camx = math.min(math.max(pObj.pox-11,1),45-21)
-	camy = math.min(math.max(pObj.poy-6,1),25-11)
+	camx,camy = getcam()
 	if graphicalrender then
 		drawObjsGRAPHIC(camx,camy)
 		else

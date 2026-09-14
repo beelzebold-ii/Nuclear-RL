@@ -420,6 +420,7 @@ return{
 			weaptype="rapid",
 			desc="The sm-40 fell out of style some time ago, mainly due to reliability issues. However, it's still a good gun in close range.",
 			char="}",
+			graphic="smg",
 			color={0.65,0.65,0.7,1}
 		},
 		ca12shotty = {
@@ -510,6 +511,7 @@ return{
 			weaptype="rapid",
 			desc="Truly the bread and butter of any military operation.",
 			char="}",
+			graphic="rifle",
 			color={0.4,0.4,0.8,1}
 		},
 		z3rifle = {
@@ -528,6 +530,7 @@ return{
 			pickupmsg="Hell yea.",
 			desc="Firing scarily heavy bullets, the z-3 battle rifle is just what you need to go toe to toe with the biggest baddies out there.",
 			char="}",
+			graphic="rifle",
 			color={0.9,0.8,0.5,1}
 		},
 		
@@ -639,6 +642,7 @@ return{
 			weaptype="rapid",
 			desc="What an odd little piece of junk. This crunched down version of the much better sm-40 is just downright uncontrollable. Fires too fast, if you can believe it.",
 			char="}",
+			graphic="smg",
 			color={0.3,0.3,0.45,1}
 		},
 		
@@ -660,6 +664,7 @@ return{
 			pickupmsg="What a relic.",
 			desc="The mk13 is a legendary submachinegun chambered in .35 magnum. Sadly it's not still in production, but if you can get your hands on one, it's very easy to use and very powerful.",
 			char="}",
+			graphic="smg",
 			color={0.8,0.75,0.15,1}
 		},
 		machinegun = {
@@ -699,6 +704,7 @@ return{
 			pickupmsg="Mine eyes can but weep!",
 			desc="What a lovely day! Truly an amazing invention, the AS-19 Autoshotgun is exactly what it says on the tin.",
 			char="}",
+			graphic="rifle",
 			color={0.5,0.1,0.25,1}
 		},
 		supershotgun = {
@@ -760,6 +766,7 @@ return{
 			weaptype="rapid",
 			desc="A forgotten relic, the G26 is. It was a rechamber of another gun, chosen for its lightning fast burstfires.",
 			char="}",
+			graphic="rifle",
 			color={0.4,0.4,0.15,1}
 		},
 		

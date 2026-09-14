@@ -8,6 +8,7 @@ gamecfgversion = "040"
 hitscandebug = true
 hitscanlines = {}
 hitscanpoints = {}
+hitscantilelines = {}
 
 --CHEATER!!!
 cheatermode = false
@@ -1288,6 +1289,7 @@ function love.keypressed(key,scancode,isrepeat)
 		if key=='escape' and controlmode==M_FIRING then
 			controlmode=M_MOVE
 			hitscanlines = {}
+			hitscantilelines = {}
 			hitscanpoints = {}
 			hudmessage=""
 			end
@@ -1432,6 +1434,7 @@ function hitscan(x1,y1,x2,y2,onlyobj,novis)
 		if obj~=-1 and eObjs[obj].health>0 and (onlyobj==obj or onlyobj==nil) then
 			if novis~=true then
 				table.insert(hitscanlines,{ofsox,ofsoy,ofsx,ofsy})
+				hitscantilelines={ox,oy,ox+dx*i,oy+dy*i}
 				if i/4<=pObj.viewdist+1 then
 					table.insert(hitscanpoints,{ofsx,ofsy,0.2,1,0.2,1})
 					end
@@ -1442,6 +1445,7 @@ function hitscan(x1,y1,x2,y2,onlyobj,novis)
 		if tile==1 then
 			if novis~=true then
 				table.insert(hitscanlines,{ofsox,ofsoy,ofsx,ofsy})
+				hitscantilelines={ox,oy,ox+dx*i,oy+dy*i}
 				if i/4<=pObj.viewdist+1 then
 					table.insert(hitscanpoints,{ofsx,ofsy,1,0,0,1})
 					end

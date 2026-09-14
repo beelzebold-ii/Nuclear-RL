@@ -22,6 +22,7 @@ function playerwait()
 	end
 
 function playermove(key)
+	hitscantilelines = {}
 	waitturns = 0
 	fireturns = math.max(0,fireturns-1)
 	local movevec = {[config.keybinds.KEY_LEFT] = {-1,0},[config.keybinds.KEY_RIGHT] = {1,0},[config.keybinds.KEY_UP] = {0,-1},[config.keybinds.KEY_DOWN] = {0,1}}
@@ -47,6 +48,7 @@ function cursormove(key)
 		cursory = newpos.y
 		end
 	hitscanlines = {}
+	hitscantilelines = {}
 	hitscanpoints = {}
 	hitscan(pObj.pox,pObj.poy,cursorx,cursory)
 	end
