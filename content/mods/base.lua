@@ -384,6 +384,7 @@ return{
 			weaptype="small",
 			desc="Blades have been around for centuries, but this one's mine.",
 			char="/",
+			graphic="blade",
 			color={0.6,0.6,0.7,1}
 		},
 		sawnoff = {
@@ -478,6 +479,7 @@ return{
 			weaptype="medium",
 			desc="The bigger blade. Excellent.",
 			char="/",
+			graphic="blade",
 			color={0.7,0.5,0.5,1}
 		},
 		knuckles = {

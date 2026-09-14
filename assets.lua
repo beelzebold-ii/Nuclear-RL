@@ -104,6 +104,7 @@ graphx = {
 		sawnoff = love.graphics.newImage("graphics/objects/sawnoff.png"),
 		smg = love.graphics.newImage("graphics/objects/submachine.png"),
 		rifle = love.graphics.newImage("graphics/objects/rifle.png"),
+		blade = love.graphics.newImage("graphics/objects/knife.png"),
 	},
 }
 function getwalltiles()
